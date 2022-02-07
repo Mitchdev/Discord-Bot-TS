@@ -15,8 +15,8 @@ class MessagesUser extends Model<MessagesAttributes> implements MessagesAttribut
   }
 
   public get lastSevenDays(): string | null {
-    if (this.getDataValue('seven_days').split(',').at(-1) !== '') {
-      return this.getDataValue('seven_days').split(',').at(-1);
+    if (this.getDataValue('seven_days').split(',').at(0) !== '') {
+      return this.getDataValue('seven_days').split(',').at(0);
     } else return null;
   }
 

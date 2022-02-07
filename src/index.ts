@@ -29,7 +29,6 @@ export const client = new ExtendedClient();
 export const devActiveCommands: CommandType['name'][] = [];
 
 export const sequelize = new Sequelize({
-  host: 'localhost',
   dialect: 'sqlite',
   storage: process.argv[2] === 'dev' ? 'discord-dev.sqlite' : 'discord.sqlite',
   logging: process.argv[2] === 'dev' ? console.log : false
