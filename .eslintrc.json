@@ -1,0 +1,22 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "rules": {
+    "prettier/prettier": 0,
+    "semi": ["error", "always"],
+    "@typescript-eslint/no-empty-interface": [
+      "error", {
+        "allowSingleExtends": true
+      }
+    ]
+  },
+  "extends": [
+    "./node_modules/gts",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ]
+}

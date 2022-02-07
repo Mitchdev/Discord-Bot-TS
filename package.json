@@ -1,0 +1,40 @@
+{
+  "name": "discord_ts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "ts-node src/index.ts dev",
+    "prod": "node dist/index.js prod",
+    "lint": "eslint . --ext .ts",
+    "build": "rm -rf ./dist/ && tsc && pm2 restart 5"
+  },
+  "keywords": [],
+  "author": "Mitchdev",
+  "license": "ISC",
+  "dependencies": {
+    "color-thief-node": "^1.0.4",
+    "discord.js": "^14.0.0-dev.1643112249.5ccdb0a",
+    "dotenv": "^14.3.2",
+    "glob": "^7.2.0",
+    "html-entities": "^2.3.2",
+    "node-fetch": "^2.6.7",
+    "sequelize": "^6.15.0",
+    "sharp": "^0.29.3",
+    "sqlite3": "^5.0.2"
+  },
+  "devDependencies": {
+    "@types/color-thief-node": "^1.0.1",
+    "@types/sharp": "^0.29.5",
+    "@types/glob": "^7.2.0",
+    "@types/node": "^17.0.13",
+    "@types/node-fetch": "^3.0.3",
+    "@typescript-eslint/eslint-plugin": "^5.10.1",
+    "@typescript-eslint/parser": "^5.10.1",
+    "eslint": "^8.8.0",
+    "gts": "^3.1.0",
+    "ts-node": "^10.4.0",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.5.5"
+  }
+}

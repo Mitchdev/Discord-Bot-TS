@@ -1,0 +1,8 @@
+db_backups/
+dist/
+logs/
+node_modules/
+.env
+discord-dev.sqlite
+discord.sqlite
+package-lock.json
