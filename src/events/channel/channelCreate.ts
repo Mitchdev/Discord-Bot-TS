@@ -9,7 +9,7 @@ export default new Event('on', 'channelCreate', (channel: NonThreadGuildBasedCha
     if (textChannel.guildId === process.env.GUILD_ID) {
       textChannel.permissionOverwrites.set([{
         type: OverwriteType.Role,
-        id: '829613714483183631',
+        id: process.env.ROLE_MUTE,
         deny: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.AddReactions]
       }], 'Added muted role');
     }

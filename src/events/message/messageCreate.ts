@@ -128,6 +128,11 @@ export default new Event('on', 'messageCreate', async (message: Message) => {
       user.addSevenDaysTime(new Date());
       await user.increment('total');
       await user.save();
+
+      if (user.sevenDays.length >= 100) {
+        const guild = client.guilds.resolve(process.env.GUILD_ID);
+        guild.members.resolve(user.id).roles.add(guild.roles.resolve(process.env.ROLE_REGULAR));
+      }
     }
 
     const emotes = message.content.match(/<(a)?:.+?:\d+>/gmi);

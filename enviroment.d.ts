@@ -16,8 +16,11 @@ declare global {
       CHANNEL_MOD: string;
       CHANNEL_LOGS: string;
       CHANNEL_ROLES: string;
+      CHANNEL_GENERAL: string;
 
       ROLE_MOD: string;
+      ROLE_MUTE: string;
+      ROLE_REGULAR: string;
 
       USER_MITCH: string;
       USER_ANDLIN: string;

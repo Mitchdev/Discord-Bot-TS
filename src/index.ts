@@ -10,10 +10,12 @@ import Messages from './structures/database/Messages';
 import TempRoles from './structures/database/TempRoles';
 import Roles from './structures/database/Roles';
 import BannedPhrases from './structures/database/BannedPhrases';
+import Timeouts from './structures/database/Timeouts';
 
 import emotesSevenDaysRemove from './scheduled/emotesSevenDaysRemove';
 import messagesSevenDaysRemove from './scheduled/messagesSevenDaysRemove';
 import tempRolesRemove from './scheduled/tempRolesRemove';
+import regularUsersUpdate from './scheduled/regularUsersUpdate';
 
 import ExtendedClient from './structures/Client';
 import CommandType from './typings/Command';
@@ -41,13 +43,15 @@ export const db =  {
   roles: Roles(sequelize),
   bannedPhrases: BannedPhrases(sequelize),
   invites: Invites(sequelize),
-  languages: Languages(sequelize)
+  languages: Languages(sequelize),
+  timeouts: Timeouts(sequelize)
 };
 
 export const timers = {
   messages_seven_day_removal: messagesSevenDaysRemove,
   emotes_seven_day_removal: emotesSevenDaysRemove,
-  temp_roles_removal: tempRolesRemove
+  temp_roles_removal: tempRolesRemove,
+  regular_users_update: regularUsersUpdate
 };
 
 client.start();
