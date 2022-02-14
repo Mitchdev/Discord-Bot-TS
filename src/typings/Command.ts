@@ -3,8 +3,10 @@ import Client from '../structures/Client';
 import { ExtendedInteraction, ExtendedInteractionType } from './Interaction';
 
 interface CommandRunOptions {
-  client: Client,
-  interaction: ExtendedInteraction
+  client: Client;
+  interaction: ExtendedInteraction;
+  subCommandGroup: string | null;
+  subCommand: string | null;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

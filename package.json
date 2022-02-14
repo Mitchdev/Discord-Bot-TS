@@ -7,7 +7,7 @@
     "dev": "ts-node src/index.ts dev",
     "prod": "node dist/index.js prod",
     "lint": "eslint . --ext .ts",
-    "build": "rm -rf ./dist/ && tsc && pm2 restart 5"
+    "build": "rm -rf ./dist/ && tsc && pm2 restart 2"
   },
   "keywords": [],
   "author": "Mitchdev",

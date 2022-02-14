@@ -34,7 +34,12 @@ export default new Event('on', 'interactionCreate', async (interaction: Interact
         await interaction.deferReply({ephemeral: true});
         return interaction.editReply('You have used a non exitent slash command');
       }
-      command.run({client, interaction: interaction as ExtendedInteraction});
+      command.run({
+        client,
+        interaction: interaction as ExtendedInteraction,
+        subCommandGroup: interaction.options.getSubcommandGroup(false) ?? null,
+        subCommand: interaction.options.getSubcommand(false) ?? null
+      });
     } else if (interaction.isContextMenuCommand()) { // ContextMenuCommandInteraction
       if (interaction.isMessageContextMenuCommand()) {} // MessageContextMenuCommandInteraction
       else if (interaction.isUserContextMenuCommand()) { // UserContextMenuCommandInteraction
@@ -43,7 +48,12 @@ export default new Event('on', 'interactionCreate', async (interaction: Interact
           await interaction.deferReply({ephemeral: true});
           return interaction.editReply('You have used a non exitent context-menu command');
         }
-        command.run({client, interaction: interaction as ExtendedInteraction});
+        command.run({
+          client,
+          interaction: interaction as ExtendedInteraction,
+          subCommandGroup: null,
+          subCommand: null
+        });
       }
     }
   } else if (interaction.isMessageComponent()) { // MessageComponentInteraction

@@ -18,5 +18,5 @@ export default new Event('on', 'emojiCreate', async (emoji: GuildEmoji) => {
     .setDescription(`\`<${emoji.animated ? 'a' : ''}:${emoji.name}:${emoji.id}>\``)
     .setImage(emoji.url);
 
-  (client.channels.resolve(process.env.CHANNEL_MOD) as TextChannel).send({embeds: [embed]});
+  (client.channels.resolve(process.env.CHANNEL_LOGS) as TextChannel).send({embeds: [embed]});
 });
