@@ -11,7 +11,7 @@ class MessagesUser extends Model<MessagesAttributes> implements MessagesAttribut
   declare seven_days: string;
 
   public get sevenDays(): string[] {
-    return this.getDataValue('seven_days').split(',');
+    return this.getDataValue('seven_days').split(',').filter((e) => e !== '');
   }
 
   public get lastSevenDays(): string | null {

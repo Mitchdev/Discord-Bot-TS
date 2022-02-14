@@ -45,7 +45,7 @@ export default new Command({
       } else {
         const embed = new Embed()
           .setTitle(`**${data[0].word}**`)
-          .setURL(`https://www.dictionary.com/browse/${data[0].word}`)
+          .setURL(`https://www.dictionary.com/browse/${encodeURIComponent(data[0].word)}`)
           .addField({
             name: 'Definition',
             value: data[0].meanings[0].definitions[0].definition ?? '-'

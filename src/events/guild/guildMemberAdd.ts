@@ -5,11 +5,14 @@ import Event from '../../structures/Event';
 import ExtendedEmbed from '../../typings/Embed';
 
 export default new Event('on', 'guildMemberAdd', async (member: GuildMember) => {
-  await db.messages.build({
-    id: member.user.id,
-    username: member.user.username,
-    discriminator: member.user.discriminator
-  }).save();
+  const user = await db.messages.findByPk(member.user.id);
+  if (!user) {
+    await db.messages.build({
+      id: member.user.id,
+      username: member.user.username,
+      discriminator: member.user.discriminator
+    }).save();
+  }
 
   let found = false;
   const embed = new ExtendedEmbed()

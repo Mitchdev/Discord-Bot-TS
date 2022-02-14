@@ -19,7 +19,7 @@ class EmotesEmote extends Model<EmotesAttributes> implements EmotesAttributes {
   declare readonly updatedAt: Date;
 
   public get sevenDays(): string[] {
-    return this.getDataValue('seven_days').split(',');
+    return this.getDataValue('seven_days').split(',').filter((e) => e !== '');
   }
 
   public get lastSevenDays(): string | null {
