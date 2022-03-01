@@ -3,12 +3,21 @@ import { Message, Util } from 'discord.js';
 /**
  * Converts rgb color values to int color.
  * @param {number} red - color red value.
- * @param {green} green color green value.
- * @param {blue} blue  color blue value.
+ * @param {number} green color green value.
+ * @param {number} blue  color blue value.
  * @returns {number} color int value.
  */
 export function rgbToInt(red: number, green: number, blue: number): number {
   return (red << 16) + (green << 8) + blue;
+}
+
+/**
+ * Converts hex color value to int color.
+ * @param {string} hex - color hex value
+ * @returns {number} color int value.
+ */
+export function hexToInt(hex: string): number {
+  return parseInt(hex.replace('#', ''), 16);
 }
 
 /**
@@ -100,4 +109,18 @@ export async function splitMessage(content: string | string[], message: Message,
     content.shift();
     return await splitMessage(content, reply, codeblock);
   } else return;
+}
+
+/**
+ * Tests if string is a url or not.
+ * @param {string} url string to test.
+ * @returns {boolean} returns if string is url or not.
+ */
+export function validURL(url: string): boolean {
+  try {
+    const validURL = new URL(url);
+    return (validURL?.protocol === 'http:' || validURL?.protocol === 'https:');
+  } catch (_) {
+    return false;
+  }
 }

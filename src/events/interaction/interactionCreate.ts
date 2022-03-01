@@ -63,7 +63,13 @@ export default new Event('on', 'interactionCreate', async (interaction: Interact
         await interaction.deferReply({ephemeral: true});
         return interaction.editReply('You have used a non exitent context-menu command');
       }
-      component.run({client, interaction: interaction as ExtendedButtonInteraction});
+      const args = interaction.customId.split('|');
+      args.shift();
+      component.run({
+        client,
+        interaction: interaction as ExtendedButtonInteraction,
+        args: args
+      });
     }
     else if (interaction.isSelectMenu()) {} // SelectMenuInteraction
   }

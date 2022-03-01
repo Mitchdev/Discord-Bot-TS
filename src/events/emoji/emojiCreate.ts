@@ -12,11 +12,13 @@ export default new Event('on', 'emojiCreate', async (emoji: GuildEmoji) => {
     guild: true
   }).save();
 
-  const embed = new Embed()
-    .setTitle(`Emoji Created by ${(await emoji.fetchAuthor()).username}#${(await emoji.fetchAuthor()).discriminator}`)
-    .setColor(Color.GREEN)
-    .setDescription(`\`<${emoji.animated ? 'a' : ''}:${emoji.name}:${emoji.id}>\``)
-    .setImage(emoji.url);
+  if ((await emoji.fetchAuthor()).id !== process.env.BOT_ID) {
+    const embed = new Embed()
+      .setTitle(`Emoji Created by ${(await emoji.fetchAuthor()).username}#${(await emoji.fetchAuthor()).discriminator}`)
+      .setColor(Color.GREEN)
+      .setDescription(`\`<${emoji.animated ? 'a' : ''}:${emoji.name}:${emoji.id}>\``)
+      .setImage(emoji.url);
 
-  (client.channels.resolve(process.env.CHANNEL_LOGS) as TextChannel).send({embeds: [embed]});
+    (client.channels.resolve(process.env.CHANNEL_EMOTE) as TextChannel).send({embeds: [embed]});
+  }
 });

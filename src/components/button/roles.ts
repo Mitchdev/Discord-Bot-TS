@@ -5,10 +5,10 @@ import Component from '../../structures/Component';
 export default new Component({
   idType: 'ButtonInteraction',
   customId: 'roles',
-  run: async ({ client, interaction }) => {
+  run: async ({ client, interaction, args }) => {
     await interaction.deferReply({ephemeral: true});
 
-    const role = await db.roles.findByPk(parseInt(interaction.customId.split('|')[1]));
+    const role = await db.roles.findByPk(parseInt(args[0]));
     if (role) {
       if (interaction.member) {
         const guild = client.guilds.resolve(process.env.GUILD_ID);

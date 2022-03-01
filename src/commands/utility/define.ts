@@ -49,19 +49,10 @@ export default new Command({
           .addField({
             name: 'Definition',
             value: data[0].meanings[0].definitions[0].definition ?? '-'
-          })
-          .addField({
-            name: 'Example',
-            value: data[0].meanings[0].definitions[0].example ?? '-'
-          })
-          .addField({
-            name: 'Origin',
-            value: data[0].origin ?? '-'
-          })
-          .addField({
-            name: 'Phonetic',
-            value: data[0].phonetic ?? '-'
           });
+          if (data[0].meanings[0].definitions[0].example) embed.addField({ name: 'Example', value: data[0].meanings[0].definitions[0].example });
+          if (data[0].origin) embed.addField({ name: 'Origin', value: data[0].origin });
+          if (data[0].phonetic) embed.addField({ name: 'Phonetic', value: data[0].phonetic });
         interaction.editReply({embeds: [embed]});
       }
     } else {

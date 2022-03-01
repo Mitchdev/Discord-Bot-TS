@@ -29,7 +29,7 @@ export default new Command({
     const seconds: number = durationToSeconds(interaction.options.get('duration').value as string);
     if (seconds) {
       if (seconds > 0 && seconds < 604800) {
-        (interaction.options.get('user').member as GuildMember).timeout(seconds * 1000, `Timed out by ${interaction.member.displayName}`);
+        await (interaction.options.get('user').member as GuildMember).timeout(seconds * 1000, `Timed out by ${interaction.member.displayName}`);
         interaction.editReply(`Timed out ${(interaction.options.get('user').member as GuildMember).displayName} for ${interaction.options.get('duration').value}.`);
       } else {
         interaction.editReply('Duration not within range (1s - 7d).');

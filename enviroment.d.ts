@@ -15,6 +15,8 @@ declare global {
 
       CHANNEL_MOD: string;
       CHANNEL_LOGS: string;
+      CHANNEL_EMOTE: string;
+      CHANNEL_BOT: string;
       CHANNEL_ROLES: string;
       CHANNEL_GENERAL: string;
 
@@ -44,6 +46,9 @@ declare global {
       IMDB_SEARCH_API: string;
       IMDB_INFO_API: string;
       IMDB_INFO_ALT_API: string;
+
+      F1_SEASON_API: string;
+      F1_TEAMS_API: string;
     }
   }
 }

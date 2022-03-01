@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, ApplicationCommandPermissionType, CommandInteractionOptionResolver, GuildMember } from 'discord.js';
+import { ApplicationCommandOptionType, ApplicationCommandPermissionType, GuildMember } from 'discord.js';
 import { db } from '../..';
 import Command from '../../structures/Command';
 import { durationToSeconds } from '../../structures/Utilities';
@@ -90,10 +90,9 @@ export default new Command({
       required: true
     }]
   }],
-  run: async ({ client, interaction }) => {
+  run: async ({ client, interaction, subCommand }) => {
     await interaction.deferReply();
-    const type = (interaction.options as CommandInteractionOptionResolver).getSubcommand();
-    if (type === 'permanent' || type === 'temporary') {
+    if (subCommand === 'permanent' || subCommand === 'temporary') {
       let seconds = 0;
       if (interaction.options.get('duration')) {
         seconds = durationToSeconds(interaction.options.get('duration')?.value as string);
@@ -130,7 +129,7 @@ export default new Command({
           interaction.editReply(`Bot does not have permissions to add **${interaction.options.get('role').role.name}**`);
         }
       });
-    } else if (type === 'edit') {
+    } else if (subCommand === 'edit') {
       const exists = await db.tempRoles.findAll({ where: { roleid: interaction.options.get('role').role.id, userid: interaction.options.get('user').user.id}});
       const seconds: number = durationToSeconds(interaction.options.get('duration')?.value as string);
       if (seconds) {
@@ -150,7 +149,7 @@ export default new Command({
       } else {
         interaction.editReply('Invalid duration. (1s - 7d)');
       }
-    } else if (type === 'remove') {
+    } else if (subCommand === 'remove') {
       const remove = await db.tempRoles.findAll({ where: { roleid: interaction.options.get('role').role.id, userid: interaction.options.get('user').user.id}});
       for (let i = 0; i < remove.length; i++) remove[i].destroy();
       const guild = client.guilds.resolve(process.env.GUILD_ID);

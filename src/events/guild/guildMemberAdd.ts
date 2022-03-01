@@ -54,7 +54,7 @@ export default new Event('on', 'guildMemberAdd', async (member: GuildMember) => 
       })
       .addField({
         name: 'Invite Code',
-        value: member.guild.vanityURLCode,
+        value: member.guild.vanityURLCode ?? 'null',
         inline: true,
       });
     (client.channels.resolve(process.env.CHANNEL_MOD) as TextChannel).send({embeds: [embed]});

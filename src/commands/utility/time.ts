@@ -2,7 +2,6 @@ import { ApplicationCommandOptionType } from 'discord.js';
 import fetch from 'node-fetch';
 import Color, { ColorDiscord } from '../../enums/Color';
 import Command from '../../structures/Command';
-import { capitalize } from '../../structures/Utilities';
 import { Time } from '../../typings/apis/Time';
 import Embed from '../../typings/Embed';
 
@@ -24,33 +23,9 @@ export default new Command({
     if (Object.keys(time).length > 0) {
       const date = new Date(time.datetime);
       const embed = new Embed()
-        .setTitle(`The time in ${time.requested_location} is **${timeToString(date.getHours(), date.getMinutes())}**`)
-        .setColor((date.getHours() >= 6 && date.getHours() < 18) ? Color.BLUE : ColorDiscord.NOT_QUITE_BLACK)
-        .addField({
-          name: 'Abbreviation',
-          value: time.timezone_abbreviation,
-          inline: true,
-        })
-        .addField({
-          name: 'GMT',
-          value: (time.gmt_offset >= 0 ? '+' : '') + time.gmt_offset,
-          inline: true,
-        })
-        .addField({
-          name: 'Daylight Savings',
-          value: capitalize(time.is_dst?.toString()),
-          inline: true,
-        })
-        .addField({
-          name: 'Name',
-          value: time.timezone_name,
-          inline: true,
-        })
-        .addField({
-          name: 'Location',
-          value: time.timezone_location,
-          inline: true,
-        });
+        .setTitle(`Time for ${time.requested_location} is **${timeToString(date.getHours(), date.getMinutes(), true, true)}**`)
+        .setDescription(`**${date.getDate()}/${date.getMonth()+1}/${date.getFullYear().toString().slice(-2)} ${timeToString(date.getHours(), date.getMinutes())}** \n\n${time.timezone_abbreviation} | GMT${(time.gmt_offset >= 0 ? '+' : '') + time.gmt_offset}\n${time.timezone_name}${time.is_dst ? ' (Day Light Savings)' : ''}`)
+        .setColor((date.getHours() >= 6 && date.getHours() < 18) ? Color.BLUE : ColorDiscord.NOT_QUITE_BLACK);
 
       interaction.editReply({embeds: [embed]});
     } else {
@@ -59,6 +34,8 @@ export default new Command({
   }
 });
 
-function timeToString(hours: number, minutes: number): string {
-  return `${(hours < 10) ? '0' + hours : hours}:${(minutes < 10) ? '0' + minutes : minutes}`;
+function timeToString(hours: number, minutes: number, _12 = false, ampm = false): string {
+  const pmam = hours >= 12 ? ' PM' : ' AM';
+  hours = (_12 && hours > 12) ? hours - 12 : hours;
+  return `${(hours < 10) ? '0' + hours : hours}:${(minutes < 10) ? '0' + minutes : minutes}${ampm ? pmam : ''}`;
 }

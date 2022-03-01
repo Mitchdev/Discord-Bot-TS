@@ -13,6 +13,7 @@ enum Color {
   DARK_GOLD = 12745742,
   ORANGE = 15105570,
   DARK_ORANGE = 11027200,
+  F1_RED = 14747136,
   RED = 15158332,
   DARK_RED = 10038562,
   GREY = 9807270,
@@ -23,7 +24,7 @@ enum Color {
   DARK_NAVY = 2899536,
   YELLOW = 16776960,
   WHITE = 16777215,
-  BLACK = 0,
+  BLACK = 0
 }
 
 export enum ColorDiscord {
@@ -36,6 +37,14 @@ export enum ColorDiscord {
   FUSCHIA = 15418782,
   RED = 15548997,
   BLACK = 2303786,
+}
+
+export enum SuggestionStatusColor {
+  'Completed' = Color.GREEN,
+  'Accepted' = Color.GREEN,
+  'In Progress' = Color.YELLOW,
+  'Pending' = ColorDiscord.DARK_BUT_NOT_BLACK,
+  'Denied' = Color.RED
 }
 
 export default Color;

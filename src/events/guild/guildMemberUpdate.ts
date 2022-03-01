@@ -16,12 +16,13 @@ export default new Event('on', 'guildMemberUpdate', async (oldMember: GuildMembe
             id: newMember.id,
             timestamp: newMember.communicationDisabledUntilTimestamp
           }).save();
-          (client.channels.resolve(process.env.CHANNEL_GENERAL) as TextChannel).send({content: `${latestTimeout.executor.username} timed out ${(latestTimeout.target).username} for ${secondsToDhms(timeDifference / 1000, false)}${latestTimeout.reason ? `\nreason: **${latestTimeout.reason}**` : ''}`});
+          await (client.channels.resolve(process.env.CHANNEL_GENERAL) as TextChannel).send({content: `${latestTimeout.executor.username} timed out ${(latestTimeout.target).username} for ${secondsToDhms(timeDifference / 1000, false)}${latestTimeout.reason ? `\nreason: **${latestTimeout.reason}**` : ''}`});
+          setTimeout(async () => {
+            const timeout = await db.timeouts.findByPk(newMember.id);
+            if (timeout) timeout.destroy();
+          }, timeDifference);
         }
       });
     }
-  } else {
-    const timeout = await db.timeouts.findByPk(newMember.id);
-    if (timeout) timeout.destroy();
   }
 });

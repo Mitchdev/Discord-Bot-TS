@@ -1,5 +1,6 @@
 import { GuildTextBasedChannel, Message, TextChannel, WebhookClient } from 'discord.js';
 import { client } from '../..';
+import Color from '../../enums/Color';
 import Event from '../../structures/Event';
 import Embed from '../../typings/Embed';
 
@@ -7,6 +8,7 @@ export default new Event('on', 'messageUpdate', (oldMessage: Message, newMessage
   if (newMessage.author.id !== process.env.BOT_ID && oldMessage.content !== newMessage.content) {
     const embed = new Embed()
       .setTitle(`**${newMessage.author.username}s edited message in #${(newMessage.channel as TextChannel).name}**`)
+      .setColor(Color.YELLOW)
       .setURL(`https://discord.com/channels/${(newMessage.channel as GuildTextBasedChannel).guild.id}/${newMessage.channel.id}/${newMessage.id}`)
       .addField({
         name: 'Old',

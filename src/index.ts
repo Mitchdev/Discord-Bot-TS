@@ -1,4 +1,4 @@
-import dotenv = require('dotenv')
+import dotenv = require('dotenv');
 dotenv.config();
 
 import { Sequelize } from 'sequelize';
@@ -11,6 +11,7 @@ import TempRoles from './structures/database/TempRoles';
 import Roles from './structures/database/Roles';
 import BannedPhrases from './structures/database/BannedPhrases';
 import Timeouts from './structures/database/Timeouts';
+import Suggestions from './structures/database/Suggestions';
 
 import emotesSevenDaysRemove from './scheduled/emotesSevenDaysRemove';
 import messagesSevenDaysRemove from './scheduled/messagesSevenDaysRemove';
@@ -28,7 +29,7 @@ if (process.argv[2] === 'dev') {
 export const client = new ExtendedClient();
 
 // commands currently working on.
-export const devActiveCommands: CommandType['name'][] = [];
+export const devActiveCommands: CommandType['name'][] = ['f1'];
 
 export const sequelize = new Sequelize({
   dialect: 'sqlite',
@@ -44,8 +45,11 @@ export const db =  {
   bannedPhrases: BannedPhrases(sequelize),
   invites: Invites(sequelize),
   languages: Languages(sequelize),
-  timeouts: Timeouts(sequelize)
+  timeouts: Timeouts(sequelize),
+  suggestions: Suggestions(sequelize)
 };
+
+export type db = typeof db;
 
 export const timers = {
   messages_seven_day_removal: messagesSevenDaysRemove,
@@ -53,5 +57,7 @@ export const timers = {
   temp_roles_removal: tempRolesRemove,
   regular_users_update: regularUsersUpdate
 };
+
+export type timers = typeof timers;
 
 client.start();

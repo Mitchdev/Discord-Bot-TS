@@ -1,12 +1,15 @@
 import { GuildMember, Message } from 'discord.js';
-import { client, db } from '../..';
+import { client, db, timers } from '../..';
 import devCommands from '../../structures/DevCommands';
 import Event from '../../structures/Event';
 
 export default new Event('on', 'messageCreate', async (message: Message) => {
-  if (message.author.id === process.env.USER_MITCH) await devCommands(message);
+  if (message.author.id === process.env.USER_MITCH) await devCommands(client, db, timers, message);
   if (message.author.id !== process.env.BOT_ID && message.author.id !== process.env.BOT_LOGS_ID) {
     if (message.content.length >= 750) message.react(message.guild.emojis.resolve('773295613558128671')); // donowall
+
+    const timeout = await db.timeouts.findByPk(message.author.id);
+    if (timeout) timeout.destroy();
 
     const bannedPhrases = await db.bannedPhrases.findAll({ where: {} });
     const phrases = bannedPhrases.filter((phrase) => {

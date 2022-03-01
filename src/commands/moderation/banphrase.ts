@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, ApplicationCommandPermissionType, CommandInteractionOptionResolver } from 'discord.js';
+import { ApplicationCommandOptionType, ApplicationCommandPermissionType } from 'discord.js';
 import { db } from '../..';
 import Command from '../../structures/Command';
 import { durationToSeconds } from '../../structures/Utilities';
@@ -49,9 +49,8 @@ export default new Command({
     type: ApplicationCommandOptionType.Subcommand,
     description: 'List all banned phrases'
   }],
-  run: async ({ interaction }) => {
-    const type = (interaction.options as CommandInteractionOptionResolver).getSubcommand();
-    if (type === 'add') {
+  run: async ({ interaction, subCommand }) => {
+    if (subCommand === 'add') {
       await interaction.deferReply();
       const seconds: number = durationToSeconds(interaction.options.get('duration')?.value as string);
       if (seconds) {
@@ -69,7 +68,7 @@ export default new Command({
           } else interaction.editReply(`Phrase **${interaction.options.get('phrase').value}** already exists`);
         } else interaction.editReply('Duration not within range (1s - 7d).');
       } else interaction.editReply('Invalid duration. (1s - 7d)');
-    } else if (type === 'remove') {
+    } else if (subCommand === 'remove') {
       await interaction.deferReply();
       const exists = await db.bannedPhrases.findOne({ where: { phrase: (interaction.options.get('phrase').value as string).toLowerCase()}});
       if (exists) {
@@ -78,7 +77,7 @@ export default new Command({
       } else {
         interaction.editReply(`Phrase **${interaction.options.get('phrase').value}** does not exist`);
       }
-    } else if (type === 'list') {
+    } else if (subCommand === 'list') {
       await interaction.deferReply({ephemeral: true});
       // const bannedPhrases = await db.bannedPhrases.findAll({ where: {} });
       // interaction.editReply(bannedPhrases.map((phrase) => `${phrase.phrase} | ${phrase.rolename} | ${phrase.duration}`).join('\n'));

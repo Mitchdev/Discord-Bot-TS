@@ -1,7 +1,20 @@
 import { BaseGuildTextChannel, BaseGuildVoiceChannel, CategoryChannel, ChannelType, Message } from 'discord.js';
-import { client } from '..';
+import { inspect } from 'util';
+import { db, timers } from '..';
+import ExtendedClient from './Client';
 
-async function devCommands(message: Message) {
+async function devCommands(client: ExtendedClient, db: db, timers: timers, message: Message) {
+
+  if (message.content.startsWith('!eval')) {
+    try {
+      const evaled = eval(message.content.replace('!eval ', ''));
+      const cleaned = await cleanEval(client, evaled);
+      await message.channel.send(`\`\`\`js\n${cleaned}\n\`\`\``);
+    } catch (err) {
+      const cleaned = await cleanEval(client, err);
+      await message.channel.send(`\`ERROR\` \`\`\`xl\n${cleaned}\n\`\`\``);
+    }
+  }
 
   if (message.content === '!restart' && process.argv[2] === 'prod') {
     message.reply('Restarting bot.');
@@ -14,7 +27,7 @@ async function devCommands(message: Message) {
     message.reply('Reloading events and commands.');
   }
 
-  if (message.content === '!clearcommands' && process.argv[2] === 'dev') {
+  if (message.content === '!cc' && process.argv[2] === 'dev') {
     const response = await client.removeCommands();
     message.reply(response);
   }
@@ -85,3 +98,13 @@ async function devCommands(message: Message) {
 }
 
 export default devCommands;
+
+async function cleanEval(client: ExtendedClient, text: string | Promise<string>): Promise<string> {
+  if (text && text.constructor.name === 'Promise') text = await text;
+  if (typeof text !== 'string') text = inspect(text, { compact: false, depth: 5 });
+  text = text
+    .replaceAll('`', `\`${String.fromCharCode(8203)}`)
+    .replaceAll('@', `@${String.fromCharCode(8203)}`)
+    .replaceAll(client.token, '[REDACTED]');
+  return text;
+}

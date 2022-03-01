@@ -6,11 +6,17 @@
   ],
   "rules": {
     "prettier/prettier": 0,
-    "semi": ["error", "always"],
+    "semi": [
+      "error",
+      "always"
+    ],
     "@typescript-eslint/no-empty-interface": [
-      "error", {
-        "allowSingleExtends": true
-      }
+      "error",
+      {"allowSingleExtends": true}
+    ],
+    "node/no-unsupported-features/node-builtins": [
+      "error",
+      {"version": ">=16.0.0"}
     ]
   },
   "extends": [

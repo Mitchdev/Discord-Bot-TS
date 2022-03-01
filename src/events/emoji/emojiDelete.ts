@@ -13,13 +13,15 @@ export default new Event('on', 'emojiDelete', async (emoji: GuildEmoji) => {
     logs.filter((entry) => (entry.changes ? entry.changes[0]?.key === 'name' : false) && (entry.targetType === 'Emoji'));
     if (logs.size > 0) {
       const latestEmojiDeleted = logs.first();
-      const embed = new Embed()
-      .setTitle(`Emoji Deleted by ${latestEmojiDeleted.executor.username}#${latestEmojiDeleted.executor.discriminator}`)
-      .setColor(Color.RED)
-      .setDescription(`\`<${emoji.animated ? 'a' : ''}:${emoji.name}:${emoji.id}>\``)
-      .setImage(emoji.url);
+      if (latestEmojiDeleted.executor.id !== process.env.BOT_ID) {
+        const embed = new Embed()
+        .setTitle(`Emoji Deleted by ${latestEmojiDeleted.executor.username}#${latestEmojiDeleted.executor.discriminator}`)
+        .setColor(Color.RED)
+        .setDescription(`\`<${emoji.animated ? 'a' : ''}:${emoji.name}:${emoji.id}>\``)
+        .setImage(emoji.url);
 
-      (client.channels.resolve(process.env.CHANNEL_LOGS) as TextChannel).send({embeds: [embed]});
+        (client.channels.resolve(process.env.CHANNEL_EMOTE) as TextChannel).send({embeds: [embed]});
+      }
     }
   });
 });

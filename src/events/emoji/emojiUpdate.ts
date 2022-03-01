@@ -26,7 +26,7 @@ export default new Event('on', 'emojiUpdate', async (oldEmoji: GuildEmoji, newEm
         })
         .setImage(newEmoji.url);
 
-      (client.channels.resolve(process.env.CHANNEL_LOGS) as TextChannel).send({embeds: [embed]});
+      (client.channels.resolve(process.env.CHANNEL_EMOTE) as TextChannel).send({embeds: [embed]});
     }
   });
 });

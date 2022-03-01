@@ -1,4 +1,4 @@
-import { ActionRow, ActionRowComponent, ApplicationCommandOptionType, ApplicationCommandPermissionType, ButtonComponent, ButtonStyle, CommandInteractionOptionResolver, Message, TextChannel } from 'discord.js';
+import { ActionRow, ActionRowComponent, ApplicationCommandOptionType, ApplicationCommandPermissionType, ButtonComponent, ButtonStyle, Message, TextChannel } from 'discord.js';
 import { db } from '../..';
 import RolesCategory from '../../enums/RolesCategory';
 import ExtendedClient from '../../structures/Client';
@@ -67,15 +67,14 @@ export default new Command({
       required: true
     }]
   }],
-  run: async ({ client, interaction }) => {
+  run: async ({ client, interaction, subCommand }) => {
     await interaction.deferReply({ephemeral: true});
-    const type = (interaction.options as CommandInteractionOptionResolver).getSubcommand();
-    if (type === 'reload') {
+    if (subCommand === 'reload') {
       interaction.editReply('Updating...');
       reloadRolesMessage(client).then(() => {
         interaction.editReply('Updated');
       });
-    } else if (type === 'remove') {
+    } else if (subCommand === 'remove') {
       if (interaction.options.get('role')) {
         (await db.roles.findOne({ where: { roleid: interaction.options.get('role').role.id } })).destroy();
       } else if (interaction.options.get('name')) {
@@ -89,7 +88,7 @@ export default new Command({
       reloadRolesMessage(client).then(() => {
         interaction.editReply('Updated');
       });
-    } else if (type === 'add') {
+    } else if (subCommand === 'add') {
       const emote = {id: null, name: null};
       // eslint-disable-next-line no-useless-escape
       const emojiMatch = (interaction.options.get('emoji').value as string).match(/\<\:(.+?)\:(\d+?)\>/g);

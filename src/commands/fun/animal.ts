@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, CommandInteractionOptionResolver } from 'discord.js';
+import { ApplicationCommandOptionType } from 'discord.js';
 import fetch from 'node-fetch';
 import Command from '../../structures/Command';
 import { AnimalFact, AnimalPic } from '../../typings/apis/Animal';
@@ -102,17 +102,16 @@ export default new Command({
       }],
     }],
   }],
-  run: async ({ interaction }) => {
+  run: async ({ interaction, subCommand }) => {
     await interaction.deferReply();
 
     const animalNames = ['Ferret', 'Red Panda', 'Dog', 'Cat', 'Panda', 'Fox', 'Koala', 'Bird', 'Racoon', 'Kangaroo', 'Whale', 'Elephant', 'Giraffe'];
     const animals = ['ferret', 'red_panda', 'dog', 'cat', 'panda', 'fox', 'koala', 'birb', 'racoon', 'kangaroo', 'whale', 'elephant', 'giraffe'];
-    const isPic = (interaction.options as CommandInteractionOptionResolver).getSubcommand() === 'pic';
     const chosenIndex: number = (interaction.options.get('animal').value as number);
-    const animalIndex: number = chosenIndex === -1 ? Math.floor(Math.random() * 10) + (isPic ? 0 : 2) : chosenIndex;
+    const animalIndex: number = chosenIndex === -1 ? Math.floor(Math.random() * 10) + (subCommand === 'pic' ? 0 : 2) : chosenIndex;
     const animal = animals[animalIndex];
 
-    if (isPic) {
+    if (subCommand === 'pic') {
       const { url, link }: AnimalPic = await (await fetch(animal === 'ferret' ? process.env.ANIMAL_PIC_FERRET_API : process.env.ANIMAL_PIC_API.replace('|animal|', animal))).json() as AnimalPic;
       if (url || link) interaction.editReply(`**${animalNames[animalIndex]}**\n${url ?? link}`);
       else interaction.editReply(`Could not get pic of ${animalNames[animalIndex]}`);

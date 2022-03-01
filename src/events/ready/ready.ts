@@ -5,7 +5,8 @@ export default new Event('once', 'ready', async () => {
   console.log(`${client.user.username} is online`);
 
   for (const key in db) {
-    db[key].sync();//{ alter: true });
+    // if (key === 'suggestions') db[key].sync({ alter: true });
+    db[key].sync();
   }
 
   setTimeout(() => {
