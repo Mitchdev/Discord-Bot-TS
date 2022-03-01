@@ -24,7 +24,12 @@ export default new Event('on', 'interactionCreate', async (interaction: Interact
       if (!autocomplete) {
         return interaction.respond([{ name: 'Autocomplete unavailable for this option', value: 'null' }]);
       }
-      autocomplete.run({client, interaction: interaction as AutocompleteInteraction});
+      autocomplete.run({
+        client,
+        interaction: interaction as AutocompleteInteraction,
+        subCommandGroup: interaction.options.getSubcommandGroup(false) ?? null,
+        subCommand: interaction.options.getSubcommand(false) ?? null
+      });
     }
   }
   else if (interaction.isCommand()) { // CommandInteraction

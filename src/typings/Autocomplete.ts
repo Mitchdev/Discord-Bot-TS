@@ -5,6 +5,8 @@ import { ExtendedInteractionType } from './Interaction';
 interface AutocompleteRunOptions {
   client: Client;
   interaction: AutocompleteInteraction;
+  subCommandGroup: string | null;
+  subCommand: string | null;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
