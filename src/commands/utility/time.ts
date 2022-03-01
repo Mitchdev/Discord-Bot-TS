@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType } from 'discord.js';
 import fetch from 'node-fetch';
 import Color, { ColorDiscord } from '../../enums/Color';
 import Command from '../../structures/Command';
-import { Time } from '../../typings/apis/Time';
+import Time from '../../typings/apis/Time';
 import Embed from '../../typings/Embed';
 
 export default new Command({

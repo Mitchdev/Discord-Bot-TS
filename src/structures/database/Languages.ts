@@ -9,7 +9,7 @@ class LanguagesLanguage extends Model<LanguagesAttributes> implements LanguagesA
   declare readonly updatedAt: Date;
 }
 
-function initiate(sequelize: Sequelize): (typeof LanguagesLanguage) {
+function initiate(sequelize: Sequelize): typeof LanguagesLanguage {
   console.log('Initiating languages');
   return LanguagesLanguage.init({
     short_name: {

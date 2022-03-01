@@ -1,4 +1,4 @@
-export interface Time {
+interface Time {
   datetime: string;
   timezone_name: string;
   timezone_location: string;
@@ -9,3 +9,5 @@ export interface Time {
   latitude: number;
   longitude: number;
 }
+
+export default Time;

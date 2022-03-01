@@ -3,8 +3,5 @@ dist/
 logs/
 node_modules/
 .env
-discord-dev.sqlite
-discord-dev.sqlite-journal
-discord.sqlite
-discord.sqlite-journal
+*.sqlite*
 package-lock.json
