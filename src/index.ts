@@ -12,6 +12,7 @@ import Roles from './structures/database/Roles';
 import BannedPhrases from './structures/database/BannedPhrases';
 import Timeouts from './structures/database/Timeouts';
 import Suggestions from './structures/database/Suggestions';
+import Measurements from './structures/database/Measurements';
 
 import emotesSevenDaysRemove from './scheduled/emotesSevenDaysRemove';
 import messagesSevenDaysRemove from './scheduled/messagesSevenDaysRemove';
@@ -46,7 +47,8 @@ export const db =  {
   invites: Invites(sequelize),
   languages: Languages(sequelize),
   timeouts: Timeouts(sequelize),
-  suggestions: Suggestions(sequelize)
+  suggestions: Suggestions(sequelize),
+  measurements: Measurements(sequelize)
 };
 
 export type db = typeof db;

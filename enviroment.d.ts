@@ -47,6 +47,8 @@ declare global {
       IMDB_INFO_API: string;
       IMDB_INFO_ALT_API: string;
 
+      CURRENCY_API: string;
+
       F1_SEASON_API: string;
       F1_TEAMS_API: string;
     }
