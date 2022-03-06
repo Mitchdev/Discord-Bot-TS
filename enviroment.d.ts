@@ -50,7 +50,8 @@ declare global {
       CURRENCY_API: string;
 
       F1_SEASON_API: string;
-      F1_TEAMS_API: string;
+      F1_DRIVERS_API: string;
+      F1_CONSTRUCTORS_API: string;
     }
   }
 }

@@ -1,68 +1,71 @@
-export interface F1Event {
-  name: string;
-  type: 'Testing' | 'Round';
-  round: number;
-  country: string;
-  country_flag: string;
-  city: string;
-  image: string;
-  track: F1Track;
+export interface F1Round {
+  name: string;                   // FORMULA 1 GULF AIR BAHRAIN GRAND PRIX 2022
+  type: string;                   // Round
+  round: number;                  // 1
+  url: string;                    // https://www.formula1.com/en/racing/2022/Bahrain.html
+  image: string;                  // https://www.formula1.com/content/dam/fom-website/races/2022/Bahrain_Grand_Prix.png
+  time_start: string;             // 2022-03-18T15:00:00
+  time_end: string;               // 2022-03-20T20:00:00
+  status: string;                 // EventScheduled
+  country: string;                // Bahrain
+  city: string;                   // Sakhir
+  track: F1Track | null;
   sessions: F1Session[];
+  results: F1Result[];
 }
 
-interface F1Track {
-  name: string;
-  image: string;
-  image_detailed: string;
-  first_gp: number;
-  laps: number;
-  circuit_length: number;
-  race_length: number;
-  lap_record: {
-    time: number;
-    driver: string;
-    year: number;
-  }
+export interface F1Track {
+  name: string;                   // Circuit de Barcelona-Catalunya
+  country: string;                // Bahrain
+  country_flag: string;           // https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Flags%2016x9/bahrain-flag.png
+  city: string;                   // Sakhir
+  image: string;                  // https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Spain_Circuit.png
+  laps: number;                   // 66
+  lap_length: number;             // 4.675
 }
 
 export interface F1Session {
-  name: string;
-  time_start: string;
-  time_end: string;
+  name: string;                   // Practice 1
+  image: string;                  // https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Racehub%20header%20images%2016x9/Bahrain.jpg
+  time_start: string;             // 2022-03-18T15:00:00
+  time_end: string;               // 2022-03-20T20:00:00
+  status: string;                 // EventScheduled
 }
 
-export interface F1Team {
-  short_name: string;
-  full_name: string;
-  constructor: string;
-  location: string;
-  color: string;
-  short_logo: string;
-  full_logo: string;
-  team_chief: string;
-  technical_chief: string;
-  first_entry: number;
-  championships: number;
-  car: {
-    name: string;
-    image: string;
-    chassis: string;
-    power_unit: string;
-  },
-  drivers: F1Driver[];
+export interface F1Result {
+  finish_position: number;        // 1
+  grid_position: number;          // 2
+  driver: {
+    number: number;               // 44
+    code: string;                 // HAM
+    name: string;                 // Lewis Hamilton
+  }
+  points: number;                 // 25
+  laps: number;                   // 56
+  status: string;                 // Finished
+  total_time: number; //(ms)      // 5523897
+  fastest_lap: boolean;           // false
+  lap_fastest: {
+    position: number;             // 4
+    lap: number;                  // 44
+    time: string;                 // 1:34.015
+    speed: number; // (kmph)      // 207.235
+  }
 }
 
-export interface F1Driver {
-  full_name: string;
-  short_name: string;
-  number: number;
-  number_image: string;
-  nationality: string;
-  country: string;
-  country_flag: string;
-  helmet: string;
-  image: string;
-  image_front: string;
-  championships: number;
-  date_of_birth: string;
+export interface F1DriverStanding {
+  position: number;               // 1
+  points: number;                 // 395.5
+  wins: number;                   // 10
+  driver: {
+    code: string;                 // VER
+    name: string;                 // Max Verstappen
+  }
+}
+
+export interface F1ConstructorStanding {
+  position: number;               // 1
+  points: number;                 // 613.5
+  wins: number;                   // 9
+  constructor: string;            // Mercedes
 }

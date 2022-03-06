@@ -1,10 +1,8 @@
-import { ApplicationCommandOptionType } from 'discord.js';
+import { ApplicationCommandOptionType, Embed } from 'discord.js';
 import fetch from 'node-fetch';
 import Color from '../../enums/Color';
 import Command from '../../structures/Command';
-import { hexToInt } from '../../structures/Utilities';
-import { F1Driver, F1Event, F1Session, F1Team } from '../../typings/apis/F1';
-import Embed from '../../typings/Embed';
+import { F1ConstructorStanding, F1DriverStanding, F1Round, F1Session } from '../../typings/apis/F1';
 
 export default new Command({
   idType: 'ChatInputCommandInteraction',
@@ -27,120 +25,82 @@ export default new Command({
       type: ApplicationCommandOptionType.Integer,
       description: 'Round number',
       minValue: 1,
-      maxValue: 23,
+      maxValue: 22,
       required: true,
     }]
   }, {
-    name: 'track',
+    name: 'standings',
     type: ApplicationCommandOptionType.Subcommand,
-    description: 'Get track info',
+    description: 'List drivers or constructors standings',
     options: [{
-      name: 'name',
+      name: 'type',
       type: ApplicationCommandOptionType.String,
-      description: 'Track name',
-      required: true
-    }]
-  }, {
-    name: 'teams',
-    type: ApplicationCommandOptionType.Subcommand,
-    description: 'List all teams',
-  }, {
-    name: 'team',
-    type: ApplicationCommandOptionType.Subcommand,
-    description: 'Get team info',
-    options: [{
-      name: 'name',
-      type: ApplicationCommandOptionType.String,
-      description: 'Team name',
-      required: true
-    }]
-  }, {
-    name: 'drivers',
-    type: ApplicationCommandOptionType.Subcommand,
-    description: 'List all drivers',
-  }, {
-    name: 'driver',
-    type: ApplicationCommandOptionType.Subcommand,
-    description: 'Get driver info',
-    options: [{
-      name: 'name',
-      type: ApplicationCommandOptionType.String,
-      description: 'Driver name',
-      required: true
+      description: 'Drivers or Constructors standings',
+      required: true,
+      choices: [{
+        name: 'Drivers',
+        value: 'Drivers'
+      }, {
+        name: 'Constructors',
+        value: 'Constructors'
+      }]
     }]
   }],
   run: async ({ interaction, subCommand }) => {
     await interaction.deferReply();
 
-    const events: F1Event[] = await (await fetch(process.env.F1_SEASON_API)).json() as F1Event[];
-    const teams: F1Team[] = await (await fetch(process.env.F1_TEAMS_API)).json() as F1Team[];
-
-    if (subCommand === 'next') {
-      let event: F1Event = null;
-      for (let i = 0; i < events.length; i++) {
-        for (let j = 0; j < events[i].sessions.length; j++) {
-          if (new Date().getTime() < new Date(events[i].sessions[j].time_start).getTime()) {
-            event = events[i];
-            i = events.length+1; // stop top level loop
-            break;
-          }
-        }
-      }
-
-      let nextSession: F1Session = null;
-      for (let i = 0; i < event.sessions.length; i++) {
-        if (new Date().getTime() < new Date(event.sessions[i].time_start).getTime()) {
-          nextSession = event.sessions[i];
+    const rounds: F1Round[] = await (await fetch(process.env.F1_SEASON_API)).json() as F1Round[];
+    let nextRound: F1Round = null;
+    let nextSession: F1Session = null;
+    for (let i = 0; i < rounds.length; i++) {
+      for (let j = 0; j < rounds[i].sessions.length; j++) {
+        if (new Date().getTime() < new Date(rounds[i].sessions[j].time_start).getTime()) {
+          nextRound = rounds[i];
+          i = rounds.length + 1;
           break;
         }
       }
+    }
+    for (let i = 0; i < nextRound.sessions.length; i++) {
+      if (new Date().getTime() < new Date(nextRound.sessions[i].time_start).getTime()) {
+        nextSession = nextRound.sessions[i];
+        break;
+      }
+    }
 
+    if (subCommand === 'next') {
       const embed = new Embed()
-        .setTitle(event.name)
+        .setTitle(nextRound.name)
         .setColor(Color.F1_RED)
-        .setDescription(`**${event.country}**, **${event.city}**\n**${event.track.name}**\n**${event.track.circuit_length}km** | **${event.track.laps} laps**\n\n${event.sessions.map((session) => {
+        .setDescription(`**${nextRound.country}**, **${nextRound.city}**\n**${nextRound.track.name}**\n**${nextRound.track.lap_length}km** | **${nextRound.track.laps} laps**\n\n${nextRound.sessions.map((session) => {
           return `**${session.name}** - ${(session.time_start) ? `**<t:${new Date(session.time_start).getTime() / 1000}:f>** | **<t:${new Date(session.time_start).getTime() / 1000}:R>**` : 'TBA'}${
             (session.time_start && session.time_end) ? (new Date().getTime() > new Date(session.time_start).getTime() && new Date().getTime() < new Date(session.time_end).getTime()) ? ' | **LIVE**' : (session.name === nextSession.name) ? ' | **NEXT**' : '' : ''
           }`;
         }).join('\n')}`)
-        .setThumbnail(event.country_flag)
-        .setImage(event.track.image_detailed)
-        .setFooter({text: `${event.type.toUpperCase()} ${event.round} / ${events.filter((evnt) => evnt.type === event.type).length}`});
+        .setThumbnail(nextRound.track.country_flag)
+        .setImage(nextRound.track.image)
+        .setFooter({text: `${nextRound.type.toUpperCase()} ${nextRound.round} / ${rounds.filter((round) => round.type === nextRound.type).length}`});
 
       interaction.editReply({embeds: [embed]});
     } else if (subCommand === 'races') {
-
-      let nextEvent: F1Event = null;
-      for (let i = 0; i < events.filter((event) => event.type === 'Round').length; i++) {
-        for (let j = 0; j < events.filter((event) => event.type === 'Round')[i].sessions.length; j++) {
-          if (new Date().getTime() < new Date(events.filter((event) => event.type === 'Round')[i].sessions[j].time_start).getTime()) {
-            nextEvent = events.filter((event) => event.type === 'Round')[i];
-            i = events.filter((event) => event.type === 'Round').length+1; // stop top level loop
-            break;
-          }
-        }
-      }
-
       const embed = new Embed()
         .setTitle('2022 Races')
         .setColor(Color.F1_RED)
-        .addField({
+        .addFields({
           name: 'Round',
-          value: events.filter((event) => event.type === 'Round').map((event) => `**${event.round}**`).join('\n'),
+          value: rounds.filter((round) => round.type === 'Round').map((round) => `**${round.round}**`).join('\n'),
           inline: true
-        })
-        .addField({
-          name: 'Country',
-          value: events.filter((event) => event.type === 'Round').map((event) => `**${event.country}**`).join('\n'),
+        }, {
+          name: 'Location',
+          value: rounds.filter((round) => round.type === 'Round').map((round) => `**${round.city}, ${round.country}**`).join('\n'),
           inline: true
-        })
-        .addField({
-          name: 'Round',
-          value: events.filter((event) => event.type === 'Round').map((event) => {
+        }, {
+          name: 'Time',
+          value: rounds.filter((round) => round.type === 'Round').map((round) => {
             return `${
-              (event.sessions[event.sessions.length - 1].time_start) ? `**<t:${new Date(event.sessions[event.sessions.length - 1].time_start).getTime() / 1000}:f>**` : '**TBA**'
+              (round.sessions[round.sessions.length - 1].time_start) ? `**<t:${new Date(round.sessions[round.sessions.length - 1].time_start).getTime() / 1000}:f>**` : '**TBA**'
             }${
-              (event.sessions[event.sessions.length - 1].time_start && event.sessions[event.sessions.length - 1].time_end) ? (new Date().getTime() > new Date(event.sessions[event.sessions.length - 1].time_start).getTime() && new Date().getTime() < new Date(event.sessions[event.sessions.length - 1].time_end).getTime()) ? ' | **LIVE**' : (event.name === nextEvent.name) ? ' | **NEXT**' : '' : ''
+              (round.sessions[round.sessions.length - 1].time_start && round.sessions[round.sessions.length - 1].time_end) ? (new Date().getTime() > new Date(round.sessions[round.sessions.length - 1].time_start).getTime() && new Date().getTime() < new Date(round.sessions[round.sessions.length - 1].time_end).getTime()) ? ' | **LIVE**' : (round.name === nextRound.name) ? ' | **NEXT**' : '' : ''
             }`;
           }).join('\n'),
           inline: true
@@ -148,132 +108,45 @@ export default new Command({
 
       interaction.editReply({embeds: [embed]});
     } else if (subCommand === 'race') {
-      const event = events.find((event) => event.round === interaction.options.get('round').value as number && event.type === 'Round');
+      const race = rounds.find((round) => round.round === interaction.options.get('round').value as number && round.type === 'Round');
       const embed = new Embed()
-        .setTitle(event.name)
+        .setTitle(race.name)
         .setColor(Color.F1_RED)
-        .setDescription(`**${event.country}**, **${event.city}**\n**${event.track.name}**\n**${event.track.circuit_length}km** | **${event.track.laps} laps**\n\n${event.sessions.map((session) => {
+        .setDescription(`**${race.country}**, **${race.city}**\n**${race.track.name}**\n**${race.track.lap_length}km** | **${race.track.laps} laps**\n${
+          race.results.length > 0 ? `\n**Winner ${race.results[0].driver.name}**\n**2nd ${race.results[1].driver.name}**\n**3rd ${race.results[2].driver.name}**\n` : ''
+        }\n${race.sessions.map((session) => {
           return `**${session.name}** - ${session.time_start ? `**<t:${new Date(session.time_start).getTime() / 1000}:f>** | **<t:${new Date(session.time_start).getTime() / 1000}:R>**` : 'TBA'}`;
         }).join('\n')}`)
-        .setThumbnail(event.country_flag)
-        .setImage(event.track.image_detailed)
-        .setFooter({text: `${event.type.toUpperCase()} ${event.round} / ${events.filter((evnt) => evnt.type === event.type).length}`});
+        .setThumbnail(race.track.country_flag)
+        .setImage(race.track.image)
+        .setFooter({text: `${race.type.toUpperCase()} ${race.round} / ${rounds.filter((round) => round.type === 'Round').length}`});
 
       interaction.editReply({embeds: [embed]});
-    } else if (subCommand === 'track') {
-      const event: F1Event = events.find((event) => {
-        const query = (interaction.options.get('name').value as string).toLowerCase();
-        return event.track.name.toLowerCase() === query || event.name.toLowerCase() === query || event.country.toLowerCase() === query || event.city.toLowerCase() === query || `${event.country.toLowerCase()}, ${event.city.toLowerCase()}` === query;
-      });
+    } else if (subCommand === 'standings') {
+      const drivers = interaction.options.get('type').value === 'Drivers';
+      const standings: F1DriverStanding[] | F1ConstructorStanding[] = drivers
+        ? await (await fetch(process.env.F1_DRIVERS_API)).json() as unknown as F1DriverStanding[]
+        : await (await fetch(process.env.F1_CONSTRUCTORS_API)).json() as unknown as F1ConstructorStanding[];
 
-      if (event) {
-        const embed = new Embed()
-          .setTitle(event.track.name)
-          .setColor(Color.F1_RED)
-          .setDescription(`**${event.country}**, **${event.city}**\n**${event.track.circuit_length}km** | **${event.track.laps} laps**\n\nFirst GP was in **${event.track.first_gp}**\nTrack Record is **${secondsToMMSSMS(event.track.lap_record.time)}** set by **${event.track.lap_record.driver}** in **${event.track.lap_record.year}**`)
-          .setThumbnail(event.country_flag)
-          .setImage(event.track.image_detailed);
-
-        interaction.editReply({embeds: [embed]});
-      } else {
-        interaction.editReply(`Could not find track: ${interaction.options.get('name').value}`);
-      }
-    } else if (subCommand === 'teams') {
       const embed = new Embed()
-        .setTitle('2022 Teams')
+        .setTitle(`${interaction.options.get('type').value} Standings`)
         .setColor(Color.F1_RED)
-        .addField({
-          name: 'Team',
-          value: teams.map((team) => `**${team.short_name}**`).join('\n'),
+        .addFields({
+          name: 'Position',
+          value: standings.map((standing: F1DriverStanding | F1ConstructorStanding) => `**${standing.position}**`).join('\n'),
+          inline: true
+        }, {
+          name: drivers ? 'Driver': 'Constructor',
+          value: standings.map((standing: F1DriverStanding | F1ConstructorStanding) => `**${drivers ? (standing as F1DriverStanding).driver.code : (standing as F1ConstructorStanding).constructor}**`).join('\n'),
+          inline: true
+        }, {
+          name: 'Points',
+          value: standings.map((standing: F1DriverStanding | F1ConstructorStanding) => `**${standing.points}**`).join('\n'),
           inline: true
         })
-        .addField({
-          name: 'Drivers',
-          value: teams.map((team) => team.drivers.map((driver) => `**${driver.full_name}**`).join(', ')).join('\n'),
-          inline: true
-        });
+        .setFooter({text: `ROUND ${nextRound.type === 'Testing' ? 0 : nextRound.round - 1} / ${rounds.filter((round) => round.type === 'Round').length}`});
 
       interaction.editReply({embeds: [embed]});
-    } else if (subCommand === 'team') {
-      const team: F1Team = teams.find((team) => {
-        const query = (interaction.options.get('name').value as string).toLowerCase();
-        return team.full_name.toLowerCase() === query || team.short_name.toLowerCase() === query || team.constructor.toLowerCase() === query || team.car.chassis.toLowerCase() === query || team.car.name.toLowerCase() === query;
-      });
-
-      if (team) {
-        const embed = new Embed()
-          .setTitle(team.full_name)
-          .setColor(hexToInt(team.color))
-          .setDescription(`**${team.short_name}**${
-            team.short_name !== team.constructor ? ` (**${team.constructor}**)` : ''
-          }\n**${team.location}**\nFirst Entry in **${team.first_entry}**\n**${team.championships}** Championships\n\nTeam Chief **${team.team_chief}**\nTechnical Chief **${team.technical_chief}**\n${
-            team.drivers.map((driver) => `Driver **${driver.full_name}**`).join('\n')
-          }\n\n**${team.car.name}**\nChassis **${team.car.chassis}**\nPower Unit **${team.car.power_unit}**`)
-          .setThumbnail(team.full_logo)
-          .setImage(team.car.image);
-
-        interaction.editReply({embeds: [embed]});
-      } else {
-        interaction.editReply(`Could not find team: ${interaction.options.get('name').value}`);
-      }
-    } else if (subCommand === 'drivers') {
-      const embed = new Embed()
-        .setTitle('2022 Drivers')
-        .setColor(Color.F1_RED)
-        .addField({
-          name: 'Driver',
-          value: teams.map((team) => team.drivers.map((driver) => `**${driver.full_name}**`).join('\n')).join('\n'),
-          inline: true
-        })
-        .addField({
-          name: 'Number',
-          value: teams.map((team) => team.drivers.map((driver) => `**${driver.number}**`).join('\n')).join('\n'),
-          inline: true
-        })
-        .addField({
-          name: 'Team',
-          value: teams.map((team) => `**${team.short_name}**\n**${team.short_name}**`).join('\n'),
-          inline: true
-        });
-
-      interaction.editReply({embeds: [embed]});
-    } else if (subCommand === 'driver') {
-      let driver: F1Driver = null;
-      const team: F1Team = teams.find((team) => {
-        const query = (interaction.options.get('name').value as string).toLowerCase();
-        const driver1 = (team.drivers[0].full_name.toLowerCase() === query || team.drivers[0].full_name.toLowerCase().includes(query) || team.drivers[0].short_name.toLowerCase() === query || team.drivers[0].number.toString() === query);
-        const driver2 = (team.drivers[1].full_name.toLowerCase() === query || team.drivers[1].full_name.toLowerCase().includes(query) || team.drivers[1].short_name.toLowerCase() === query || team.drivers[1].number.toString() === query);
-        if (driver1) driver = team.drivers[0];
-        if (driver2) driver = team.drivers[1];
-        return driver1 || driver2;
-      });
-
-      if (driver) {
-        const embed = new Embed()
-          .setTitle(driver.full_name)
-          .setColor(hexToInt(team.color))
-          .setDescription(`Driver **${driver.full_name}** (**${driver.short_name}**) (**#${driver.number}**)\nAge **${getAge(driver.date_of_birth)}**\nNationality **${driver.nationality}**\nCountry **${driver.country}**\nChampionships **${driver.championships}**\nTeam **${team.short_name}**`)
-          .setThumbnail(driver.country_flag)
-          .setImage(driver.image_front);
-
-        interaction.editReply({embeds: [embed]});
-      } else {
-        interaction.editReply(`Could not find driver: ${interaction.options.get('name').value}`);
-      }
     }
   }
 });
-
-function secondsToMMSSMS(seconds: number): string {
-  const m = Math.floor(seconds / 60);
-  const s = Math.floor(seconds % 60);
-  const ms = (seconds % 1).toFixed(3);
-  return `${m}:${s}.${ms.toString().replace('0.', '')}`;
-}
-
-function getAge(date: string): number {
-  const now = new Date();
-  const birthDate = new Date(date);
-  const m = now.getMonth() - birthDate.getMonth();
-  return now.getFullYear() - birthDate.getFullYear() - ((m < 0 || (m === 0 && now.getDate() < birthDate.getDate())) ? 1 : 0);
-}
