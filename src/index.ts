@@ -14,6 +14,7 @@ import Timeouts from './structures/database/Timeouts';
 import Suggestions from './structures/database/Suggestions';
 import Measurements from './structures/database/Measurements';
 import TwitterClient from './structures/TwitterClient';
+import ExtendedClient from './structures/Client';
 
 import emotesSevenDaysRemove from './scheduled/emotesSevenDaysRemove';
 import messagesSevenDaysRemove from './scheduled/messagesSevenDaysRemove';
@@ -21,16 +22,20 @@ import tempRolesRemove from './scheduled/tempRolesRemove';
 import regularUsersUpdate from './scheduled/regularUsersUpdate';
 
 import CommandType from './typings/Command';
+import Utilities from './structures/Utilities';
 
 if (process.argv[2] === 'dev') {
   process.env.BOT_TOKEN = process.env.BOT_TOKEN_DEV;
   process.env.BOT_ID = process.env.BOT_ID_DEV;
 }
 
+export const Util = new Utilities();
+
 export const client = new ExtendedClient();
 
 // commands currently working on.
-export const devActiveCommands: CommandType['name'][] = ['f1'];
+export const devActiveCommands: CommandType['name'][] = [];
+
 export const twitter = new TwitterClient();
 
 export const sequelize = new Sequelize({

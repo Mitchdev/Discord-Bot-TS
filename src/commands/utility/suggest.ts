@@ -1,12 +1,10 @@
-import { ActionRow, ApplicationCommandOptionType, ButtonComponent, ButtonStyle, TextChannel } from 'discord.js';
+import { ActionRow, ApplicationCommandOptionType, ButtonComponent, ButtonStyle, Embed, TextChannel } from 'discord.js';
 import fetch from 'node-fetch';
 import sharp from 'sharp';
-import { client, db } from '../..';
+import { client, db, Util } from '../..';
 import { SuggestionStatusColor } from '../../enums/Color';
 import { GuildEmoteLimits, GuildStickerLimits } from '../../enums/Limits';
 import Command from '../../structures/Command';
-import { capitalize, validURL } from '../../structures/Utilities';
-import Embed from '../../typings/Embed';
 
 export default new Command({
   idType: 'ChatInputCommandInteraction',
@@ -81,7 +79,7 @@ export default new Command({
   run: async ({ interaction, subCommand }) => {
     await interaction.deferReply({ ephemeral: true });
     if (subCommand === 'emote' || subCommand === 'sticker') {
-      if (validURL(interaction.options.get('image').value as string)) {
+      if (Util.validUrl(interaction.options.get('image').value as string)) {
         const response = await fetch(interaction.options.get('image').value as string);
         const buffer = await response.buffer();
         if (response.headers.get('content-type')?.startsWith('image')) {
@@ -122,23 +120,23 @@ export default new Command({
           );
 
           const embed = new Embed()
-            .setTitle(`ID: ${suggestion.id} | ${capitalize(suggestion.type)} Suggestion - ${suggestion.status}`)
+            .setTitle(`ID: ${suggestion.id} | ${Util.capitalize(suggestion.type)} Suggestion - ${suggestion.status}`)
             .setURL(suggestion.suggestion)
             .setImage(suggestion.suggestion)
             .setTimestamp(suggestion.createdAt)
-            .addField({
-              name: `${capitalize(suggestion.type)} Name`,
+            .addFields({
+              name: `${Util.capitalize(suggestion.type)} Name`,
               value: suggestion.name,
             });
           if (suggestion.type === 'sticker') {
-            embed.addField({
+            embed.addFields({
               name: 'Sticker Emoji',
               value: stickerEmote
             })
             .setFooter({ text: `${(await interaction.guild.stickers.fetch()).size}/${GuildStickerLimits['L' + interaction.guild.premiumTier.toString()]} Used` });
           } else if (suggestion.type === 'emote') {
             const emojisSize = (await interaction.guild.emojis.fetch()).filter((emoji) => emoji.animated === (metadata.format === 'gif')).size;
-            embed.addField({
+            embed.addFields({
               name: 'Animated Emote',
               value: metadata.format === 'gif' ? 'Yes' : 'No'
             })
@@ -148,13 +146,12 @@ export default new Command({
           await interaction.user.send({embeds: [embed]});
 
           embed.addFields({
-              name: 'Suggester Username',
-              value: suggestion.suggesterusername
-            })
-            .addField({
-              name: 'Suggester ID',
-              value: suggestion.suggesterid
-            });
+            name: 'Suggester Username',
+            value: suggestion.suggesterusername
+          }, {
+            name: 'Suggester ID',
+            value: suggestion.suggesterid
+          });
 
           const message = await (client.channels.resolve(process.env.CHANNEL_EMOTE) as TextChannel).send({embeds: [embed], components: [buttons]});
           await interaction.editReply('Suggestion Sent (see DMs for suggestion id)');
@@ -186,7 +183,7 @@ export default new Command({
       );
 
       const embed = new Embed()
-        .setTitle(`ID: ${suggestion.id} | ${capitalize(suggestion.type)} Suggestion - ${suggestion.status}`)
+        .setTitle(`ID: ${suggestion.id} | ${Util.capitalize(suggestion.type)} Suggestion - ${suggestion.status}`)
         .setDescription(suggestion.suggestion)
         .setTimestamp(suggestion.createdAt);
 
@@ -195,8 +192,7 @@ export default new Command({
         embed.addFields({
           name: 'Suggester Username',
           value: suggestion.suggesterusername
-        })
-        .addField({
+        }, {
           name: 'Suggester ID',
           value: suggestion.suggesterid
         });
@@ -209,18 +205,18 @@ export default new Command({
       if (suggestion) {
         if (suggestion.suggesterid === interaction.user.id || client.guilds.resolve(process.env.GUILD_ID).members.resolve(interaction.user.id).roles.resolve(process.env.ROLE_MOD)) {
           const embed = new Embed()
-            .setTitle(`ID: ${suggestion.id} | ${capitalize(suggestion.type)} Suggestion - ${suggestion.status}`)
+            .setTitle(`ID: ${suggestion.id} | ${Util.capitalize(suggestion.type)} Suggestion - ${suggestion.status}`)
             .setColor(SuggestionStatusColor[suggestion.status])
             .setTimestamp(suggestion.createdAt);
           if (suggestion.type === 'emote' || suggestion.type === 'sticker') {
             embed.setURL(suggestion.suggestion)
               .setImage(suggestion.suggestion)
-              .addField({
-                name: `${capitalize(suggestion.type)} Name`,
+              .addFields({
+                name: `${Util.capitalize(suggestion.type)} Name`,
                 value: suggestion.name
               });
             if (suggestion.type === 'sticker') {
-              embed.addField({
+              embed.addFields({
                 name: 'Sticker Emoji',
                 value: suggestion.emoji
               });

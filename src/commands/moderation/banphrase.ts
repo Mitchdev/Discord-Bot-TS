@@ -1,7 +1,6 @@
 import { ApplicationCommandOptionType, ApplicationCommandPermissionType } from 'discord.js';
-import { db } from '../..';
+import { db, Util } from '../..';
 import Command from '../../structures/Command';
-import { durationToSeconds } from '../../structures/Utilities';
 
 export default new Command({
   idType: 'ChatInputCommandInteraction',
@@ -52,7 +51,7 @@ export default new Command({
   run: async ({ interaction, subCommand }) => {
     if (subCommand === 'add') {
       await interaction.deferReply();
-      const seconds: number = durationToSeconds(interaction.options.get('duration')?.value as string);
+      const seconds: number = Util.durationToSeconds(interaction.options.get('duration')?.value as string);
       if (seconds) {
         if (seconds > 0 && seconds < 604800) {
           const exists = await db.bannedPhrases.findOne({ where: { phrase: (interaction.options.get('phrase').value as string).toLowerCase()}});

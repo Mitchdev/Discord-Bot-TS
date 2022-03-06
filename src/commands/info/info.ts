@@ -2,8 +2,7 @@ import os from 'os';
 import fetch from 'node-fetch';
 import Command from '../../structures/Command';
 import { Embed } from 'discord.js';
-import { secondsToDhms } from '../../structures/Utilities';
-import Embed from '../../typings/Embed';
+import { Util } from '../..';
 
 export default new Command({
   idType: 'ChatInputCommandInteraction',
@@ -20,7 +19,7 @@ export default new Command({
       .setTitle('Info')
       .addFields({
         name: 'Client Uptime',
-        value: secondsToDhms(client.uptime/1000),
+        value: Util.secondsToDhms(client.uptime/1000),
         inline: true,
       }, Util.blankField(), {
         name: 'Discord API Ping',
@@ -28,7 +27,7 @@ export default new Command({
         inline: true,
       }, {
         name: 'System Uptime',
-        value: secondsToDhms(os.uptime()),
+        value: Util.secondsToDhms(os.uptime()),
         inline: true,
       }, {
         name: 'Andlin API Ping',

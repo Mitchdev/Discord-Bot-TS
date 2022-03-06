@@ -1,8 +1,7 @@
 import { ApplicationCommandOptionType, Embed, GuildMember } from 'discord.js';
 import { getColorFromURL } from 'color-thief-node';
 import Command from '../../structures/Command';
-import { rgbToInt } from '../../structures/Utilities';
-import Embed from '../../typings/Embed';
+import { Util } from '../..';
 
 export default new Command({
   idType: 'ChatInputCommandInteraction',
@@ -32,7 +31,7 @@ export default new Command({
       const embed = new Embed()
         .setTitle(member?.displayName ? `${member.displayName}${member.displayName !== user.username ? ` (${user.username})` : ''}` : user.username)
         .setImage(image)
-        .setColor(rgbToInt(color[0], color[1], color[2]));
+        .setColor(Util.rgbToInt(color[0], color[1], color[2]));
 
       interaction.editReply({embeds: [embed]});
     } else {

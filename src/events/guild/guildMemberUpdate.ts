@@ -1,6 +1,5 @@
 import { AuditLogEvent, Collection, GuildAuditLogsEntry, GuildMember, TextChannel } from 'discord.js';
-import { Collection, GuildAuditLogsEntry, GuildMember, TextChannel } from 'discord.js';
-import { client, db } from '../..';
+import { client, db, Util } from '../..';
 import Event from '../../structures/Event';
 
 export default new Event('on', 'guildMemberUpdate', async (oldMember: GuildMember, newMember: GuildMember) => {
@@ -16,7 +15,7 @@ export default new Event('on', 'guildMemberUpdate', async (oldMember: GuildMembe
             id: newMember.id,
             timestamp: newMember.communicationDisabledUntilTimestamp
           }).save();
-          await (client.channels.resolve(process.env.CHANNEL_GENERAL) as TextChannel).send({content: `${latestTimeout.executor.username} timed out ${(latestTimeout.target).username} for ${secondsToDhms(timeDifference / 1000, false)}${latestTimeout.reason ? `\nreason: **${latestTimeout.reason}**` : ''}`});
+          await (client.channels.resolve(process.env.CHANNEL_GENERAL) as TextChannel).send({content: `${latestTimeout.executor.username} timed out ${(latestTimeout.target).username} for ${Util.secondsToDhms(timeDifference / 1000, false)}${latestTimeout.reason ? `\nreason: **${latestTimeout.reason}**` : ''}`});
           setTimeout(async () => {
             const timeout = await db.timeouts.findByPk(newMember.id);
             if (timeout) timeout.destroy();

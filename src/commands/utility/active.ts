@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, Embed, MessageAttachment } from 'discord.js';
 import sharp from 'sharp';
-import { db } from '../..';
+import { db, Util } from '../..';
 import Command from '../../structures/Command';
 
 export default new Command({
@@ -61,7 +61,7 @@ export default new Command({
       const redPercent: number = red.length > 0 ? parseFloat(((red.length / user.sevenDays.length) * 100).toFixed(1)) : 0;
 
       const largest: number = Math.max.apply(null, [bluePercent, greenPercent, yellowPercent, redPercent]);
-      const color = largest === bluePercent ? rgbToInt(52, 100, 252) : largest === greenPercent ? rgbToInt(100, 204, 52) : largest === yellowPercent ? rgbToInt(204, 204, 52) : rgbToInt(204, 52, 52);
+      const color = largest === bluePercent ? Util.rgbToInt(52, 100, 252) : largest === greenPercent ? Util.rgbToInt(100, 204, 52) : largest === yellowPercent ? Util.rgbToInt(204, 204, 52) : Util.rgbToInt(204, 52, 52);
       const active = largest === bluePercent ? '0 and 5' : largest === greenPercent ? '6 and 11' : largest === yellowPercent ? '12 and 17' : '18 and 23';
 
       const blueWidth = blue.length > 0 ? Math.ceil((blue.length / user.sevenDays.length) * 286) : 0;

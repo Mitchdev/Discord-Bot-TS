@@ -1,5 +1,6 @@
 import { ApplicationCommandOptionType, Embed } from 'discord.js';
 import fetch from 'node-fetch';
+import { Util } from '../..';
 import Color from '../../enums/Color';
 import Command from '../../structures/Command';
 import Coordinates from '../../typings/apis/Coordinates';
@@ -102,12 +103,12 @@ export default new Command({
       if (notSunSet && (sunBothPos || sunBothNeg || sunRisePosSetNeg || sunRiseNegSetPos)) {
         if (moonBothPos || moonBothNeg || moonRisePosSetNeg || moonRiseNegSetPos) {
           const colorCloud = ((80/100)*data.hourly[0].clouds);
-          weather.setColor(rgbToInt(colorCloud, colorCloud, colorCloud));
+          weather.setColor(Util.rgbToInt(colorCloud, colorCloud, colorCloud));
         } else {
           // ADD MOON PHASE
           // HIGHER = MORE LIGHT
           const colorMoonCloud = ((85/100)*data.hourly[0].clouds)+80;
-          weather.setColor(rgbToInt(colorMoonCloud, colorMoonCloud, colorMoonCloud));
+          weather.setColor(Util.rgbToInt(colorMoonCloud, colorMoonCloud, colorMoonCloud));
         }
       } else {
         if ((sunrise <= setRiseMargin && sunrise >= -setRiseMargin) || (sunset <= setRiseMargin && sunset >= -setRiseMargin)) {
@@ -115,12 +116,12 @@ export default new Command({
           // MORE RAIN = MORE PINK/PURPLE
           const colorCloud = 80-((80/100)*data.hourly[0].clouds); // 80-0
           const color = (((110/12)*hourOffset)+50)+(colorCloud/1.5); // 110-160
-          weather.setColor(rgbToInt(255, color, colorCloud));
+          weather.setColor(Util.rgbToInt(255, color, colorCloud));
         } else {
           const colorCloud = (255/100)*data.hourly[0].clouds; // 0-255
           const color = ((185/12)*hourOffset)+70+(colorCloud/3.3); // 131-285(255)
 
-          weather.setColor(rgbToInt(colorCloud, color > 255 ? 255 : color, 255));
+          weather.setColor(Util.rgbToInt(colorCloud, color > 255 ? 255 : color, 255));
         }
       }
 
@@ -160,8 +161,8 @@ export default new Command({
         }, {
           name: 'Sun & Moon',
           value: `${sunText}\n${moonText}`+
-          `\nAmount of Daylight **${secondsToDhms(daylightTime)}**`+
-          `\nAmount of Nightlight **${secondsToDhms(nightlightTime)}**`,
+          `\nAmount of Daylight **${Util.secondsToDhms(daylightTime)}**`+
+          `\nAmount of Nightlight **${Util.secondsToDhms(nightlightTime)}**`,
         });
 
       embeds.push(weather);
@@ -174,9 +175,9 @@ export default new Command({
           const alertEnd = alert.end - data.current.dt;
           const alertDuration = alert.end - alert.start;
 
-          if (alertStart > 5) alertTime = `Starts in ${secondsToDhms(alertStart)}and lasts for ${secondsToDhms(alertDuration)}\n`;
-          else if (alertEnd > 5) alertTime = `Started ${secondsToDhms(Math.abs(alertStart))}ago and ends in ${secondsToDhms(alertEnd)}\n`;
-          else alertTime = `Ended ${secondsToDhms(Math.abs(alertEnd))}ago and lasted ${secondsToDhms(alertDuration)}\n`;
+          if (alertStart > 5) alertTime = `Starts in ${Util.secondsToDhms(alertStart)}and lasts for ${Util.secondsToDhms(alertDuration)}\n`;
+          else if (alertEnd > 5) alertTime = `Started ${Util.secondsToDhms(Math.abs(alertStart))}ago and ends in ${Util.secondsToDhms(alertEnd)}\n`;
+          else alertTime = `Ended ${Util.secondsToDhms(Math.abs(alertEnd))}ago and lasted ${Util.secondsToDhms(alertDuration)}\n`;
 
           let description = `${alertTime}\n${alert.description}`;
           const more = `...\n\nmore via ${alert.sender_name}`;
@@ -194,6 +195,30 @@ export default new Command({
     }
   }
 });
+
+/**
+ * Takes coordinate degree and converts it to a cardinal direction.
+ * @param {number} deg coordinate degree.
+ * @returns {string} returns cardinal direction.
+ */
+function getCardinalDirection(deg: number): string {
+  if ((deg > 348.75 && deg <= 360) || (deg < 11.25 && deg >= 0)) return 'N';
+  if (deg > 11.25 && deg < 33.75) return 'NNE';
+  if (deg > 33.75 && deg < 56.25) return 'NE';
+  if (deg > 56.25 && deg < 78.75) return 'ENE';
+  if (deg > 78.75 && deg < 101.25) return 'E';
+  if (deg > 101.25 && deg < 123.75) return 'ESE';
+  if (deg > 123.75 && deg < 146.25) return 'SE';
+  if (deg > 146.25 && deg < 168.75) return 'SSE';
+  if (deg > 168.75 && deg < 191.25) return 'S';
+  if (deg > 191.25 && deg < 213.75) return 'SSW';
+  if (deg > 213.75 && deg < 236.25) return 'SW';
+  if (deg > 236.25 && deg < 258.75) return 'WSW';
+  if (deg > 258.75 && deg < 281.25) return 'W';
+  if (deg > 281.25 && deg < 303.75) return 'WNW';
+  if (deg > 303.75 && deg < 326.25) return 'NW';
+  if (deg > 326.25 && deg < 348.75) return 'NNW';
+}
 
 // /**
 //  * Animates color of embed.

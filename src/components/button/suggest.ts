@@ -1,7 +1,7 @@
 import { ActionRow, ButtonComponent, ButtonStyle, Embed, GuildEmoji, MessageActionRowComponent, TextChannel } from 'discord.js';
 import fetch from 'node-fetch';
 import sharp from 'sharp';
-import { client, db } from '../..';
+import { client, db, Util } from '../..';
 import Color, { SuggestionStatusColor } from '../../enums/Color';
 import { GuildEmoteLimits, GuildStickerLimits } from '../../enums/Limits';
 import Component from '../../structures/Component';
@@ -33,7 +33,7 @@ export default new Component({
             interaction.guild.emojis.create(imageBuffer, suggestion.name).then(async (emoji: GuildEmoji) => {
               await suggestion.set('status', 'Accepted').save();
               const embed = (suggestionMessage.embeds[0] as Embed)
-                .setTitle(`#${suggestion.id} | ${capitalize(suggestion.type)} Suggestion - ${suggestion.status}`)
+                .setTitle(`#${suggestion.id} | ${Util.capitalize(suggestion.type)} Suggestion - ${suggestion.status}`)
                 .setColor(SuggestionStatusColor[suggestion.status]);
 
               await suggestionMessage.edit({embeds: [embed], components: []});
@@ -58,7 +58,7 @@ export default new Component({
         await interaction.deferUpdate();
         await suggestion.set('status', 'Denied').save();
         const embed = (interaction.message.embeds[0] as Embed)
-          .setTitle(`#${suggestion.id} | ${capitalize(suggestion.type)} Suggestion - Denied`)
+          .setTitle(`#${suggestion.id} | ${Util.capitalize(suggestion.type)} Suggestion - Denied`)
           .setColor(SuggestionStatusColor.Denied);
         await interaction.editReply({embeds: [embed], components: []});
       } else if (args[0] === 'emote' && args[1] === 'Accepted') {
@@ -104,7 +104,7 @@ export default new Component({
           interaction.guild.emojis.create(imageBuffer, suggestion.name).then(async () => {
             await suggestion.set('status', 'Accepted').save();
             const embed = (interaction.message.embeds[0] as Embed)
-              .setTitle(`#${suggestion.id} | ${capitalize(suggestion.type)} Suggestion - ${suggestion.status}`)
+              .setTitle(`#${suggestion.id} | ${Util.capitalize(suggestion.type)} Suggestion - ${suggestion.status}`)
               .setColor(SuggestionStatusColor[suggestion.status]);
 
             await interaction.deferUpdate();
@@ -133,7 +133,7 @@ export default new Component({
           if (sticker) {
             await suggestion.set('status', 'Accepted').save();
             const embed = (interaction.message.embeds[0] as Embed)
-              .setTitle(`#${suggestion.id} | ${capitalize(suggestion.type)} Suggestion - ${suggestion.status}`)
+              .setTitle(`#${suggestion.id} | ${Util.capitalize(suggestion.type)} Suggestion - ${suggestion.status}`)
               .setColor(SuggestionStatusColor[suggestion.status]);
 
             await interaction.deferUpdate();
@@ -156,7 +156,7 @@ export default new Component({
         if (args[1] === 'In Progress' || args[1] === 'Completed' || args[1] === 'Denied') {
           await suggestion.set('status', args[1]).save();
           const embed = (interaction.message.embeds[0] as Embed)
-            .setTitle(`#${suggestion.id} | ${capitalize(suggestion.type)} Suggestion - ${suggestion.status}`)
+            .setTitle(`#${suggestion.id} | ${Util.capitalize(suggestion.type)} Suggestion - ${suggestion.status}`)
             .setColor(SuggestionStatusColor[suggestion.status]);
           await interaction.editReply({embeds: [embed], components: interaction.message.components as ActionRow<MessageActionRowComponent>[]});
         }

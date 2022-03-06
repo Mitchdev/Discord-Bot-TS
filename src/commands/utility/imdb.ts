@@ -3,8 +3,7 @@ import fetch from 'node-fetch';
 import { getColorFromURL } from 'color-thief-node';
 import Command from '../../structures/Command';
 import { ImdbSearch, ImdbTitle, ImdbTitleAlt } from '../../typings/apis/Imdb';
-import Embed from '../../typings/Embed';
-import { rgbToInt } from '../../structures/Utilities';
+import { Util } from '../..';
 
 export default new Command({
   idType: 'ChatInputCommandInteraction',
@@ -73,7 +72,7 @@ export default new Command({
           if (data.image !== '') {
             embed.setThumbnail(data.image);
             const color = await getColorFromURL(data.image);
-            embed.setColor(rgbToInt(color[0], color[1], color[2]));
+            embed.setColor(Util.rgbToInt(color[0], color[1], color[2]));
           }
           interaction.editReply({embeds: [embed]});
         } else {

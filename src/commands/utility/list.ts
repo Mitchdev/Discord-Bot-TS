@@ -1,5 +1,5 @@
 import { Embed } from 'discord.js';
-import { db } from '../..';
+import { db, Util } from '../..';
 import Command from '../../structures/Command';
 
 export default new Command({
@@ -28,7 +28,7 @@ export default new Command({
           inline: true
         }, Util.blankField(), {
           name: 'Time left',
-          value: users.map((user) => secondsToDhms((user.expireAt.getTime() / 1000) - (new Date().getTime() / 1000))).join('\n'),
+          value: users.map((user) => Util.secondsToDhms((user.expireAt.getTime() / 1000) - (new Date().getTime() / 1000), false)).join('\n'),
           inline: true
         });
       }

@@ -1,5 +1,5 @@
+import { Util } from '..';
 import Autocomplete from '../structures/Autocomplete';
-import { durationToSeconds } from '../structures/Utilities';
 
 export default new Autocomplete({
   idType: 'AutocompleteInteraction',
@@ -33,7 +33,7 @@ export default new Autocomplete({
         name: `${interaction.options.getFocused()}d`,
         value: `${interaction.options.getFocused()}d`
       }]);
-    } else if (durationToSeconds(interaction.options.getFocused() as string)) {
+    } else if (Util.durationToSeconds(interaction.options.getFocused() as string)) {
       interaction.respond([{
         name: interaction.options.getFocused() as string,
         value: interaction.options.getFocused()

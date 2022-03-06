@@ -1,6 +1,6 @@
 import { ApplicationCommandAutocompleteOption, ApplicationCommandNonOptionsData, ApplicationCommandOptionType, Embed } from 'discord.js';
 import fetch from 'node-fetch';
-import { db } from '../..';
+import { db, Util } from '../..';
 import Command from '../../structures/Command';
 import Currency from '../../typings/apis/Currency';
 
@@ -122,7 +122,7 @@ export default new Command({
     if (subCommand === 'list') {
       await interaction.deferReply({ ephemeral: true });
       const all = await db.measurements.findAll({ where: { type: interaction.options.get('type').value } });
-      interaction.editReply(`**${capitalize(interaction.options.get('type').value as string)}**:\n${all.map((measurement) => `**${measurement.short_name}**`).join(', ')}`);
+      interaction.editReply(`**${Util.capitalize(interaction.options.get('type').value as string)}**:\n${all.map((measurement) => `**${measurement.short_name}**`).join(', ')}`);
     } else {
       await interaction.deferReply();
       let value = parseFloat(interaction.options.get('amount').value as string);

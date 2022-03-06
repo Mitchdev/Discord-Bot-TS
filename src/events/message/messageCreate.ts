@@ -1,5 +1,4 @@
-import { GuildMember, Message } from 'discord.js';
-import { client, db, timers } from '../..';
+import { Message } from 'discord.js';
 import { client, db, timers, Util } from '../..';
 import devCommands from '../../structures/DevCommands';
 import Event from '../../structures/Event';
@@ -21,27 +20,19 @@ export default new Event('on', 'messageCreate', async (message: Message) => {
     }).sort((a, b) => b.seconds - a.seconds);
 
     if (phrases.length > 0) {
-      const guild = client.guilds.resolve(process.env.GUILD_ID);
-      guild.members.fetch(process.env.BOT_ID).then((botMember: GuildMember) => {
-        if (botMember.roles.highest.position >= guild.roles.resolve(phrases[0].roleid).position) {
-          guild.members.fetch(message.author.id).then((member: GuildMember) => {
-            if (member.roles.resolve(phrases[0].roleid)) return;
-            member.roles.add(phrases[0].roleid).then(async () => {
-              db.tempRoles.build({
-                userid: message.author.id,
-                username: message.author.username,
-                roleid: phrases[0].roleid,
-                rolename: phrases[0].rolename,
-                expireAt: new Date(new Date().getTime() + (phrases[0].seconds * 1000)),
-                duration: phrases[0].duration,
-                byid: client.user.id,
-                byusername: client.user.username
-              }).save();
-              message.channel.send(`Added **${phrases[0].rolename}** to **${member.displayName ?? message.author.username}** for **${phrases[0].duration}**\nfor using banned phrase **${phrases[0].phrase}**`);
-            }).catch((error) => console.log(error));
-          }).catch((error) => console.log(error));
-        }
-      });
+      const member = await client.guilds.resolve(process.env.GUILD_ID).members.fetch(message.author.id);
+      Util.addTempRole({
+        id: phrases[0].roleid,
+        name: phrases[0].rolename
+      }, {
+        id: message.author.id,
+        username: message.author.username
+      }, {
+        seconds: phrases[0].seconds,
+        duration: phrases[0].duration
+      }, message,
+      `Added **${phrases[0].rolename}** to **${member.displayName ?? message.author.username}** for **${phrases[0].duration}**\nfor using banned phrase **${phrases[0].phrase}**`,
+      `**${member.displayName ?? message.author.username}** already has role ${phrases[0].rolename}\nbut used banned phrase **${phrases[0].phrase}**`);
     }
 
     const user = await db.messages.findByPk(message.author.id);
