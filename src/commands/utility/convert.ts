@@ -1,10 +1,8 @@
-import { ApplicationCommandAutocompleteOption, ApplicationCommandNonOptionsData, ApplicationCommandOptionType } from 'discord.js';
+import { ApplicationCommandAutocompleteOption, ApplicationCommandNonOptionsData, ApplicationCommandOptionType, Embed } from 'discord.js';
 import fetch from 'node-fetch';
 import { db } from '../..';
 import Command from '../../structures/Command';
-import { capitalize } from '../../structures/Utilities';
 import Currency from '../../typings/apis/Currency';
-import Embed from '../../typings/Embed';
 
 const measurementOptions = [{
   name: 'amount',
@@ -149,9 +147,7 @@ export default new Command({
                   name: `${source.full_name} (${source.short_name})`,
                   value: `${source.symbol} ${interaction.options.get('amount').value}`,
                   inline: true,
-                })
-                .addField({name: '\u200B', value: '**=**', inline: true})
-                .addField({
+                }, {name: '\u200B', value: '**=**', inline: true}, {
                   name: `${target.full_name} (${target.short_name})`,
                   value: `${target.symbol} ${REQ.toFixed(2)}`,
                   inline: true,
@@ -161,14 +157,12 @@ export default new Command({
               if (!source.base) value = convertValue(source.convert_source, source.convert_value, value);
               if (!target.base) value = convertValue(target.convert_target, target.convert_value, value);
               const embed = new Embed()
-                .setTitle(`${capitalize(source.type)} Conversion`)
-                .addField({
+                .setTitle(`${Util.capitalize(source.type)} Conversion`)
+                .addFields({
                   name: `${(value > 1 || value < -1) ? source.plural_name : source.full_name} (${source.short_name})`,
                   value: interaction.options.get('amount').value as string,
                   inline: true,
-                })
-                .addField({name: '\u200B', value: '**=**', inline: true})
-                .addField({
+                }, {name: '\u200B', value: '**=**', inline: true}, {
                   name: `${(value > 1 || value < -1) ? target.plural_name : target.full_name} (${target.short_name})`,
                   value: (Math.round(value * 1000) / 1000).toString(),
                   inline: true,

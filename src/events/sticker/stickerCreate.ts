@@ -1,8 +1,7 @@
-import { Sticker, TextChannel } from 'discord.js';
+import { Embed, Sticker, TextChannel } from 'discord.js';
 import { client } from '../..';
 import Color from '../../enums/Color';
 import Event from '../../structures/Event';
-import Embed from '../../typings/Embed';
 
 export default new Event('on', 'stickerCreate', async (sticker: Sticker) => {
   if ((await sticker.fetchUser()).id !== process.env.BOT_ID) {

@@ -1,8 +1,7 @@
-import { GuildMember, TextChannel } from 'discord.js';
+import { Embed, GuildMember, TextChannel } from 'discord.js';
 import { client, db } from '../..';
 import Color from '../../enums/Color';
 import Event from '../../structures/Event';
-import ExtendedEmbed from '../../typings/Embed';
 
 export default new Event('on', 'guildMemberAdd', async (member: GuildMember) => {
   const user = await db.messages.findByPk(member.user.id);
@@ -15,7 +14,7 @@ export default new Event('on', 'guildMemberAdd', async (member: GuildMember) => 
   }
 
   let found = false;
-  const embed = new ExtendedEmbed()
+  const embed = new Embed()
     .setTitle('User Join')
     .setColor(Color.GREEN)
     .addFields({
@@ -31,16 +30,15 @@ export default new Event('on', 'guildMemberAdd', async (member: GuildMember) => 
       found = true;
       oldInvite.set('uses', invite.uses).save();
 
-      embed.addField({
-          name: 'Inviter',
-          value: invite.inviter.username,
-          inline: true,
-        })
-        .addField({
-          name: 'Invite Code',
-          value: invite.code,
-          inline: true,
-        });
+      embed.addFields({
+        name: 'Inviter',
+        value: invite.inviter.username,
+        inline: true,
+      }, {
+        name: 'Invite Code',
+        value: invite.code,
+        inline: true,
+      });
 
       (client.channels.resolve(process.env.CHANNEL_MOD) as TextChannel).send({embeds: [embed]});
     }
@@ -48,15 +46,14 @@ export default new Event('on', 'guildMemberAdd', async (member: GuildMember) => 
 
   if (!found) {
     embed.addFields({
-        name: 'Inviter',
-        value: 'Vanity',
-        inline: true,
-      })
-      .addField({
-        name: 'Invite Code',
-        value: member.guild.vanityURLCode ?? 'null',
-        inline: true,
-      });
+      name: 'Inviter',
+      value: 'Vanity',
+      inline: true,
+    }, {
+      name: 'Invite Code',
+      value: member.guild.vanityURLCode ?? 'null',
+      inline: true,
+    });
     (client.channels.resolve(process.env.CHANNEL_MOD) as TextChannel).send({embeds: [embed]});
   }
 });

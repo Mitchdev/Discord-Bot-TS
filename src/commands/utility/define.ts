@@ -1,8 +1,7 @@
-import { ApplicationCommandOptionType } from 'discord.js';
+import { ApplicationCommandOptionType, Embed } from 'discord.js';
 import fetch from 'node-fetch';
 import Command from '../../structures/Command';
 import { NormalDictionary, NormalDictionaryError, UrbanDictionary } from '../../typings/apis/Dictionary';
-import Embed from '../../typings/Embed';
 
 export default new Command({
   idType: 'ChatInputCommandInteraction',
@@ -46,13 +45,13 @@ export default new Command({
         const embed = new Embed()
           .setTitle(`**${data[0].word}**`)
           .setURL(`https://www.dictionary.com/browse/${encodeURIComponent(data[0].word)}`)
-          .addField({
+          .addFields({
             name: 'Definition',
             value: data[0].meanings[0].definitions[0].definition ?? '-'
           });
-          if (data[0].meanings[0].definitions[0].example) embed.addField({ name: 'Example', value: data[0].meanings[0].definitions[0].example });
-          if (data[0].origin) embed.addField({ name: 'Origin', value: data[0].origin });
-          if (data[0].phonetic) embed.addField({ name: 'Phonetic', value: data[0].phonetic });
+          if (data[0].meanings[0].definitions[0].example) embed.addFields({ name: 'Example', value: data[0].meanings[0].definitions[0].example });
+          if (data[0].origin) embed.addFields({ name: 'Origin', value: data[0].origin });
+          if (data[0].phonetic) embed.addFields({ name: 'Phonetic', value: data[0].phonetic });
         interaction.editReply({embeds: [embed]});
       }
     } else {
@@ -71,11 +70,10 @@ export default new Command({
         const embed = new Embed()
           .setTitle(`**${list[0].word}**`)
           .setURL(list[0].permalink)
-          .addField({
+          .addFields({
             name: 'Definition',
             value: (definition.length > 1020 ? definition.slice(0, 1020) + '...' : definition) ?? '-'
-          })
-          .addField({
+          }, {
             name: 'Example',
             value: (example.length > 1020 ? example.slice(0, 1020) + '...' : example) ?? '-'
           });

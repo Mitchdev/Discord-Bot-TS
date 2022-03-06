@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType } from 'discord.js';
+import { ApplicationCommandOptionType, Embed } from 'discord.js';
 import fetch from 'node-fetch';
 import { getColorFromURL } from 'color-thief-node';
 import Command from '../../structures/Command';
@@ -29,52 +29,43 @@ export default new Command({
           const embed = new Embed()
             .setTitle(`${data.title} (${data.year})`)
             .setURL(`https://www.imdb.com/title/${data.id}/`)
-            .addField({
+            .addFields({
               name: 'Plot',
               value: dataAlt.Plot !== 'N/A' ? dataAlt.Plot : data.plot !== '' ? data.plot : 'Unknown',
               inline: false,
-            })
-            .addField({
+            }, {
               name: 'IMDb Rating',
               value: data.ratings.imDb !== '' ? `${data.ratings.imDb} / 10` : dataAlt.imdbRating !== 'N/A' ? `${dataAlt.imdbRating} / 10` : 'Unknown',
               inline: true,
-            })
-            .addField({
+            }, {
               name: 'Rotten Tomatoes',
               value: data.ratings.rottenTomatoes !== '' ? `${data.ratings.rottenTomatoes} / 100` : dataAltRT ? dataAltRT.replace('%', ' / 100') : 'Unknown',
               inline: true,
-            })
-            .addField({
+            }, {
               name: 'Metacritic',
               value: data.ratings.metacritic !== '' ? `${data.ratings.metacritic} / 100` : dataAltMC ? dataAltMC.replace('/', ' / ') : 'Unknown',
               inline: true,
-            })
-            .addField({
+            }, {
               name: 'Release Date',
               value: dataAlt.Released !== 'N/A' ? dataAlt.Released : data.releaseDate !== '' ? data.releaseDate : 'Unknown',
               inline: true,
-            })
-            .addField({
+            }, {
               name: 'Director',
               value: dataAlt.Director !== 'N/A' ? dataAlt.Director : data.directors !== '' ? data.directorList[0].name : 'Unknown',
               inline: true,
-            })
-            .addField({
+            }, {
               name: 'Rating',
               value: dataAlt.Rated !== 'N/A' ? dataAlt.Rated : data.contentRating !== '' ? data.contentRating : 'Unknown',
               inline: true,
-            })
-            .addField({
+            }, {
               name: 'Duration',
               value: dataAlt.Runtime !== 'N/A' ? dataAlt.Runtime : data.runtimeStr !== '' ? data.runtimeStr : 'Unknown',
               inline: true,
-            })
-            .addField({
+            }, {
               name: 'Budget (USD)',
               value: data.boxOffice.budget !== '' ? data.boxOffice.budget.replace(' (estimated)', '') : 'Unknown',
               inline: true,
-            })
-            .addField({
+            }, {
               name: 'Box Office Gross (USD)',
               value: data.boxOffice.cumulativeWorldwideGross !== '' ? data.boxOffice.cumulativeWorldwideGross : 'Unknown',
               inline: true,

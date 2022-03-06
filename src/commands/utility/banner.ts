@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType } from 'discord.js';
+import { ApplicationCommandOptionType, Embed } from 'discord.js';
 import { getColorFromURL } from 'color-thief-node';
 import Command from '../../structures/Command';
 import { rgbToInt } from '../../structures/Utilities';

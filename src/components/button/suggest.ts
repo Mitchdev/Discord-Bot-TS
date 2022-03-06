@@ -1,12 +1,10 @@
-import { ActionRow, ActionRowComponent, ButtonComponent, ButtonStyle, GuildEmoji, TextChannel } from 'discord.js';
+import { ActionRow, ButtonComponent, ButtonStyle, Embed, GuildEmoji, MessageActionRowComponent, TextChannel } from 'discord.js';
 import fetch from 'node-fetch';
 import sharp from 'sharp';
 import { client, db } from '../..';
 import Color, { SuggestionStatusColor } from '../../enums/Color';
 import { GuildEmoteLimits, GuildStickerLimits } from '../../enums/Limits';
 import Component from '../../structures/Component';
-import { capitalize } from '../../structures/Utilities';
-import Embed from '../../typings/Embed';
 
 export default new Component({
   idType: 'ButtonInteraction',
@@ -160,7 +158,7 @@ export default new Component({
           const embed = (interaction.message.embeds[0] as Embed)
             .setTitle(`#${suggestion.id} | ${capitalize(suggestion.type)} Suggestion - ${suggestion.status}`)
             .setColor(SuggestionStatusColor[suggestion.status]);
-          await interaction.editReply({embeds: [embed], components: interaction.message.components as ActionRow<ActionRowComponent>[]});
+          await interaction.editReply({embeds: [embed], components: interaction.message.components as ActionRow<MessageActionRowComponent>[]});
         }
       }
     } else {

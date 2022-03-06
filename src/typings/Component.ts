@@ -1,4 +1,3 @@
-import { InteractionButtonOptions, MessageSelectMenuOptions } from 'discord.js';
 import Client from '../structures/Client';
 import { ExtendedButtonInteraction, ExtendedInteractionType, ExtendedSelectMenuInteraction } from './Interaction';
 
@@ -12,7 +11,8 @@ interface ComponentRunOptions {
 type ComponentRunFunction = (options: ComponentRunOptions) => any;
 
 type ExtendedComponentType = {
+  customId: string;
   run: ComponentRunFunction;
-} & ExtendedInteractionType & (InteractionButtonOptions | MessageSelectMenuOptions)
+} & ExtendedInteractionType
 
 export default ExtendedComponentType;

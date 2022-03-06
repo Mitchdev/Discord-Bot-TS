@@ -1,11 +1,9 @@
-import { ApplicationCommandOptionType } from 'discord.js';
+import { ApplicationCommandOptionType, Embed } from 'discord.js';
 import fetch from 'node-fetch';
 import Color from '../../enums/Color';
 import Command from '../../structures/Command';
-import { getCardinalDirection, rgbToInt, secondsToDhms } from '../../structures/Utilities';
 import Coordinates from '../../typings/apis/Coordinates';
 import Weather from '../../typings/apis/Weather';
-import Embed from '../../typings/Embed';
 
 export default new Command({
   idType: 'ChatInputCommandInteraction',
@@ -136,7 +134,7 @@ export default new Command({
       weather.setTitle(`${coordinates.manicipality != null ? coordinates.manicipality : location}, ${coordinates.countryCode} (Location confidence: ${(coordinates.score < 0) ? '0' : coordinates.score}%)`)
         .setDescription(`Current condition **${data.hourly[0].weather[0].description}** at **${localTime.getHours() < 10 ? `0${localTime.getHours()}`: localTime.getHours()}:${localTime.getMinutes() < 10 ? `0${localTime.getMinutes()}`: localTime.getMinutes()}**`)
         .setThumbnail(`http://openweathermap.org/img/wn/${data.current.weather[0].icon}@2x.png`)
-        .addField({
+        .addFields({
           name: 'Temperature',
           value: `Current **${data.hourly[0].temp}${units === 'imperial' ? '°F' : (units === 'standard') ? 'K' : '°C'}**`+
           `\nFeels like **${data.hourly[0].feels_like}${units === 'imperial' ? '°F' : (units === 'standard') ? 'K' : '°C'}**`+
@@ -145,27 +143,21 @@ export default new Command({
           `\nDew point **${data.hourly[0].dew_point}${units === 'imperial' ? '°F' : (units === 'standard') ? 'K' : '°C'}**`+
           `\nHumidity **${data.hourly[0].humidity}%**`,
           inline: true,
-        })
-        .addBlankField()
-        .addField({
+        }, Util.blankField(), {
           name: 'Wind & Clouds',
           value: `Cloud cover **${data.hourly[0].clouds}%**\n${windText}${gustText}`,
           inline: true,
-        })
-        .addField({
+        }, {
           name: 'Extra',
           value: `Pressure **${data.hourly[0].pressure}hPa**`+
           `\nVisibility **${units === 'imperial' ? (data.hourly[0].visibility/1609).toFixed(2)+'mi' : (units === 'standard') ? data.hourly[0].visibility+'m' : (data.hourly[0].visibility/1000).toFixed(2)+'km'}**`+
           `\nUV **${data.hourly[0].uvi}**`,
           inline: true,
-        })
-        .addBlankField()
-        .addField({
+        }, Util.blankField(), {
           name: 'Rain & Snow',
           value: `Rain probability **${Math.round(data.hourly[0].pop*100)}%**${rainText}${snowText}`,
           inline: true,
-        })
-        .addField({
+        }, {
           name: 'Sun & Moon',
           value: `${sunText}\n${moonText}`+
           `\nAmount of Daylight **${secondsToDhms(daylightTime)}**`+
@@ -190,7 +182,7 @@ export default new Command({
           const more = `...\n\nmore via ${alert.sender_name}`;
           if (description.length > 500) description = description.slice(0, 500-more.length) + more;
 
-          alerts.addField({name: alert.event, value: description});
+          alerts.addFields({name: alert.event, value: description});
         });
 
         embeds.push(alerts);

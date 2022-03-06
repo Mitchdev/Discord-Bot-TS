@@ -1,6 +1,7 @@
 import os from 'os';
 import fetch from 'node-fetch';
 import Command from '../../structures/Command';
+import { Embed } from 'discord.js';
 import { secondsToDhms } from '../../structures/Utilities';
 import Embed from '../../typings/Embed';
 
@@ -17,24 +18,19 @@ export default new Command({
 
     const embed = new Embed()
       .setTitle('Info')
-      .addField({
+      .addFields({
         name: 'Client Uptime',
         value: secondsToDhms(client.uptime/1000),
         inline: true,
-      })
-      .addBlankField()
-      .addField({
+      }, Util.blankField(), {
         name: 'Discord API Ping',
         value: `${Math.round(client.ws.ping)}ms`,
         inline: true,
-      })
-      .addField({
+      }, {
         name: 'System Uptime',
         value: secondsToDhms(os.uptime()),
         inline: true,
-      })
-      .addBlankField()
-      .addField({
+      }, {
         name: 'Andlin API Ping',
         value: `${(post.getTime() - pre.getTime())}ms`,
         inline: true,

@@ -1,7 +1,6 @@
+import { Embed } from 'discord.js';
 import { db } from '../..';
 import Command from '../../structures/Command';
-import { secondsToDhms } from '../../structures/Utilities';
-import Embed from '../../typings/Embed';
 
 export default new Command({
   idType: 'ChatInputCommandInteraction',
@@ -23,13 +22,11 @@ export default new Command({
           where: { roleid: roles[i].roleid },
           order: [['expireAt', 'DESC']]
         });
-        embed.addField({
+        embed.addFields({
           name: roles[i].rolename,
           value: users.map((user) => user.username).join('\n'),
           inline: true
-        })
-        .addBlankField()
-        .addField({
+        }, Util.blankField(), {
           name: 'Time left',
           value: users.map((user) => secondsToDhms((user.expireAt.getTime() / 1000) - (new Date().getTime() / 1000))).join('\n'),
           inline: true

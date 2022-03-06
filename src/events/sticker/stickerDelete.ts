@@ -1,13 +1,12 @@
-import { Collection, GuildAuditLogsEntry, Sticker, TextChannel } from 'discord.js';
+import { AuditLogEvent, Collection, Embed, GuildAuditLogsEntry, Sticker, TextChannel } from 'discord.js';
 import { client } from '../..';
 import Color from '../../enums/Color';
 import Event from '../../structures/Event';
-import Embed from '../../typings/Embed';
 
 export default new Event('on', 'stickerDelete', async (sticker: Sticker) => {
   sticker.guild.fetchAuditLogs().then(async (audit) => {
-    const logs = audit.entries as unknown as Collection<string, GuildAuditLogsEntry<'StickerDelete'>>;
-    logs.filter((entry) => (entry.changes ? entry.changes[0]?.key === 'name' : false) && (entry.targetType === 'Sticket'));
+    const logs = audit.entries as unknown as Collection<string, GuildAuditLogsEntry<AuditLogEvent.StickerDelete>>;
+    logs.filter((entry) => (entry.changes ? entry.changes[0]?.key === 'name' : false) && (entry.targetType === 'Sticker'));
     if (logs.size > 0) {
       const latestEmojiDeleted = logs.first();
       if (latestEmojiDeleted.executor.id !== process.env.BOT_ID) {

@@ -1,7 +1,6 @@
-import { MessageAttachment } from 'discord.js';
+import { Embed, MessageAttachment } from 'discord.js';
 import * as fs from 'fs';
 import Command from '../../structures/Command';
-import Embed from '../../typings/Embed';
 
 export default new Command({
   idType: 'ChatInputCommandInteraction',

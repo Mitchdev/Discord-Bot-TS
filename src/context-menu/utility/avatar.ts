@@ -1,4 +1,4 @@
-import { ApplicationCommandType, GuildMember } from 'discord.js';
+import { ApplicationCommandType, Embed, GuildMember } from 'discord.js';
 import { getColorFromURL } from 'color-thief-node';
 import Command from '../../structures/Command';
 import { rgbToInt } from '../../structures/Utilities';
@@ -18,7 +18,7 @@ export default new Command({
 
     if (image) {
       const color = await getColorFromURL(image);
-      const embed = new ExtendedEmbed()
+      const embed = new Embed()
         .setTitle(member?.displayName ? `${member.displayName}${member.displayName !== user.username ? ` (${user.username})` : ''}` : user.username)
         .setImage(image)
         .setColor(rgbToInt(color[0], color[1], color[2]));

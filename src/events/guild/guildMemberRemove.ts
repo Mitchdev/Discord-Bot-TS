@@ -1,8 +1,7 @@
-import { GuildMember, TextChannel } from 'discord.js';
+import { Embed, GuildMember, TextChannel } from 'discord.js';
 import { client } from '../..';
 import Color from '../../enums/Color';
 import Event from '../../structures/Event';
-import Embed from '../../typings/Embed';
 
 export default new Event('on', 'guildMemberRemove', (member: GuildMember) => {
   const roles = member.roles.cache.map((role) => role.name).join(', ');
@@ -13,18 +12,15 @@ export default new Event('on', 'guildMemberRemove', (member: GuildMember) => {
       name: 'Username',
       value: `${member.user.username}#${member.user.discriminator}`,
       inline: true
-    })
-    .addField({
+    }, {
       name: 'Nickname',
       value: member.nickname ? member.nickname : 'null',
       inline: true
-    })
-    .addField({
+    }, {
       name: 'User',
       value: `<@${member.user.id}>`,
       inline: true
-    })
-    .addField({
+    }, {
       name: 'Roles',
       value: roles !== '' ? roles : 'none'
     });

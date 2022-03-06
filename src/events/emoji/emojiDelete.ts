@@ -1,15 +1,14 @@
-import { Collection, GuildAuditLogsEntry, GuildEmoji, TextChannel } from 'discord.js';
+import { AuditLogEvent, Collection, Embed, GuildAuditLogsEntry, GuildEmoji, TextChannel } from 'discord.js';
 import { client, db } from '../..';
 import Color from '../../enums/Color';
 import Event from '../../structures/Event';
-import Embed from '../../typings/Embed';
 
 export default new Event('on', 'emojiDelete', async (emoji: GuildEmoji) => {
   const emote = await db.emotes.findByPk(emoji.id);
   emote.set('deleted', true).save();
 
   emoji.guild.fetchAuditLogs().then(async (audit) => {
-    const logs = audit.entries as unknown as Collection<string, GuildAuditLogsEntry<'EmojiDelete'>>;
+    const logs = audit.entries as unknown as Collection<string, GuildAuditLogsEntry<AuditLogEvent.EmojiDelete>>;
     logs.filter((entry) => (entry.changes ? entry.changes[0]?.key === 'name' : false) && (entry.targetType === 'Emoji'));
     if (logs.size > 0) {
       const latestEmojiDeleted = logs.first();

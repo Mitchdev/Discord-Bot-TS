@@ -1,4 +1,4 @@
-import { ActionRow, ActionRowComponent, ApplicationCommandOptionType, ApplicationCommandPermissionType, ButtonComponent, ButtonStyle, Message, TextChannel } from 'discord.js';
+import { ActionRow, ApplicationCommandOptionType, ApplicationCommandPermissionType, ButtonComponent, ButtonStyle, Message, MessageActionRowComponent, TextChannel } from 'discord.js';
 import { db } from '../..';
 import RolesCategory from '../../enums/RolesCategory';
 import ExtendedClient from '../../structures/Client';
@@ -125,7 +125,7 @@ export default new Command({
 });
 
 async function reloadRolesMessage(client: ExtendedClient): Promise<Message> {
-  const rows: ActionRow<ActionRowComponent>[] = [];
+  const rows: ActionRow<MessageActionRowComponent>[] = [];
   const channel = client.channels.resolve(process.env.CHANNEL_ROLES) as TextChannel;
   const messages = await channel.messages.fetch();
   let message = messages.find((message) => message.author.id === process.env.BOT_ID);

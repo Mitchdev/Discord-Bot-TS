@@ -1,9 +1,7 @@
-import { ApplicationCommandOptionType, MessageAttachment } from 'discord.js';
+import { ApplicationCommandOptionType, Embed, MessageAttachment } from 'discord.js';
 import sharp from 'sharp';
 import { db } from '../..';
 import Command from '../../structures/Command';
-import { rgbToInt } from '../../structures/Utilities';
-import Embed from '../../typings/Embed';
 
 export default new Command({
   idType: 'ChatInputCommandInteraction',
@@ -99,24 +97,19 @@ export default new Command({
         .setTitle(`Activity for ${user.nickname ?? user.username}`)
         .setColor(color)
         .setDescription(`Most active between **${active} UTC${utcOffset >= 0 ? '+' : ''}${utcOffset}**`)
-        .addField({
+        .addFields({
           name: `**${bluePercent}%**`,
           value: '0-5',
           inline: true,
-        })
-        .addBlankField()
-        .addField({
+        }, Util.blankField(), {
           name: `**${greenPercent}%**`,
           value: '6-11',
           inline: true,
-        })
-        .addField({
+        }, {
           name: `**${yellowPercent}%**`,
           value: '12-17',
           inline: true,
-        })
-        .addBlankField()
-        .addField({
+        }, Util.blankField(), {
           name: `**${redPercent}%**`,
           value: '18-23',
           inline: true,

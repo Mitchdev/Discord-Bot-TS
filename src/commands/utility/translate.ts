@@ -1,10 +1,9 @@
-import { ApplicationCommandOptionType } from 'discord.js';
+import { ApplicationCommandOptionType, Embed } from 'discord.js';
 import fetch from 'node-fetch';
 import { encode, decode } from 'html-entities';
 import { db } from '../..';
 import Command from '../../structures/Command';
 import { Translate, TranslateError } from '../../typings/apis/Translate';
-import Embed from '../../typings/Embed';
 
 export default new Command({
   idType: 'ChatInputCommandInteraction',
@@ -62,7 +61,7 @@ export default new Command({
         case 'en-GB':
           targetLanguage = 'en';
           break;
-        case 'zh-CH':
+        case 'zh-CN':
         case 'zh-TW':
           targetLanguage = 'zh-Hans';
           break;
@@ -72,7 +71,7 @@ export default new Command({
         case 'es-ES':
           targetLanguage = 'es';
           break;
-        case 'sw-SE':
+        case 'sv-SE':
           targetLanguage = 'sw';
           break;
         default:
@@ -98,11 +97,10 @@ export default new Command({
 
           const embed = new Embed()
             .setTitle('Translate')
-            .addField({
+            .addFields({
               name: `**${sourceLanguageName}**${(data[0].detectedLanguage ? ` - Language confidence: ${data[0].detectedLanguage.score*100}%` : '')}`,
               value: phrase
-            })
-            .addField({
+            }, {
               name: `**${targetLanguageName}**`,
               value: decode(data[0].translations[0].text)
             });

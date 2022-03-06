@@ -1,4 +1,3 @@
-import { OverwriteType } from 'discord-api-types';
 import { ChannelType, NonThreadGuildBasedChannel, PermissionFlagsBits, TextChannel } from 'discord.js';
 import Event from '../../structures/Event';
 
@@ -8,7 +7,7 @@ export default new Event('on', 'channelCreate', (channel: NonThreadGuildBasedCha
 
     if (textChannel.guildId === process.env.GUILD_ID) {
       textChannel.permissionOverwrites.set([{
-        type: OverwriteType.Role,
+        type: 0,
         id: process.env.ROLE_MUTE,
         deny: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.AddReactions]
       }], 'Added muted role');

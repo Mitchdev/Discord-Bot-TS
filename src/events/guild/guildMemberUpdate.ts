@@ -1,7 +1,7 @@
+import { AuditLogEvent, Collection, GuildAuditLogsEntry, GuildMember, TextChannel } from 'discord.js';
 import { Collection, GuildAuditLogsEntry, GuildMember, TextChannel } from 'discord.js';
 import { client, db } from '../..';
 import Event from '../../structures/Event';
-import { secondsToDhms } from '../../structures/Utilities';
 
 export default new Event('on', 'guildMemberUpdate', async (oldMember: GuildMember, newMember: GuildMember) => {
   if (newMember.communicationDisabledUntilTimestamp) {
@@ -9,7 +9,7 @@ export default new Event('on', 'guildMemberUpdate', async (oldMember: GuildMembe
     const exists = await db.timeouts.findByPk(newMember.id);
     if (timeDifference > 0 && !exists) {
       newMember.guild.fetchAuditLogs().then(async (audit) => {
-        const logs = audit.entries.filter((entry) => entry.changes ? entry.changes[0]?.key === 'communication_disabled_until' : false) as unknown as Collection<string, GuildAuditLogsEntry<'MemberUpdate'>>;
+        const logs = audit.entries.filter((entry) => entry.changes ? entry.changes[0]?.key === 'communication_disabled_until' : false) as unknown as Collection<string, GuildAuditLogsEntry<AuditLogEvent.MemberUpdate>>;
         if (logs.size > 0) {
           const latestTimeout = logs.first();
           await db.timeouts.build({
