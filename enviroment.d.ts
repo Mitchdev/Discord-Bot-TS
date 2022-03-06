@@ -32,6 +32,8 @@ declare global {
       ANDLIN_ADDRESS_API: string;
       ANDLIN_TRANSLATE_API: string;
 
+      TWITTER_API_TOKEN: string;
+
       WEATHER_API: string;
 
       TIME_API: string;

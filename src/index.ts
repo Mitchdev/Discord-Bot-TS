@@ -13,13 +13,13 @@ import BannedPhrases from './structures/database/BannedPhrases';
 import Timeouts from './structures/database/Timeouts';
 import Suggestions from './structures/database/Suggestions';
 import Measurements from './structures/database/Measurements';
+import TwitterClient from './structures/TwitterClient';
 
 import emotesSevenDaysRemove from './scheduled/emotesSevenDaysRemove';
 import messagesSevenDaysRemove from './scheduled/messagesSevenDaysRemove';
 import tempRolesRemove from './scheduled/tempRolesRemove';
 import regularUsersUpdate from './scheduled/regularUsersUpdate';
 
-import ExtendedClient from './structures/Client';
 import CommandType from './typings/Command';
 
 if (process.argv[2] === 'dev') {
@@ -31,6 +31,7 @@ export const client = new ExtendedClient();
 
 // commands currently working on.
 export const devActiveCommands: CommandType['name'][] = ['f1'];
+export const twitter = new TwitterClient();
 
 export const sequelize = new Sequelize({
   dialect: 'sqlite',
