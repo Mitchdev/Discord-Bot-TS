@@ -8,7 +8,7 @@ export default new Event('on', 'messageCreate', async (message: Message) => {
   if (message.author.id !== process.env.BOT_ID && message.author.id !== process.env.BOT_LOGS_ID) {
     if (message.content.length >= 750) message.react(message.guild.emojis.resolve('773295613558128671')); // donowall
 
-    const twitterURL = new RegExp(/(?:https|http):\/\/twitter.com\/(?:.+?)\/status\/([0-9]+?)(?:$|\n|\s|\?)/, 'gmi').exec(message.content) ?? [];
+    const twitterURL = new RegExp(/(?:https|http):\/\/(?:.+?\.)?twitter.com\/(?:.+?)\/status\/([0-9]+?)(?:$|\n|\s|\?)/, 'gmi').exec(message.content) ?? [];
     if (twitterURL.length > 0) Util.embedTweet(message, twitterURL[1]);
 
     const timeout = await db.timeouts.findByPk(message.author.id);
