@@ -1,11 +1,19 @@
 import { CommandInteraction, Message, Snowflake } from 'discord.js';
 import { client, db } from '..';
 
+/**
+ * Removes temporary role from a user.
+ * @param {{ id: Snowflake, name: string }} role role to remove.
+ * @param {{ id: Snowflake, username: string }} user user to remove role from.
+ * @param {Message | CommandInteraction} message message or interaction to reply to.
+ * @param {string} success message to reply if function successful.
+ * @example Util.removeTempRole({ id: '829613714483183631', name: 'Muted' }, { id: '399186129288560651', username: 'John' }, message, 'Removed role!')
+ */
 export default async function removeTempRole(role: {
   id: Snowflake,
   name: string
 }, user: {
-  id: Snowflake,
+  id: Snowflake
   username: string
 }, message: Message | CommandInteraction = null, success: string = null) {
   const remove = await db.tempRoles.findAll({ where: { roleid: role.id, userid: user.id } });

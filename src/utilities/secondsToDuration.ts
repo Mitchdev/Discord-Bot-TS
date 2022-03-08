@@ -2,6 +2,7 @@
  * Converts seconds to duration.
  * @param {number} seconds seconds.
  * @returns {string} returns duration string.
+ * @example Util.secondsToDhms(600): '10m'
  */
 export default function secondsToDuration(seconds: number): string {
   const d = Math.floor(seconds / (3600*24));

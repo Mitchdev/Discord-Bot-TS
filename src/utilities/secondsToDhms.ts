@@ -1,8 +1,10 @@
 /**
  * Converts seconds to dhms.
  * @param {number} seconds seconds.
- * @param {boolean} ago include 'ago' in string .
+ * @param {boolean} ago include 'ago' in string.
  * @returns {string} returns dhms string.
+ * @example Util.secondsToDhms(600): '10m 0s ago'
+ * @example Util.secondsToDhms(3600, false): '1h 0m'
  */
 // eslint-disable-next-line @typescript-eslint/no-inferrable-types
 export default function secondsToDhms(seconds: number, ago: boolean = true): string {

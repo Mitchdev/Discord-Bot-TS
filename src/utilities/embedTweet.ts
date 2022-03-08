@@ -3,6 +3,12 @@ import { Snowflake } from 'twitter.js';
 import { twitter } from '..';
 import Color from '../enums/Color';
 
+/**
+ * Replaces bad Twitter embed with custom one.
+ * @param {Message} message message to remove twitter embed from and reply to with better embed.
+ * @param {Snowflake} id Twitter tweet id.
+ * @example Util.embedTweet(message, '1138505981460193280')
+ */
 export default async function embedTweet(message: Message, id: Snowflake) {
   const tweet = await twitter.api.tweets.fetch({ tweet: id });
   if (tweet.attachments?.mediaKeys?.length > 0 || tweet.repliedTo) {

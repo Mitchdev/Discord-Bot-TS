@@ -1,6 +1,16 @@
 import { CommandInteraction, Message, Snowflake } from 'discord.js';
 import { client, db } from '..';
 
+/**
+ * Adds temporary role to a user.
+ * @param {{ id: Snowflake, name: string }} role role to add.
+ * @param {{ id: Snowflake, username: string }} user user to add role to.
+ * @param {{ seconds: number, duration: string }} time time user has the role.
+ * @param {Message | CommandInteraction} message message or interaction to reply to.
+ * @param {string} success message to reply if function successful.
+ * @param {string} fail message to reply if function failed.
+ * @example Util.removeTempRole({ id: '829613714483183631', name: 'Muted' }, { id: '399186129288560651', username: 'John' }, { seconds: 600, duration: '10m' }, message, 'Role added!', 'Couldn't add role!')
+ */
 export default async function addTempRole(role: {
   id: Snowflake,
   name: string

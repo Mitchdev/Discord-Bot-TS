@@ -1,7 +1,8 @@
 /**
  * Converts duration to seconds.
- * @param {string} duration duration code \[0-9\](dhms) .
+ * @param {string} duration duration code \[0-9\](dhms).
  * @returns {number | null} returns seconds or null if duration is invalid.
+ * @example Util.durationToSeconds('10m'): 600
  */
 export default function durationToSeconds(duration: string): number | null {
   let time: number = parseInt(duration.slice(0, -1));
