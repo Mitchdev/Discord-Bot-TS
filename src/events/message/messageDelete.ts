@@ -33,7 +33,7 @@ export default new Event('on', 'messageDelete', async (message: Message) => {
         token: process.env.WEBHOOK_LOG_TOKEN
       }).send({embeds: [embed]});
 
-      if (message.attachments.size > 0) (client.channels.resolve(process.env.CHANNEL_LOGS) as TextChannel).send(`**Attachment(s)**\n${message.attachments.map((attachment) => attachment.url).join('\n')}`);
+      if (message.attachments.size > 0) (client.channels.resolve(process.env.CHANNEL_LOGS) as TextChannel).send({content: '**Attachment(s)**', files: message.attachments.map((attachment) => attachment.url)});
     });
   }
 });
