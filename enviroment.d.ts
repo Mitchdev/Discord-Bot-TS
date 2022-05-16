@@ -62,6 +62,9 @@ declare global {
       F1_SEASON_API: string;
       F1_DRIVERS_API: string;
       F1_CONSTRUCTORS_API: string;
+
+      TWITCH_CLIENT_ID: string;
+      TWITCH_AUTH_API: string;
     }
   }
 }
