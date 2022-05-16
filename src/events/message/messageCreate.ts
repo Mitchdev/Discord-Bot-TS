@@ -21,6 +21,39 @@ export default new Event('on', 'messageCreate', async (message: Message) => {
       }
     }
 
+    const twitterURL = new RegExp(/(?:https|http):\/\/(?:.+?\.)?(twitter.com\/(?:.+?)\/status\/([0-9]+?)(?:\/|$|\n|\s|\?))/, 'gmi').exec(message.content) ?? [];
+    if (twitterURL.length > 0) {
+      const isSpoiler = new RegExp(`(\\|\\|(.+?)${twitterURL[2]}(.+?)\\|\\|)`, 'gmi').exec(message.content) ?? [];
+      if (isSpoiler.length === 0) Util.embedTweet(message, twitterURL[2]);
+    }
+
+    const recycledTwitterURL = new RegExp(/(?:https|http):\/\/(?:.+?\.)?((?:twitter.com|fxtwitter.com|nitter.net)\/(?:.+?)\/status\/([0-9]+?)(?:\/|$|\n|\s|\?))/, 'gmi').exec(message.content) ?? [];
+    if (recycledTwitterURL.length > 0) {
+      const recycled = await db.recycledLinks.findByPk(twitterURL[2]);
+      if (recycled) message.react('♻️');
+      else {
+        await db.recycledLinks.build({
+          url: recycledTwitterURL[2],
+          guild: message.guild.id,
+          channel: message.channel.id,
+          message: message.id
+        }).save();
+      }
+    }
+
+    const redditURL = new RegExp(/(?:https|http):\/\/(?:.+?\.)?(reddit.com\/(?:.+?)\/(?:comment|comments)\/(?:.+?))(?:\/)?(?:$|\n|\s|\?)/, 'gmi').exec(message.content) ?? [];
+    if (redditURL.length > 0) {
+      const recycled = await db.recycledLinks.findByPk(redditURL[1]);
+      if (recycled) message.react('♻️');
+      else {
+        await db.recycledLinks.build({
+          url: redditURL[1],
+          guild: message.guild.id,
+          channel: message.channel.id,
+          message: message.id
+        }).save();
+      }
+    }
 
     const timeout = await db.timeouts.findByPk(message.author.id);
     if (timeout) timeout.destroy();

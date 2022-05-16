@@ -1,8 +1,10 @@
 import addTempRole from '../utilities/addTempRole';
 import blankField from '../utilities/blankField';
 import capitalize from '../utilities/capitalize';
+import commaNumber from '../utilities/commaNumber';
 import durationToSeconds from '../utilities/durationToSeconds';
 import embedTweet from '../utilities/embedTweet';
+import followRedirect from '../utilities/followRedirect';
 import hexToInt from '../utilities/hexToInt';
 import randomString from '../utilities/randomString';
 import rgbToInt from '../utilities/rgbToInt';
@@ -17,8 +19,10 @@ interface UtilitiesType {
   addTempRole: typeof addTempRole;
   blankField: typeof blankField;
   capitalize: typeof capitalize;
+  commaNumber: typeof commaNumber;
   durationToSeconds: typeof durationToSeconds;
   embedTweet: typeof embedTweet;
+  followRedirect: typeof followRedirect;
   hexToInt: typeof hexToInt;
   randomString: typeof randomString;
   removeTempRole: typeof removeTempRole;

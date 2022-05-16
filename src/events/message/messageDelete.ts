@@ -1,10 +1,20 @@
 import { AuditLogEvent, EmbedBuilder, GuildAuditLogsEntry, Message, TextChannel, WebhookClient } from 'discord.js';
-import { client } from '../..';
+import { client, db } from '../..';
 import Color from '../../enums/Color';
 import Event from '../../structures/Event';
 
 export default new Event('on', 'messageDelete', async (message: Message) => {
   if (message.author.id !== process.env.BOT_ID && message.author.id !== process.env.WEBHOOK_LOG_ID) {
+
+    const twitterURL = new RegExp(/(?:https|http):\/\/(?:.+?\.)?twitter.com\/(?:.+?)\/status\/([0-9]+?)(?:$|\n|\s|\?)/, 'gmi').exec(message.content) ?? [];
+    if (twitterURL.length > 0) {
+      const found = await db.embededTweets.findByPk(message.id);
+      if (found) {
+        await (client.channels.resolve(found.channel_id) as TextChannel).messages.resolve(found.bot_message_id).delete();
+        await found.destroy();
+      }
+    }
+
     message.guild.fetchAuditLogs().then(async (audit) => {
       let logs = audit.entries.first(5) as unknown as GuildAuditLogsEntry<AuditLogEvent.MessageDelete>[];
       logs = logs.filter((entry) => entry.actionType.toUpperCase() === 'DELETE' && entry.targetType.toUpperCase() === 'MESSAGE');

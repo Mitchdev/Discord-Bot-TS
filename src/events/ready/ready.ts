@@ -13,6 +13,7 @@ export default new Event('once', 'ready', async () => {
     for (const key in timers) timers[key].start();
   }, 2500);
 
+  await  db.embededTweets.destroy({ where: {}, truncate: true });
   await  db.invites.destroy({ where: {}, truncate: true });
 
   const invites = await client.guilds.resolve(process.env.GUILD_ID).invites.fetch();

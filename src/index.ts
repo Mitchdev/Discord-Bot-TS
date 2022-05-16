@@ -14,6 +14,8 @@ import BannedPhrases from './structures/database/BannedPhrases';
 import Timeouts from './structures/database/Timeouts';
 import Suggestions from './structures/database/Suggestions';
 import Measurements from './structures/database/Measurements';
+import EmbededTweets from './structures/database/EmbededTweets';
+import RecycledLinks from './structures/database/RecycledLinks';
 
 import CloudConvertClient from './structures/CloudConvertClient';
 import TwitterClient from './structures/TwitterClient';
@@ -59,7 +61,9 @@ export const db =  {
   languages: Languages(sequelize),
   timeouts: Timeouts(sequelize),
   suggestions: Suggestions(sequelize),
-  measurements: Measurements(sequelize)
+  measurements: Measurements(sequelize),
+  embededTweets: EmbededTweets(sequelize),
+  recycledLinks: RecycledLinks(sequelize)
 };
 
 export type db = typeof db;
