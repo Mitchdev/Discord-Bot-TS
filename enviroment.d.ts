@@ -40,6 +40,8 @@ declare global {
 
       CLOUD_CONVERT_TOKEN: string;
 
+      SMMRY_API: string;
+
       WEATHER_API: string;
 
       TIME_API: string;
