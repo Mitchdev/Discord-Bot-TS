@@ -3,6 +3,7 @@ dotenv.config();
 
 import { Sequelize } from 'sequelize';
 
+import Utilities from './structures/Utilities';
 import Emotes from './structures/database/Emotes';
 import Invites from './structures/database/Invites';
 import Languages from './structures/database/Languages';
@@ -13,6 +14,8 @@ import BannedPhrases from './structures/database/BannedPhrases';
 import Timeouts from './structures/database/Timeouts';
 import Suggestions from './structures/database/Suggestions';
 import Measurements from './structures/database/Measurements';
+
+import CloudConvertClient from './structures/CloudConvertClient';
 import TwitterClient from './structures/TwitterClient';
 import ExtendedClient from './structures/Client';
 
@@ -22,7 +25,6 @@ import tempRolesRemove from './scheduled/tempRolesRemove';
 import regularUsersUpdate from './scheduled/regularUsersUpdate';
 
 import CommandType from './typings/Command';
-import Utilities from './structures/Utilities';
 
 if (process.argv[2] === 'dev') {
   process.env.BOT_TOKEN = process.env.BOT_TOKEN_DEV;
@@ -37,6 +39,8 @@ export const client = new ExtendedClient();
 export const devActiveCommands: CommandType['name'][] = [];
 
 export const twitter = new TwitterClient();
+
+export const convert = new CloudConvertClient();
 
 export const sequelize = new Sequelize({
   dialect: 'sqlite',

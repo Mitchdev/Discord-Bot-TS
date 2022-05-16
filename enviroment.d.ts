@@ -34,6 +34,8 @@ declare global {
 
       TWITTER_API_TOKEN: string;
 
+      CLOUD_CONVERT_TOKEN: string;
+
       WEATHER_API: string;
 
       TIME_API: string;

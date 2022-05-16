@@ -5,11 +5,22 @@ import Event from '../../structures/Event';
 
 export default new Event('on', 'messageCreate', async (message: Message) => {
   if (message.author.id === process.env.USER_MITCH) await devCommands(client, db, timers, message);
-  if (message.author.id !== process.env.BOT_ID && message.author.id !== process.env.BOT_LOGS_ID) {
+  if (message.author.id !== process.env.BOT_ID && message.author.id !== process.env.BOT_LOGS_ID && message.author.id !== process.env.BOT_ID_DEV) {
     if (message.content.length >= 750) message.react(message.guild.emojis.resolve('773295613558128671')); // donowall
 
-    const twitterURL = new RegExp(/(?:https|http):\/\/(?:.+?\.)?twitter.com\/(?:.+?)\/status\/([0-9]+?)(?:$|\n|\s|\?)/, 'gmi').exec(message.content) ?? [];
-    if (twitterURL.length > 0) Util.embedTweet(message, twitterURL[1]);
+    if (message.content.startsWith('!mp4')) {
+      let messageContent = message.content;
+      if (message.reference) {
+        const channel = client.guilds.resolve(message.reference.guildId).channels.resolve(message.reference.channelId);
+        if (channel.isTextBased()) messageContent = channel.messages.resolve(message.reference.messageId).content;
+      }
+      const webmURL = new RegExp(/(https?:\/\/.*\/(.*)(?:\.webm))/, 'gmi').exec(messageContent) ?? [];
+      if (webmURL.length > 0) {
+        if (!message.reference) await message.suppressEmbeds();
+        await Util.webmToMp4(message, webmURL[1], webmURL[2]);
+      }
+    }
+
 
     const timeout = await db.timeouts.findByPk(message.author.id);
     if (timeout) timeout.destroy();

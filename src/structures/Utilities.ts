@@ -12,6 +12,7 @@ import secondsToDhms from '../utilities/secondsToDhms';
 import secondsToDuration from '../utilities/secondsToDuration';
 import splitMessage from '../utilities/splitMessage';
 import validUrl from '../utilities/validUrl';
+import webmToMp4 from '../utilities/webmToMp4';
 
 class Utilities implements UtilitiesType {
   constructor() {
@@ -30,6 +31,7 @@ class Utilities implements UtilitiesType {
   secondsToDuration = secondsToDuration;
   splitMessage = splitMessage;
   validUrl = validUrl;
+  webmToMp4 = webmToMp4;
 }
 
 export default Utilities;

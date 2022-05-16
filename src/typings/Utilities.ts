@@ -9,7 +9,7 @@ import secondsToDuration from '../utilities/secondsToDuration';
 import splitMessage from '../utilities/splitMessage';
 import validUrl from '../utilities/validUrl';
 import removeTempRole from '../utilities/removeTempRole';
-import addTempRole from '../utilities/addTempRole';
+import webmToMp4 from '../utilities/webmToMp4';
 
 interface UtilitiesType {
   addTempRole: typeof addTempRole;
@@ -24,6 +24,7 @@ interface UtilitiesType {
   secondsToDuration: typeof secondsToDuration;
   splitMessage: typeof splitMessage;
   validUrl: typeof validUrl;
+  webmToMp4: typeof webmToMp4;
 }
 
 export default UtilitiesType;
