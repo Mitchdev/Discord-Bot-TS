@@ -1,8 +1,9 @@
 import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import fetch from 'node-fetch';
+import { Util } from '../..';
 import Color from '../../enums/Color';
 import Command from '../../structures/Command';
-import { F1ConstructorStanding, F1DriverStanding, F1Round, F1Session } from '../../typings/apis/F1';
+import { F1ConstructorStanding, F1DriverStanding, F1Round } from '../../typings/apis/F1';
 
 export default new Command({
   idType: 'ChatInputCommandInteraction',
@@ -51,7 +52,7 @@ export default new Command({
 
     const rounds: F1Round[] = await (await fetch(process.env.F1_SEASON_API)).json() as F1Round[];
     let nextRound: F1Round = null;
-    let nextSession: F1Session = null;
+
     for (let i = 0; i < rounds.length; i++) {
       for (let j = 0; j < rounds[i].sessions.length; j++) {
         if (new Date().getTime() < new Date(rounds[i].sessions[j].time_start).getTime()) {
@@ -61,24 +62,16 @@ export default new Command({
         }
       }
     }
-    for (let i = 0; i < nextRound.sessions.length; i++) {
-      if (new Date().getTime() < new Date(nextRound.sessions[i].time_start).getTime()) {
-        nextSession = nextRound.sessions[i];
-        break;
-      }
-    }
 
     if (subCommand === 'next') {
       const embed = new EmbedBuilder()
         .setTitle(nextRound.name)
         .setColor(Color.F1_RED)
         .setDescription(`**${nextRound.country}**, **${nextRound.city}**\n**${nextRound.track.name}**\n**${nextRound.track.lap_length}km** | **${nextRound.track.laps} laps**\n\n${nextRound.sessions.map((session) => {
-          return `**${session.name}** - ${(session.time_start) ? `**<t:${new Date(session.time_start).getTime() / 1000}:f>** | **<t:${new Date(session.time_start).getTime() / 1000}:R>**` : 'TBA'}${
-            (session.time_start && session.time_end) ? (new Date().getTime() > new Date(session.time_start).getTime() && new Date().getTime() < new Date(session.time_end).getTime()) ? ' | **LIVE**' : (session.name === nextSession.name) ? ' | **NEXT**' : '' : ''
-          }`;
+          return `**${session.name}** - ${(session.time_start) ? `**<t:${new Date(session.time_start).getTime() / 1000}:f>** | **<t:${new Date(session.time_start).getTime() / 1000}:R>**` : 'TBA'}`;
         }).join('\n')}`)
         .setThumbnail(nextRound.track.country_flag)
-        .setImage(nextRound.track.image)
+        .setImage(`${nextRound.track.image}?${Util.randomString(5)}`)
         .setFooter({text: `${nextRound.type.toUpperCase()} ${nextRound.round} / ${rounds.filter((round) => round.type === nextRound.type).length}`});
 
       interaction.editReply({embeds: [embed]});
@@ -110,14 +103,41 @@ export default new Command({
       const embed = new EmbedBuilder()
         .setTitle(race.name)
         .setColor(Color.F1_RED)
-        .setDescription(`**${race.country}**, **${race.city}**\n**${race.track.name}**\n**${race.track.lap_length}km** | **${race.track.laps} laps**\n${
-          race.results.length > 0 ? `\n**Winner ${race.results[0].driver.name}**\n**2nd ${race.results[1].driver.name}**\n**3rd ${race.results[2].driver.name}**\n` : ''
-        }\n${race.sessions.map((session) => {
+        .setDescription(`**${race.country}**, **${race.city}**\n**${race.track.name}**\n**${race.track.lap_length}km** | **${race.track.laps} laps**\n\n${race.results.length > 0 ? '' : race.sessions.map((session) => {
           return `**${session.name}** - ${session.time_start ? `**<t:${new Date(session.time_start).getTime() / 1000}:f>** | **<t:${new Date(session.time_start).getTime() / 1000}:R>**` : 'TBA'}`;
         }).join('\n')}`)
         .setThumbnail(race.track.country_flag)
-        .setImage(race.track.image)
+        .setImage(`${race.track.image}?${Util.randomString(5)}`)
         .setFooter({text: `${race.type.toUpperCase()} ${race.round} / ${rounds.filter((round) => round.type === 'Round').length}`});
+
+      if (race.results.length > 0) {
+        embed.setFields([{
+          name: 'Position',
+          value: race.results.map((result) => {
+            console.log(`${result.driver.code} - ${result.grid_position}`);
+            return `${result.finish_position === 1 ? `**${result.finish_position}**`
+                      : result.finish_position} ${result.grid_position > 0
+                        ? `(${(result.grid_position - result.finish_position) > 0 ? '+' : ''}${result.grid_position - result.finish_position})` : ''}`;
+          }).join('\n'),
+          inline: true
+        }, {
+          name: 'Driver',
+          value: race.results.map((result) => {
+            return `${result.finish_position === 1 ? `**${result.driver.name}**` : result.driver.name}`;
+          }).join('\n'),
+          inline: true
+        }, {
+          name: 'Time / DNF',
+          value: race.results.map((result) => {
+            if (result.finish_position === 1) return `**${msToTime(result.total_time)}**`;
+            else if (result.status === 'Finished' || /^\+(\d+?)\sLap$/.test(result.status)) {
+              if (result.laps === race.results[0].laps) return `+${msToTime(result.total_time - race.results[0].total_time)}`;
+              else return result.status;
+            } else return `${result.status} (L${result.laps})`;
+          }).join('\n'),
+          inline: true
+        }]);
+      }
 
       interaction.editReply({embeds: [embed]});
     } else if (subCommand === 'standings') {
@@ -148,3 +168,14 @@ export default new Command({
     }
   }
 });
+
+function msToTime(duration: number): string {
+  const ms = Math.floor(duration % 1000);
+  const s = Math.floor((duration / 1000) % 60);
+  const m = Math.floor((duration / (1000 * 60)) % 60);
+  const h = Math.floor((duration / (1000 * 60 * 60)) % 24);
+
+  if (h > 0) return `${h}:${(m < 10) ? `0${m}` : m}:${(s < 10) ? `0${s}` : s}.${ms}`;
+  else if (m > 0) return `${m}:${(s < 10) ? `0${s}` : s}.${ms}`;
+  else return `${s}.${ms}`;
+}

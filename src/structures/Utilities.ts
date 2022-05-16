@@ -6,6 +6,7 @@ import capitalize from '../utilities/capitalize';
 import durationToSeconds from '../utilities/durationToSeconds';
 import embedTweet from '../utilities/embedTweet';
 import hexToInt from '../utilities/hexToInt';
+import randomString from '../utilities/randomString';
 import removeTempRole from '../utilities/removeTempRole';
 import rgbToInt from '../utilities/rgbToInt';
 import secondsToDhms from '../utilities/secondsToDhms';
@@ -25,6 +26,7 @@ class Utilities implements UtilitiesType {
   durationToSeconds = durationToSeconds;
   embedTweet = embedTweet;
   hexToInt = hexToInt;
+  randomString = randomString;
   removeTempRole = removeTempRole;
   rgbToInt = rgbToInt;
   secondsToDhms = secondsToDhms;

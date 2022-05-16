@@ -1,8 +1,10 @@
+import addTempRole from '../utilities/addTempRole';
 import blankField from '../utilities/blankField';
 import capitalize from '../utilities/capitalize';
 import durationToSeconds from '../utilities/durationToSeconds';
 import embedTweet from '../utilities/embedTweet';
 import hexToInt from '../utilities/hexToInt';
+import randomString from '../utilities/randomString';
 import rgbToInt from '../utilities/rgbToInt';
 import secondsToDhms from '../utilities/secondsToDhms';
 import secondsToDuration from '../utilities/secondsToDuration';
@@ -18,6 +20,7 @@ interface UtilitiesType {
   durationToSeconds: typeof durationToSeconds;
   embedTweet: typeof embedTweet;
   hexToInt: typeof hexToInt;
+  randomString: typeof randomString;
   removeTempRole: typeof removeTempRole;
   rgbToInt: typeof rgbToInt;
   secondsToDhms: typeof secondsToDhms;

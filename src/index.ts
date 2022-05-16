@@ -23,6 +23,7 @@ import emotesSevenDaysRemove from './scheduled/emotesSevenDaysRemove';
 import messagesSevenDaysRemove from './scheduled/messagesSevenDaysRemove';
 import tempRolesRemove from './scheduled/tempRolesRemove';
 import regularUsersUpdate from './scheduled/regularUsersUpdate';
+import f1StandingsUpdate from './scheduled/f1StandingsUpdate';
 
 import CommandType from './typings/Command';
 
@@ -67,7 +68,7 @@ export const timers = {
   messages_seven_day_removal: messagesSevenDaysRemove,
   emotes_seven_day_removal: emotesSevenDaysRemove,
   temp_roles_removal: tempRolesRemove,
-  regular_users_update: regularUsersUpdate
+  f1_standings_update: f1StandingsUpdate
 };
 
 export type timers = typeof timers;

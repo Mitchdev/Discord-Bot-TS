@@ -19,6 +19,10 @@ declare global {
       CHANNEL_BOT: string;
       CHANNEL_ROLES: string;
       CHANNEL_GENERAL: string;
+      CHANNEL_F1: string;
+
+      MESSAGE_F1_DRIVERS: string;
+      MESSAGE_F1_CONSTRUCTORS: string;
 
       ROLE_MOD: string;
       ROLE_MUTE: string;
