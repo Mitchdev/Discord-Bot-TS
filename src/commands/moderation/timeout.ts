@@ -23,13 +23,17 @@ export default new Command({
     description: 'Duration of the time out (1s - 7d)',
     required: true,
     autocomplete: true
+  }, {
+    type: ApplicationCommandOptionType.String,
+    name: 'reason',
+    description: 'Reason for the timeout',
   }],
   run: async ({ interaction }) => {
     await interaction.deferReply({ephemeral: true});
     const seconds: number = Util.durationToSeconds(interaction.options.get('duration').value as string);
     if (seconds) {
       if (seconds > 0 && seconds < 604800) {
-        await (interaction.options.get('user').member as GuildMember).timeout(seconds * 1000, `Timed out by ${interaction.member.displayName}`);
+        await (interaction.options.get('user').member as GuildMember).timeout(seconds * 1000, `${interaction.user.username}${interaction.options.get('reason') ? ` | ${interaction.options.get('reason').value as string}` : ''}`);
         interaction.editReply(`Timed out ${(interaction.options.get('user').member as GuildMember).displayName} for ${interaction.options.get('duration').value}.`);
       } else {
         interaction.editReply('Duration not within range (1s - 7d).');

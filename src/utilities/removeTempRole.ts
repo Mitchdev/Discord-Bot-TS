@@ -24,14 +24,20 @@ export default async function removeTempRole(role: {
   const requestedRole = guild.roles.resolve(role.id);
   if (botMember.roles.highest.position >= requestedRole.position) {
     const member = await guild.members.fetch(user.id);
-    member.roles.remove(role.id).then(async () => {
-      if (message && success) {
-        if ('commandId' in message) message.editReply(success);
-        else message.reply(success);
-      }
-    }).catch((error) => console.log(error));
+    if (member) {
+      member.roles.remove(role.id).then(async () => {
+        if (message && success) {
+          if ('commandId' in message) message.editReply(success);
+          else message.reply(success);
+        }
+      }).catch((error) => console.log(error));
+    } else {
+      console.log('Could not find member: ', member);
+    }
   } else {
-    if ('commandId' in message) message.editReply(`Bot does not have permissions to remove **${role.name}**`);
-    else message.reply(`Bot does not have permissions to remove **${role.name}**`);
+    if (message) {
+      if ('commandId' in message) message.editReply(`Bot does not have permissions to remove **${role.name}**`);
+      else message.reply(`Bot does not have permissions to remove **${role.name}**`);
+    }
   }
 }

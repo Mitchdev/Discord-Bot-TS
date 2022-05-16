@@ -58,7 +58,7 @@ export default new Command({
               inline: true,
             }, {
               name: 'Duration',
-              value: dataAlt.Runtime !== 'N/A' ? dataAlt.Runtime : data.runtimeStr !== '' ? data.runtimeStr : 'Unknown',
+              value: dataAlt.Runtime !== 'N/A' ? dataAlt.Runtime : (data.runtimeStr !== null && data.runtimeStr !== '') ? data.runtimeStr : 'Unknown',
               inline: true,
             }, {
               name: 'Budget (USD)',

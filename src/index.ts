@@ -72,6 +72,7 @@ export const timers = {
   messages_seven_day_removal: messagesSevenDaysRemove,
   emotes_seven_day_removal: emotesSevenDaysRemove,
   temp_roles_removal: tempRolesRemove,
+  regular_users_update: regularUsersUpdate,
   f1_standings_update: f1StandingsUpdate
 };
 

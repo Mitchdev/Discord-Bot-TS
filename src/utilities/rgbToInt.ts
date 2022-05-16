@@ -7,5 +7,5 @@
  * @example Util.hexToInt(36, 107, 206): 2386894
  */
 export default function rgbToInt(red: number, green: number, blue: number): number {
-  return (red << 16) + (green << 8) + blue;
+  return Math.trunc((red << 16) + (green << 8) + blue);
 }

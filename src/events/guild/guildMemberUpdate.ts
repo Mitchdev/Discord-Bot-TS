@@ -15,7 +15,11 @@ export default new Event('on', 'guildMemberUpdate', async (oldMember: GuildMembe
             id: newMember.id,
             timestamp: newMember.communicationDisabledUntilTimestamp
           }).save();
-          await (client.channels.resolve(process.env.CHANNEL_GENERAL) as TextChannel).send({content: `${latestTimeout.executor.username} timed out ${(latestTimeout.target).username} for ${Util.secondsToDhms(timeDifference / 1000, false)}${latestTimeout.reason ? `\nreason: **${latestTimeout.reason}**` : ''}`});
+          if (latestTimeout.executor.id === process.env.BOT_ID) {
+            await (client.channels.resolve(process.env.CHANNEL_GENERAL) as TextChannel).send({content: `${latestTimeout.reason.split(' | ')[0]} timed out ${(latestTimeout.target).username} for ${Util.secondsToDhms(timeDifference / 1000, false)}${latestTimeout.reason.split(' | ').length > 1 ? `\nreason: **${latestTimeout.reason.split(' | ')[1]}**` : ''}`});
+          } else {
+            await (client.channels.resolve(process.env.CHANNEL_GENERAL) as TextChannel).send({content: `${latestTimeout.executor.username} timed out ${(latestTimeout.target).username} for ${Util.secondsToDhms(timeDifference / 1000, false)}${latestTimeout.reason ? `\nreason: **${latestTimeout.reason}**` : ''}`});
+          }
           setTimeout(async () => {
             const timeout = await db.timeouts.findByPk(newMember.id);
             if (timeout) timeout.destroy();
