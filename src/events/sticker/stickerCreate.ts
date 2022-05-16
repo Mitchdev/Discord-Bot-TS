@@ -1,11 +1,11 @@
-import { Embed, Sticker, TextChannel } from 'discord.js';
+import { EmbedBuilder, Sticker, TextChannel } from 'discord.js';
 import { client } from '../..';
 import Color from '../../enums/Color';
 import Event from '../../structures/Event';
 
 export default new Event('on', 'stickerCreate', async (sticker: Sticker) => {
   if ((await sticker.fetchUser()).id !== process.env.BOT_ID) {
-    const embed = new Embed()
+    const embed = new EmbedBuilder()
       .setTitle(`Sticker Created by ${(await sticker.fetchUser()).username}#${(await sticker.fetchUser()).discriminator}`)
       .setColor(Color.GREEN)
       .setDescription(`**${sticker.name}**\n${sticker.description}`)

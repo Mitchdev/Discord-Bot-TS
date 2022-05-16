@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, Embed } from 'discord.js';
+import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import fetch from 'node-fetch';
 import { encode, decode } from 'html-entities';
 import { db } from '../..';
@@ -95,15 +95,15 @@ export default new Command({
           const sourceLanguageName = await getLang((data[0].detectedLanguage ? data[0].detectedLanguage.language : sourceLanguage));
           const targetLanguageName = await getLang((data[0].translations[0].to ? data[0].translations[0].to : targetLanguage));
 
-          const embed = new Embed()
+          const embed = new EmbedBuilder()
             .setTitle('Translate')
-            .addFields({
+            .addFields([{
               name: `**${sourceLanguageName}**${(data[0].detectedLanguage ? ` - Language confidence: ${data[0].detectedLanguage.score*100}%` : '')}`,
               value: phrase
             }, {
               name: `**${targetLanguageName}**`,
               value: decode(data[0].translations[0].text)
-            });
+            }]);
 
           interaction.editReply({embeds: [embed]});
         }

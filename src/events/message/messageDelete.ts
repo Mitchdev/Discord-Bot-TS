@@ -1,4 +1,4 @@
-import { AuditLogEvent, Embed, GuildAuditLogsEntry, Message, TextChannel, WebhookClient } from 'discord.js';
+import { AuditLogEvent, EmbedBuilder, GuildAuditLogsEntry, Message, TextChannel, WebhookClient } from 'discord.js';
 import { client } from '../..';
 import Color from '../../enums/Color';
 import Event from '../../structures/Event';
@@ -9,7 +9,7 @@ export default new Event('on', 'messageDelete', async (message: Message) => {
       let logs = audit.entries.first(5) as unknown as GuildAuditLogsEntry<AuditLogEvent.MessageDelete>[];
       logs = logs.filter((entry) => entry.actionType.toUpperCase() === 'DELETE' && entry.targetType.toUpperCase() === 'MESSAGE');
 
-      const embed = new Embed()
+      const embed = new EmbedBuilder()
         .setColor(Color.RED)
         .setDescription(message.content?.length > 0 ? message.content ?? 'null' : 'null');
 

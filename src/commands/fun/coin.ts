@@ -1,4 +1,4 @@
-import { Embed, MessageAttachment } from 'discord.js';
+import { Attachment, EmbedBuilder } from 'discord.js';
 import * as fs from 'fs';
 import Command from '../../structures/Command';
 
@@ -10,11 +10,11 @@ export default new Command({
     await interaction.deferReply();
 
     const result = Math.floor(Math.random() * 2) === 1 ? 'Heads' : 'Tails';
-    const embed = new Embed()
+    const embed = new EmbedBuilder()
       .setTitle('Heads or Tails')
       .setDescription(result)
       .setThumbnail(`attachment://${result}.png`);
 
-    interaction.editReply({files: [new MessageAttachment(fs.readFileSync(`./src/resources/coin/${result}.png`), `${result}.png`)], embeds: [embed]});
+    interaction.editReply({files: [new Attachment(fs.readFileSync(`./src/resources/coin/${result}.png`), `${result}.png`)], embeds: [embed]});
   }
 });

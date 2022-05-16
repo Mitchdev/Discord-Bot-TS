@@ -4,7 +4,6 @@ import { db, timers } from '..';
 import ExtendedClient from './Client';
 
 async function devCommands(client: ExtendedClient, db: db, timers: timers, message: Message) {
-
   if (message.content.startsWith('!eval')) {
     try {
       const evaled = eval(message.content.replace('!eval ', ''));

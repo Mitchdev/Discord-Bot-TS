@@ -1,4 +1,4 @@
-import { ActionRow, ApplicationCommandOptionType, ButtonComponent, ButtonStyle, Embed, TextChannel } from 'discord.js';
+import { ActionRow, ActionRowBuilder, ApplicationCommandOptionType, ButtonBuilder, ButtonComponent, ButtonStyle, EmbedBuilder, TextChannel } from 'discord.js';
 import fetch from 'node-fetch';
 import sharp from 'sharp';
 import { client, db, Util } from '../..';
@@ -108,52 +108,52 @@ export default new Command({
             suggesterusername: interaction.user.username
           }).save();
 
-          const buttons = new ActionRow().addComponents(
-            new ButtonComponent()
+          const buttons = new ActionRowBuilder().addComponents([
+            new ButtonBuilder()
               .setCustomId(`suggest|${suggestion.type}|Accepted|${suggestion.id}`)
               .setLabel('Accept')
               .setStyle(ButtonStyle.Success),
-            new ButtonComponent()
+            new ButtonBuilder()
               .setCustomId(`suggest|${suggestion.type}|Denied|${suggestion.id}`)
               .setLabel('Deny')
               .setStyle(ButtonStyle.Danger)
-          );
+          ]);
 
-          const embed = new Embed()
+          const embed = new EmbedBuilder()
             .setTitle(`ID: ${suggestion.id} | ${Util.capitalize(suggestion.type)} Suggestion - ${suggestion.status}`)
             .setURL(suggestion.suggestion)
             .setImage(suggestion.suggestion)
             .setTimestamp(suggestion.createdAt)
-            .addFields({
+            .addFields([{
               name: `${Util.capitalize(suggestion.type)} Name`,
               value: suggestion.name,
-            });
+            }]);
           if (suggestion.type === 'sticker') {
-            embed.addFields({
+            embed.addFields([{
               name: 'Sticker Emoji',
               value: stickerEmote
-            })
+            }])
             .setFooter({ text: `${(await interaction.guild.stickers.fetch()).size}/${GuildStickerLimits['L' + interaction.guild.premiumTier.toString()]} Used` });
           } else if (suggestion.type === 'emote') {
             const emojisSize = (await interaction.guild.emojis.fetch()).filter((emoji) => emoji.animated === (metadata.format === 'gif')).size;
-            embed.addFields({
+            embed.addFields([{
               name: 'Animated Emote',
               value: metadata.format === 'gif' ? 'Yes' : 'No'
-            })
+            }])
             .setFooter({ text: `${emojisSize}/${GuildEmoteLimits['L' + interaction.guild.premiumTier.toString()]} Used` });
           }
 
           await interaction.user.send({embeds: [embed]});
 
-          embed.addFields({
+          embed.addFields([{
             name: 'Suggester Username',
             value: suggestion.suggesterusername
           }, {
             name: 'Suggester ID',
             value: suggestion.suggesterid
-          });
+          }]);
 
-          const message = await (client.channels.resolve(process.env.CHANNEL_EMOTE) as TextChannel).send({embeds: [embed], components: [buttons]});
+          const message = await (client.channels.resolve(process.env.CHANNEL_EMOTE) as TextChannel).send({embeds: [embed], components: [buttons] as unknown as ActionRow<ButtonComponent>[]});
           await interaction.editReply('Suggestion Sent (see DMs for suggestion id)');
           await suggestion.set('messageid', message.id).save();
         } else return await interaction.editReply('Invalid Image');
@@ -167,59 +167,59 @@ export default new Command({
         suggesterusername: interaction.user.username
       }).save();
 
-      const buttons = new ActionRow().addComponents(
-        new ButtonComponent()
+      const buttons = new ActionRowBuilder().addComponents([
+        new ButtonBuilder()
           .setCustomId(`suggest|${suggestion.type}|In Progress|${suggestion.id}`)
           .setLabel('In Progress')
           .setStyle(ButtonStyle.Success),
-        new ButtonComponent()
+        new ButtonBuilder()
           .setCustomId(`suggest|${suggestion.type}|Completed|${suggestion.id}`)
           .setLabel('Complete')
           .setStyle(ButtonStyle.Success),
-        new ButtonComponent()
+        new ButtonBuilder()
           .setCustomId(`suggest|${suggestion.type}|Denied|${suggestion.id}`)
           .setLabel('Deny')
           .setStyle(ButtonStyle.Danger)
-      );
+      ]);
 
-      const embed = new Embed()
+      const embed = new EmbedBuilder()
         .setTitle(`ID: ${suggestion.id} | ${Util.capitalize(suggestion.type)} Suggestion - ${suggestion.status}`)
         .setDescription(suggestion.suggestion)
         .setTimestamp(suggestion.createdAt);
 
         await interaction.user.send({embeds: [embed]});
 
-        embed.addFields({
+        embed.addFields([{
           name: 'Suggester Username',
           value: suggestion.suggesterusername
         }, {
           name: 'Suggester ID',
           value: suggestion.suggesterid
-        });
+        }]);
 
-      const message = await (client.channels.resolve(subCommand === 'bot' ? process.env.CHANNEL_BOT : process.env.CHANNEL_MOD) as TextChannel).send({embeds: [embed], components: [buttons]});
+      const message = await (client.channels.resolve(subCommand === 'bot' ? process.env.CHANNEL_BOT : process.env.CHANNEL_MOD) as TextChannel).send({embeds: [embed], components: [buttons] as unknown as ActionRow<ButtonComponent>[]});
       await interaction.editReply('Suggestion Sent (see DMs for suggestion id)');
       await suggestion.set('messageid', message.id).save();
     } else if (subCommand === 'status') {
       const suggestion = await db.suggestions.findByPk(interaction.options.get('id').value as number);
       if (suggestion) {
         if (suggestion.suggesterid === interaction.user.id || client.guilds.resolve(process.env.GUILD_ID).members.resolve(interaction.user.id).roles.resolve(process.env.ROLE_MOD)) {
-          const embed = new Embed()
+          const embed = new EmbedBuilder()
             .setTitle(`ID: ${suggestion.id} | ${Util.capitalize(suggestion.type)} Suggestion - ${suggestion.status}`)
             .setColor(SuggestionStatusColor[suggestion.status])
             .setTimestamp(suggestion.createdAt);
           if (suggestion.type === 'emote' || suggestion.type === 'sticker') {
             embed.setURL(suggestion.suggestion)
               .setImage(suggestion.suggestion)
-              .addFields({
+              .addFields([{
                 name: `${Util.capitalize(suggestion.type)} Name`,
                 value: suggestion.name
-              });
+              }]);
             if (suggestion.type === 'sticker') {
-              embed.addFields({
+              embed.addFields([{
                 name: 'Sticker Emoji',
                 value: suggestion.emoji
-              });
+              }]);
             }
           } else embed.setDescription(suggestion.suggestion);
           await interaction.editReply({embeds: [embed]});

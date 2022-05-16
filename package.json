@@ -13,7 +13,9 @@
   "author": "Mitchdev",
   "license": "ISC",
   "dependencies": {
+    "cloudconvert": "^2.2.4",
     "color-thief-node": "^1.0.4",
+    "discord-api-types": "^0.28.0",
     "discord.js": "^14.0.0-dev.1643112249.5ccdb0a",
     "dotenv": "^14.3.2",
     "glob": "^7.2.0",

@@ -1,4 +1,4 @@
-import { Embed } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import { db, Util } from '../..';
 import Command from '../../structures/Command';
 
@@ -9,7 +9,7 @@ export default new Command({
   run: async ({ interaction }) => {
     await interaction.deferReply();
 
-    const embed = new Embed().setTitle('List of temporarily roled users');
+    const embed = new EmbedBuilder().setTitle('List of temporarily roled users');
     const roles = await db.tempRoles.findAll({
       attributes: ['rolename', 'roleid'],
       order: [['expireAt', 'DESC']],
@@ -22,7 +22,7 @@ export default new Command({
           where: { roleid: roles[i].roleid },
           order: [['expireAt', 'DESC']]
         });
-        embed.addFields({
+        embed.addFields([{
           name: roles[i].rolename,
           value: users.map((user) => user.username).join('\n'),
           inline: true
@@ -30,7 +30,7 @@ export default new Command({
           name: 'Time left',
           value: users.map((user) => Util.secondsToDhms((user.expireAt.getTime() / 1000) - (new Date().getTime() / 1000), false)).join('\n'),
           inline: true
-        });
+        }]);
       }
     } else embed.setDescription('Nobody!');
 

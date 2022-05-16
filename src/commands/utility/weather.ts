@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, Embed } from 'discord.js';
+import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import fetch from 'node-fetch';
 import { Util } from '../..';
 import Color from '../../enums/Color';
@@ -30,13 +30,27 @@ export default new Command({
       name: 'Imperial',
       value: 'imperial',
     }],
+  }, {
+    name: 'size',
+    type: ApplicationCommandOptionType.String,
+    description: 'Large or small embed',
+    required: false,
+    choices: [{
+      name: 'Large',
+      value: 'large'
+    }, {
+      name: 'Small',
+      value: 'small'
+    }]
   }],
   run: async({ interaction, client }) => {
     await interaction.deferReply();
 
-    const weather = new Embed();
-    const alerts = new Embed().setTitle('Alerts').setColor(Color.RED);
-    const embeds: Embed[] = [];
+    const size = (interaction.options.get('size')?.value as string) ?? 'small';
+
+    const weather = new EmbedBuilder();
+    const alerts = new EmbedBuilder().setTitle('Alerts').setColor(Color.RED);
+    const embeds: EmbedBuilder[] = [];
 
     const units: string = interaction.options.get('unit').value as string;
     const location: string = interaction.options.get('location').value as string;
@@ -134,8 +148,22 @@ export default new Command({
       // eslint-disable-next-line eqeqeq
       weather.setTitle(`${coordinates.manicipality != null ? coordinates.manicipality : location}, ${coordinates.countryCode} (Location confidence: ${(coordinates.score < 0) ? '0' : coordinates.score}%)`)
         .setDescription(`Current condition **${data.hourly[0].weather[0].description}** at **${localTime.getHours() < 10 ? `0${localTime.getHours()}`: localTime.getHours()}:${localTime.getMinutes() < 10 ? `0${localTime.getMinutes()}`: localTime.getMinutes()}**`)
-        .setThumbnail(`http://openweathermap.org/img/wn/${data.current.weather[0].icon}@2x.png`)
-        .addFields({
+        .setThumbnail(`http://openweathermap.org/img/wn/${data.current.weather[0].icon}@2x.png`);
+
+      if (size === 'small') {
+        weather.addFields([{
+          name: 'Temperature',
+          value: `Current **${data.hourly[0].temp}${units === 'imperial' ? '°F' : (units === 'standard') ? 'K' : '°C'}**`+
+          `\nFeels like **${data.hourly[0].feels_like}${units === 'imperial' ? '°F' : (units === 'standard') ? 'K' : '°C'}**`+
+          `\nHumidity **${data.hourly[0].humidity}%**`,
+          inline: true,
+        }, {
+          name: 'Rain & Snow',
+          value: `Rain probability **${Math.round(data.hourly[0].pop*100)}%**${rainText}${snowText}`,
+          inline: true,
+        }]);
+      } else {
+        weather.addFields([{
           name: 'Temperature',
           value: `Current **${data.hourly[0].temp}${units === 'imperial' ? '°F' : (units === 'standard') ? 'K' : '°C'}**`+
           `\nFeels like **${data.hourly[0].feels_like}${units === 'imperial' ? '°F' : (units === 'standard') ? 'K' : '°C'}**`+
@@ -163,7 +191,8 @@ export default new Command({
           value: `${sunText}\n${moonText}`+
           `\nAmount of Daylight **${Util.secondsToDhms(daylightTime)}**`+
           `\nAmount of Nightlight **${Util.secondsToDhms(nightlightTime)}**`,
-        });
+        }]);
+      }
 
       embeds.push(weather);
 
@@ -183,7 +212,7 @@ export default new Command({
           const more = `...\n\nmore via ${alert.sender_name}`;
           if (description.length > 500) description = description.slice(0, 500-more.length) + more;
 
-          alerts.addFields({name: alert.event, value: description});
+          alerts.addFields([{name: alert.event, value: description}]);
         });
 
         embeds.push(alerts);

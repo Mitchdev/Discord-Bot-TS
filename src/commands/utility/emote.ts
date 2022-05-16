@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, Embed } from 'discord.js';
+import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import { db } from '../..';
 import Command from '../../structures/Command';
 
@@ -53,13 +53,13 @@ export default new Command({
           else return b.sevenDays.length - a.sevenDays.length;
         });
         const ten = (subCommand === 'top') ? emotes.slice(0, 10) : emotes.slice(-10).reverse();
-        const embed = new Embed()
+        const embed = new EmbedBuilder()
           .setTitle(`${subCommand === 'top' ? 'Top' : 'Bottom'} 10 emotes`)
-          .addFields({
+          .addFields([{
             name: '# - Emote - Total - Weekly',
             value: ten.map((emote) => `**${emotes.findIndex((e) => e.id === emote.id)+1}** - ${emote.getEmoteString()} - **${emote.uses}** - **${emote.sevenDays.length}**`).join('\n'),
             inline: true
-          });
+          }]);
         interaction.editReply({embeds: [embed]});
       }
     }

@@ -1,4 +1,4 @@
-import { AuditLogEvent, Collection, Embed, GuildAuditLogsEntry, GuildEmoji, TextChannel } from 'discord.js';
+import { AuditLogEvent, Collection, EmbedBuilder, GuildAuditLogsEntry, GuildEmoji, TextChannel } from 'discord.js';
 import { client, db } from '../..';
 import Color from '../../enums/Color';
 import Event from '../../structures/Event';
@@ -13,7 +13,7 @@ export default new Event('on', 'emojiDelete', async (emoji: GuildEmoji) => {
     if (logs.size > 0) {
       const latestEmojiDeleted = logs.first();
       if (latestEmojiDeleted.executor.id !== process.env.BOT_ID) {
-        const embed = new Embed()
+        const embed = new EmbedBuilder()
         .setTitle(`Emoji Deleted by ${latestEmojiDeleted.executor.username}#${latestEmojiDeleted.executor.discriminator}`)
         .setColor(Color.RED)
         .setDescription(`\`<${emoji.animated ? 'a' : ''}:${emoji.name}:${emoji.id}>\``)

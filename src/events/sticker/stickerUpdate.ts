@@ -1,4 +1,4 @@
-import { AuditLogEvent, Collection, Embed, GuildAuditLogsEntry, Sticker, TextChannel } from 'discord.js';
+import { AuditLogEvent, Collection, EmbedBuilder, GuildAuditLogsEntry, Sticker, TextChannel } from 'discord.js';
 import { client } from '../..';
 import Color from '../../enums/Color';
 import Event from '../../structures/Event';
@@ -9,11 +9,11 @@ export default new Event('on', 'stickerUpdate', async (oldSticker: Sticker, newS
     logs.filter((entry) => (entry.changes ? entry.changes[0]?.key === 'name' : false) && (entry.targetType === 'Sticker'));
     if (logs.size > 0) {
       const latestEmojiUpdate = logs.first();
-      const embed = new Embed()
+      const embed = new EmbedBuilder()
         .setTitle(`Sticker Edited by ${latestEmojiUpdate.executor.username}#${latestEmojiUpdate.executor.discriminator}`)
         .setColor(Color.YELLOW)
         .setImage(newSticker.url)
-        .addFields({
+        .addFields([{
           name: 'Old Sticker Name',
           value: oldSticker.name
         }, {
@@ -27,7 +27,7 @@ export default new Event('on', 'stickerUpdate', async (oldSticker: Sticker, newS
           name: 'New Sticker Description',
           value: newSticker.description ?? 'null',
           inline: true
-        });
+        }]);
 
       (client.channels.resolve(process.env.CHANNEL_EMOTE) as TextChannel).send({embeds: [embed]});
     }

@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, Embed } from 'discord.js';
+import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import { getColorFromURL } from 'color-thief-node';
 import Command from '../../structures/Command';
 import { Util } from '../..';
@@ -22,7 +22,7 @@ export default new Command({
 
     if (image) {
       const color = await getColorFromURL(image);
-      const embed = new Embed()
+      const embed = new EmbedBuilder()
         .setTitle(user.username)
         .setImage(image)
         .setColor(Util.rgbToInt(color[0], color[1], color[2]));

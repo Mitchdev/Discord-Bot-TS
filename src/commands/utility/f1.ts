@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, Embed } from 'discord.js';
+import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import fetch from 'node-fetch';
 import Color from '../../enums/Color';
 import Command from '../../structures/Command';
@@ -69,7 +69,7 @@ export default new Command({
     }
 
     if (subCommand === 'next') {
-      const embed = new Embed()
+      const embed = new EmbedBuilder()
         .setTitle(nextRound.name)
         .setColor(Color.F1_RED)
         .setDescription(`**${nextRound.country}**, **${nextRound.city}**\n**${nextRound.track.name}**\n**${nextRound.track.lap_length}km** | **${nextRound.track.laps} laps**\n\n${nextRound.sessions.map((session) => {
@@ -83,10 +83,10 @@ export default new Command({
 
       interaction.editReply({embeds: [embed]});
     } else if (subCommand === 'races') {
-      const embed = new Embed()
+      const embed = new EmbedBuilder()
         .setTitle('2022 Races')
         .setColor(Color.F1_RED)
-        .addFields({
+        .addFields([{
           name: 'Round',
           value: rounds.filter((round) => round.type === 'Round').map((round) => `**${round.round}**`).join('\n'),
           inline: true
@@ -99,17 +99,15 @@ export default new Command({
           value: rounds.filter((round) => round.type === 'Round').map((round) => {
             return `${
               (round.sessions[round.sessions.length - 1].time_start) ? `**<t:${new Date(round.sessions[round.sessions.length - 1].time_start).getTime() / 1000}:f>**` : '**TBA**'
-            }${
-              (round.sessions[round.sessions.length - 1].time_start && round.sessions[round.sessions.length - 1].time_end) ? (new Date().getTime() > new Date(round.sessions[round.sessions.length - 1].time_start).getTime() && new Date().getTime() < new Date(round.sessions[round.sessions.length - 1].time_end).getTime()) ? ' | **LIVE**' : (round.name === nextRound.name) ? ' | **NEXT**' : '' : ''
             }`;
           }).join('\n'),
           inline: true
-        });
+        }]);
 
       interaction.editReply({embeds: [embed]});
     } else if (subCommand === 'race') {
       const race = rounds.find((round) => round.round === interaction.options.get('round').value as number && round.type === 'Round');
-      const embed = new Embed()
+      const embed = new EmbedBuilder()
         .setTitle(race.name)
         .setColor(Color.F1_RED)
         .setDescription(`**${race.country}**, **${race.city}**\n**${race.track.name}**\n**${race.track.lap_length}km** | **${race.track.laps} laps**\n${
@@ -128,22 +126,22 @@ export default new Command({
         ? await (await fetch(process.env.F1_DRIVERS_API)).json() as unknown as F1DriverStanding[]
         : await (await fetch(process.env.F1_CONSTRUCTORS_API)).json() as unknown as F1ConstructorStanding[];
 
-      const embed = new Embed()
+      const embed = new EmbedBuilder()
         .setTitle(`${interaction.options.get('type').value} Standings`)
         .setColor(Color.F1_RED)
-        .addFields({
+        .addFields([{
           name: 'Position',
           value: standings.map((standing: F1DriverStanding | F1ConstructorStanding) => `**${standing.position}**`).join('\n'),
           inline: true
         }, {
           name: drivers ? 'Driver': 'Constructor',
-          value: standings.map((standing: F1DriverStanding | F1ConstructorStanding) => `**${drivers ? (standing as F1DriverStanding).driver.code : (standing as F1ConstructorStanding).constructor}**`).join('\n'),
+          value: standings.map((standing: F1DriverStanding | F1ConstructorStanding) => `${drivers ? (standing as F1DriverStanding).driver.name : (standing as F1ConstructorStanding).constructor}`).join('\n'),
           inline: true
         }, {
           name: 'Points',
-          value: standings.map((standing: F1DriverStanding | F1ConstructorStanding) => `**${standing.points}**`).join('\n'),
+          value: standings.map((standing: F1DriverStanding | F1ConstructorStanding) => `${standing.points}`).join('\n'),
           inline: true
-        })
+        }])
         .setFooter({text: `ROUND ${nextRound.type === 'Testing' ? 0 : nextRound.round - 1} / ${rounds.filter((round) => round.type === 'Round').length}`});
 
       interaction.editReply({embeds: [embed]});

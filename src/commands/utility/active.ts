@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, Embed, MessageAttachment } from 'discord.js';
+import { ApplicationCommandOptionType, Attachment, EmbedBuilder } from 'discord.js';
 import sharp from 'sharp';
 import { db, Util } from '../..';
 import Command from '../../structures/Command';
@@ -93,11 +93,11 @@ export default new Command({
 
       const graphPNG = await sharp(graph).png().toBuffer();
 
-      const embed = new Embed()
+      const embed = new EmbedBuilder()
         .setTitle(`Activity for ${user.nickname ?? user.username}`)
         .setColor(color)
         .setDescription(`Most active between **${active} UTC${utcOffset >= 0 ? '+' : ''}${utcOffset}**`)
-        .addFields({
+        .addFields([{
           name: `**${bluePercent}%**`,
           value: '0-5',
           inline: true,
@@ -113,9 +113,9 @@ export default new Command({
           name: `**${redPercent}%**`,
           value: '18-23',
           inline: true,
-        });
+        }]);
 
-        interaction.editReply({files: [new MessageAttachment(graphPNG, 'graph.png')], embeds: [embed]});
+        interaction.editReply({files: [new Attachment(graphPNG, 'graph.png')], embeds: [embed]});
     } else {
       await interaction.deferReply({ephemeral: true});
       interaction.editReply({content: 'Could not find user.'});

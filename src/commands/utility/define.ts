@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, Embed } from 'discord.js';
+import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import fetch from 'node-fetch';
 import Command from '../../structures/Command';
 import { NormalDictionary, NormalDictionaryError, UrbanDictionary } from '../../typings/apis/Dictionary';
@@ -42,16 +42,16 @@ export default new Command({
           });
         }
       } else {
-        const embed = new Embed()
+        const embed = new EmbedBuilder()
           .setTitle(`**${data[0].word}**`)
           .setURL(`https://www.dictionary.com/browse/${encodeURIComponent(data[0].word)}`)
-          .addFields({
+          .addFields([{
             name: 'Definition',
             value: data[0].meanings[0].definitions[0].definition ?? '-'
-          });
-          if (data[0].meanings[0].definitions[0].example) embed.addFields({ name: 'Example', value: data[0].meanings[0].definitions[0].example });
-          if (data[0].origin) embed.addFields({ name: 'Origin', value: data[0].origin });
-          if (data[0].phonetic) embed.addFields({ name: 'Phonetic', value: data[0].phonetic });
+          }]);
+          if (data[0].meanings[0].definitions[0].example) embed.addFields([{ name: 'Example', value: data[0].meanings[0].definitions[0].example }]);
+          if (data[0].origin) embed.addFields([{ name: 'Origin', value: data[0].origin }]);
+          if (data[0].phonetic) embed.addFields([{ name: 'Phonetic', value: data[0].phonetic }]);
         interaction.editReply({embeds: [embed]});
       }
     } else {
@@ -67,16 +67,16 @@ export default new Command({
           return `${i}(http://${i.replace(/\[|\]|\'|\"/gmi, '').replace(/\s/gmi, '-')}.urbanup.com)`;
         });
 
-        const embed = new Embed()
+        const embed = new EmbedBuilder()
           .setTitle(`**${list[0].word}**`)
           .setURL(list[0].permalink)
-          .addFields({
+          .addFields([{
             name: 'Definition',
             value: (definition.length > 1020 ? definition.slice(0, 1020) + '...' : definition) ?? '-'
           }, {
             name: 'Example',
             value: (example.length > 1020 ? example.slice(0, 1020) + '...' : example) ?? '-'
-          });
+          }]);
 
           interaction.editReply({embeds: [embed]});
       } else {

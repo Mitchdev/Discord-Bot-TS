@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, Embed } from 'discord.js';
+import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import fetch from 'node-fetch';
 import Color, { ColorDiscord } from '../../enums/Color';
 import Command from '../../structures/Command';
@@ -21,7 +21,7 @@ export default new Command({
 
     if (Object.keys(time).length > 0) {
       const date = new Date(time.datetime);
-      const embed = new Embed()
+      const embed = new EmbedBuilder()
         .setTitle(`Time for ${time.requested_location} is **${timeToString(date.getHours(), date.getMinutes(), true, true)}**`)
         .setDescription(`**${date.getDate()}/${date.getMonth()+1}/${date.getFullYear().toString().slice(-2)} ${timeToString(date.getHours(), date.getMinutes())}** \n\n${time.timezone_abbreviation} | GMT${(time.gmt_offset >= 0 ? '+' : '') + time.gmt_offset}\n${time.timezone_name}${time.is_dst ? ' (Day Light Savings)' : ''}`)
         .setColor((date.getHours() >= 6 && date.getHours() < 18) ? Color.BLUE : ColorDiscord.NOT_QUITE_BLACK);

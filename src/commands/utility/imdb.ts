@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, Embed } from 'discord.js';
+import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import fetch from 'node-fetch';
 import { getColorFromURL } from 'color-thief-node';
 import Command from '../../structures/Command';
@@ -25,10 +25,10 @@ export default new Command({
         const dataAltRT = dataAlt.Ratings.find((r) => r.Source === 'Rotten Tomatoes')?.Value;
         const dataAltMC = dataAlt.Ratings.find((r) => r.Source === 'Metacritic')?.Value;
         if (data.errorMessage === '' || !dataAlt.Error) {
-          const embed = new Embed()
+          const embed = new EmbedBuilder()
             .setTitle(`${data.title} (${data.year})`)
             .setURL(`https://www.imdb.com/title/${data.id}/`)
-            .addFields({
+            .addFields([{
               name: 'Plot',
               value: dataAlt.Plot !== 'N/A' ? dataAlt.Plot : data.plot !== '' ? data.plot : 'Unknown',
               inline: false,
@@ -68,7 +68,7 @@ export default new Command({
               name: 'Box Office Gross (USD)',
               value: data.boxOffice.cumulativeWorldwideGross !== '' ? data.boxOffice.cumulativeWorldwideGross : 'Unknown',
               inline: true,
-            });
+            }]);
           if (data.image !== '') {
             embed.setThumbnail(data.image);
             const color = await getColorFromURL(data.image);

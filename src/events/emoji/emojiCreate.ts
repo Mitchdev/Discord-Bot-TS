@@ -1,4 +1,4 @@
-import { Embed, GuildEmoji, TextChannel } from 'discord.js';
+import { EmbedBuilder, GuildEmoji, TextChannel } from 'discord.js';
 import { client, db } from '../..';
 import Color from '../../enums/Color';
 import Event from '../../structures/Event';
@@ -12,7 +12,7 @@ export default new Event('on', 'emojiCreate', async (emoji: GuildEmoji) => {
   }).save();
 
   if ((await emoji.fetchAuthor()).id !== process.env.BOT_ID) {
-    const embed = new Embed()
+    const embed = new EmbedBuilder()
       .setTitle(`Emoji Created by ${(await emoji.fetchAuthor()).username}#${(await emoji.fetchAuthor()).discriminator}`)
       .setColor(Color.GREEN)
       .setDescription(`\`<${emoji.animated ? 'a' : ''}:${emoji.name}:${emoji.id}>\``)

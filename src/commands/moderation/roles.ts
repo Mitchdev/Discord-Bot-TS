@@ -1,4 +1,4 @@
-import { ActionRow, ApplicationCommandOptionType, ApplicationCommandPermissionType, ButtonComponent, ButtonStyle, Message, MessageActionRowComponent, TextChannel } from 'discord.js';
+import { ActionRow, ActionRowBuilder, AnyComponentBuilder, ApplicationCommandOptionType, ApplicationCommandPermissionType, ButtonBuilder, ButtonComponent, ButtonStyle, Message, TextChannel } from 'discord.js';
 import { db } from '../..';
 import RolesCategory from '../../enums/RolesCategory';
 import ExtendedClient from '../../structures/Client';
@@ -125,7 +125,7 @@ export default new Command({
 });
 
 async function reloadRolesMessage(client: ExtendedClient): Promise<Message> {
-  const rows: ActionRow<MessageActionRowComponent>[] = [];
+  const rows: ActionRowBuilder<AnyComponentBuilder>[] = [];
   const channel = client.channels.resolve(process.env.CHANNEL_ROLES) as TextChannel;
   const messages = await channel.messages.fetch();
   let message = messages.find((message) => message.author.id === process.env.BOT_ID);
@@ -139,7 +139,7 @@ async function reloadRolesMessage(client: ExtendedClient): Promise<Message> {
       if (roles.length > 0) {
         const categoryButtons = [];
         roles.forEach((role) => {
-          const button = new ButtonComponent()
+          const button = new ButtonBuilder()
             .setCustomId(`roles|${role.id}`)
             .setStyle(ButtonStyle.Primary)
             .setLabel(role.name);
@@ -160,12 +160,12 @@ async function reloadRolesMessage(client: ExtendedClient): Promise<Message> {
   }
 
   for (let i = 0; i < categories.length; i++) {
-    let row = new ActionRow();
+    let row = new ActionRowBuilder();
     for (let j = 0; j < categories[i].buttons.length; j++) {
-      row.addComponents(categories[i].buttons[j]);
+      row.addComponents([categories[i].buttons[j] as unknown as ButtonBuilder]);
       if (row.components.length === 5 || j === categories[i].buttons.length - 1) {
         rows.push(row);
-        row = new ActionRow();
+        row = new ActionRowBuilder();
       }
     }
   }
@@ -178,5 +178,5 @@ async function reloadRolesMessage(client: ExtendedClient): Promise<Message> {
         const emote = role.emoteid ? client.guilds.resolve(process.env.GUILD_ID).emojis.resolve(role.emoteid) : role.emotename;
         return `${emote}    ${role.name}`;
       }).join('\n')}`;
-    }).join('\n'), components: rows});
+    }).join('\n'), components: rows as unknown as ActionRow<ButtonComponent>[]});
 }

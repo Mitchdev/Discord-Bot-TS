@@ -1,4 +1,4 @@
-import { ApplicationCommandAutocompleteOption, ApplicationCommandNonOptionsData, ApplicationCommandOptionType, Embed } from 'discord.js';
+import { ApplicationCommandAutocompleteOption, ApplicationCommandNonOptionsData, ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import fetch from 'node-fetch';
 import { db, Util } from '../..';
 import Command from '../../structures/Command';
@@ -142,8 +142,8 @@ export default new Command({
               const { rates }: Currency = await (await fetch(process.env.CURRENCY_API)).json() as Currency;
               const USD = value / rates[source.short_name];
               const REQ = USD * rates[target.short_name];
-              const embed = new Embed()
-                .addFields({
+              const embed = new EmbedBuilder()
+                .addFields([{
                   name: `${source.full_name} (${source.short_name})`,
                   value: `${source.symbol} ${interaction.options.get('amount').value}`,
                   inline: true,
@@ -151,14 +151,14 @@ export default new Command({
                   name: `${target.full_name} (${target.short_name})`,
                   value: `${target.symbol} ${REQ.toFixed(2)}`,
                   inline: true,
-                });
+                }]);
               interaction.editReply({embeds: [embed]});
             } else {
               if (!source.base) value = convertValue(source.convert_source, source.convert_value, value);
               if (!target.base) value = convertValue(target.convert_target, target.convert_value, value);
-              const embed = new Embed()
+              const embed = new EmbedBuilder()
                 .setTitle(`${Util.capitalize(source.type)} Conversion`)
-                .addFields({
+                .addFields([{
                   name: `${(value > 1 || value < -1) ? source.plural_name : source.full_name} (${source.short_name})`,
                   value: interaction.options.get('amount').value as string,
                   inline: true,
@@ -166,7 +166,7 @@ export default new Command({
                   name: `${(value > 1 || value < -1) ? target.plural_name : target.full_name} (${target.short_name})`,
                   value: (Math.round(value * 1000) / 1000).toString(),
                   inline: true,
-                });
+                }]);
               interaction.editReply({embeds: [embed]});
             }
           } else interaction.editReply(`Could not find source **${interaction.options.get('source').value}** in **${subCommand}**`);

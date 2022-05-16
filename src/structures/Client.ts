@@ -1,4 +1,4 @@
-import { ApplicationCommandDataResolvable, Client, ClientEvents, Collection } from 'discord.js';
+import { ApplicationCommandDataResolvable, Client, ClientEvents, Collection, IntentsBitField } from 'discord.js';
 import { glob } from 'glob';
 import { promisify } from 'util';
 import Event from './Event';
@@ -16,7 +16,25 @@ export default class ExtendedClient extends Client {
   autocomplete: Collection<string, AutocompleteType> = new Collection();
 
   constructor() {
-    super({intents: 32767});
+    super({intents: [
+      IntentsBitField.Flags.DirectMessageReactions,
+      IntentsBitField.Flags.DirectMessageTyping,
+      IntentsBitField.Flags.DirectMessages,
+      IntentsBitField.Flags.GuildBans,
+      IntentsBitField.Flags.GuildEmojisAndStickers,
+      IntentsBitField.Flags.GuildIntegrations,
+      IntentsBitField.Flags.GuildInvites,
+      IntentsBitField.Flags.GuildMembers,
+      IntentsBitField.Flags.GuildMessageReactions,
+      IntentsBitField.Flags.GuildMessageTyping,
+      IntentsBitField.Flags.GuildMessages,
+      IntentsBitField.Flags.GuildPresences,
+      IntentsBitField.Flags.GuildScheduledEvents,
+      IntentsBitField.Flags.GuildVoiceStates,
+      IntentsBitField.Flags.GuildWebhooks,
+      IntentsBitField.Flags.Guilds,
+      IntentsBitField.Flags.MessageContent
+    ]});
   }
 
   start() {
@@ -45,10 +63,11 @@ export default class ExtendedClient extends Client {
     await this.application?.commands.set(clientCommands);
     console.log(`Registering ${clientCommands.length} global commands`);
 
-    const setGuildCommands = await this.guilds.cache.get(process.env.GUILD_ID)?.commands.set(guildCommands);
-    setGuildCommands.forEach((command) => {
-      command.permissions.set({permissions: this.commands.get(command.name + 'ChatInputCommandInteraction').userPermissions});
-    });
+    // const setGuildCommands =
+    await this.guilds.cache.get(process.env.GUILD_ID)?.commands.set(guildCommands);
+    // setGuildCommands.forEach((command) => {
+    //   command.permissions.set({permissions: this.commands.get(command.name + 'ChatInputCommandInteraction').userPermissions});
+    // });
     console.log(`Registering ${guildCommands.length} commands to ${this.guilds.cache.get(process.env.GUILD_ID).name}`);
 
   }

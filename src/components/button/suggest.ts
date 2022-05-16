@@ -1,4 +1,4 @@
-import { ActionRow, ButtonComponent, ButtonStyle, Embed, GuildEmoji, MessageActionRowComponent, TextChannel } from 'discord.js';
+import { ActionRow, ActionRowBuilder, ButtonBuilder, ButtonComponent, ButtonStyle, EmbedBuilder, GuildEmoji, MessageActionRowComponent, TextChannel } from 'discord.js';
 import fetch from 'node-fetch';
 import sharp from 'sharp';
 import { client, db, Util } from '../..';
@@ -18,7 +18,7 @@ export default new Component({
           await interaction.deleteReply();
           client.guilds.resolve(process.env.GUILD_ID).emojis.resolve(args[3]).delete().then(async (deletedEmoji: GuildEmoji) => {
 
-            const logEmbed = new Embed()
+            const logEmbed = new EmbedBuilder()
               .setTitle(`Emote Deleted by ${interaction.user.username}#${interaction.user.discriminator}`)
               .setColor(Color.RED)
               .setDescription(`\`<${deletedEmoji.animated ? 'a' : ''}:${deletedEmoji.name}:${deletedEmoji.id}>\``)
@@ -32,13 +32,13 @@ export default new Component({
             const imageBuffer = (metadata.format === 'gif') ? await sharp(await (await fetch(suggestion.suggestion)).buffer(), { animated: true }).toBuffer() : await image.toBuffer();
             interaction.guild.emojis.create(imageBuffer, suggestion.name).then(async (emoji: GuildEmoji) => {
               await suggestion.set('status', 'Accepted').save();
-              const embed = (suggestionMessage.embeds[0] as Embed)
+              const embed = new EmbedBuilder(suggestionMessage.embeds[0].data)
                 .setTitle(`#${suggestion.id} | ${Util.capitalize(suggestion.type)} Suggestion - ${suggestion.status}`)
                 .setColor(SuggestionStatusColor[suggestion.status]);
 
               await suggestionMessage.edit({embeds: [embed], components: []});
 
-              const logEmbed = new Embed()
+              const logEmbed = new EmbedBuilder()
                 .setTitle(`Emote Created by ${interaction.user.username}#${interaction.user.discriminator}`)
                 .setColor(Color.GREEN)
                 .setDescription(`\`<${emoji.animated ? 'a' : ''}:${emoji.name}:${emoji.id}>\``)
@@ -57,7 +57,7 @@ export default new Component({
       } else if (args[1] === 'Denied' && (args[0] === 'emote' || args[0] === 'sticker')) {
         await interaction.deferUpdate();
         await suggestion.set('status', 'Denied').save();
-        const embed = (interaction.message.embeds[0] as Embed)
+        const embed = new EmbedBuilder(interaction.message.embeds[0])
           .setTitle(`#${suggestion.id} | ${Util.capitalize(suggestion.type)} Suggestion - Denied`)
           .setColor(SuggestionStatusColor.Denied);
         await interaction.editReply({embeds: [embed], components: []});
@@ -66,7 +66,7 @@ export default new Component({
         const metadata = await image.metadata();
         const imageBuffer = (metadata.format === 'gif') ? await sharp(await (await fetch(suggestion.suggestion)).buffer(), { animated: true }).toBuffer() : await image.toBuffer();
         const emojisSize = (await interaction.guild.emojis.fetch()).filter((emoji) => emoji.animated === (metadata.format === 'gif')).size;
-        if (emojisSize >= GuildEmoteLimits['_' + interaction.guild.premiumTier.toString()]) {
+        if (emojisSize >= GuildEmoteLimits['L' + interaction.guild.premiumTier.toString()]) {
           await interaction.deferReply();
           await suggestion.set('messageid', interaction.message.id).save();
           const emotes = (await db.emotes.findAll({
@@ -80,11 +80,11 @@ export default new Component({
             else return b.sevenDays.length - a.sevenDays.length;
           });
           const bottom = emotes.slice(-10).reverse();
-          const buttons = [new ActionRow(), new ActionRow()];
+          const buttons = [new ActionRowBuilder(), new ActionRowBuilder()];
 
           for (let i = 0; i < bottom.length; i++) {
-            buttons[(i < 5) ? 0 : 1].addComponents(
-              new ButtonComponent()
+            buttons[(i < 5) ? 0 : 1].addComponents([
+              new ButtonBuilder()
                 .setCustomId(`suggest|emote|Deleted|${args[2]}|${bottom[i].id}`)
                 .setLabel(`${bottom[i].name} - ${bottom[i].uses} - ${bottom[i].sevenDays.length}`)
                 .setStyle(ButtonStyle.Primary)
@@ -93,53 +93,54 @@ export default new Component({
                   id: bottom[i].id,
                   animated: bottom[i].animated
                 })
-            );
+            ]);
           }
 
           await interaction.editReply({
-            content: `Max emotes (${GuildEmoteLimits['_' + interaction.guild.premiumTier.toString()]}):\nPlease select a emote to delete.\n(name - total uses - one week uses)`,
-            components: buttons
+            content: `Max emotes (${GuildEmoteLimits['L' + interaction.guild.premiumTier.toString()]}):\nPlease select a emote to delete.\n(name - total uses - one week uses)`,
+            components: buttons as unknown as ActionRow<ButtonComponent>[]
           });
         } else {
           interaction.guild.emojis.create(imageBuffer, suggestion.name).then(async () => {
             await suggestion.set('status', 'Accepted').save();
-            const embed = (interaction.message.embeds[0] as Embed)
+            const embed = new EmbedBuilder(interaction.message.embeds[0])
               .setTitle(`#${suggestion.id} | ${Util.capitalize(suggestion.type)} Suggestion - ${suggestion.status}`)
               .setColor(SuggestionStatusColor[suggestion.status]);
 
             await interaction.deferUpdate();
             await interaction.editReply({embeds: [embed], components: []});
 
-            const logEmbed = new Embed()
+            const logEmbed = new EmbedBuilder()
               .setTitle(`Emote Created by ${interaction.user.username}#${interaction.user.discriminator}`)
               .setColor(Color.GREEN)
               .setDescription(`**${suggestion.name}**`)
               .setImage(suggestion.suggestion);
 
             (client.channels.resolve(process.env.CHANNEL_EMOTE) as TextChannel).send({embeds: [logEmbed]});
-          }).catch(async () => {
+          }).catch(async (error) => {
+            console.log(error);
             await interaction.deferReply({ ephemeral: true });
             await interaction.editReply('Could not add emote.');
           });
         }
       } else if (args[0] === 'sticker' && args[1] === 'Accepted') {
         const stickers = await interaction.guild.stickers.fetch();
-        if (stickers.size >= GuildStickerLimits['_' + interaction.guild.premiumTier.toString()]) {
+        if (stickers.size >= GuildStickerLimits['L' + interaction.guild.premiumTier.toString()]) {
           await interaction.deferReply({ ephemeral: true });
-          await interaction.editReply(`Max stickers (${GuildStickerLimits['_' + interaction.guild.premiumTier.toString()]}):\nPlease delete a sticker first.`);
+          await interaction.editReply(`Max stickers (${GuildStickerLimits['L' + interaction.guild.premiumTier.toString()]}):\nPlease delete a sticker first.`);
         } else {
           const imageBuffer = await sharp(await (await fetch(suggestion.suggestion)).buffer()).png().toBuffer();
           const sticker = await interaction.guild.stickers.create(imageBuffer, suggestion.name, suggestion.emoji);
           if (sticker) {
             await suggestion.set('status', 'Accepted').save();
-            const embed = (interaction.message.embeds[0] as Embed)
+            const embed = new EmbedBuilder(interaction.message.embeds[0])
               .setTitle(`#${suggestion.id} | ${Util.capitalize(suggestion.type)} Suggestion - ${suggestion.status}`)
               .setColor(SuggestionStatusColor[suggestion.status]);
 
             await interaction.deferUpdate();
             await interaction.editReply({embeds: [embed], components: []});
 
-            const logEmbed = new Embed()
+            const logEmbed = new EmbedBuilder()
               .setTitle(`Sticker Created by ${interaction.user.username}#${interaction.user.discriminator}`)
               .setColor(Color.GREEN)
               .setDescription(`**${suggestion.name}**`)
@@ -155,7 +156,7 @@ export default new Component({
         await interaction.deferUpdate();
         if (args[1] === 'In Progress' || args[1] === 'Completed' || args[1] === 'Denied') {
           await suggestion.set('status', args[1]).save();
-          const embed = (interaction.message.embeds[0] as Embed)
+          const embed = new EmbedBuilder(interaction.message.embeds[0])
             .setTitle(`#${suggestion.id} | ${Util.capitalize(suggestion.type)} Suggestion - ${suggestion.status}`)
             .setColor(SuggestionStatusColor[suggestion.status]);
           await interaction.editReply({embeds: [embed], components: interaction.message.components as ActionRow<MessageActionRowComponent>[]});

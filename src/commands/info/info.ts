@@ -1,7 +1,7 @@
 import os from 'os';
 import fetch from 'node-fetch';
 import Command from '../../structures/Command';
-import { Embed } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import { Util } from '../..';
 
 export default new Command({
@@ -15,9 +15,9 @@ export default new Command({
     await fetch(process.env.ANDLIN_PING_API);
     const post = new Date();
 
-    const embed = new Embed()
+    const embed = new EmbedBuilder()
       .setTitle('Info')
-      .addFields({
+      .addFields([{
         name: 'Client Uptime',
         value: Util.secondsToDhms(client.uptime/1000),
         inline: true,
@@ -33,7 +33,7 @@ export default new Command({
         name: 'Andlin API Ping',
         value: `${(post.getTime() - pre.getTime())}ms`,
         inline: true,
-      });
+      }]);
 
     interaction.editReply({embeds: [embed]});
   }
