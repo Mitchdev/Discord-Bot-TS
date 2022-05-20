@@ -6,7 +6,7 @@ import ExtendedClient from './Client';
 async function devCommands(client: ExtendedClient, db: db, timers: timers, message: Message) {
   if (message.content.startsWith('!eval')) {
     try {
-      const evaled = eval(message.content.replace('!eval ', ''));
+      const evaled = await eval(`(async () => { ${message.content.replace('!eval ', '')} })()`);
       const cleaned = await cleanEval(client, evaled);
       await message.channel.send(`\`\`\`js\n${cleaned}\n\`\`\``);
     } catch (err) {

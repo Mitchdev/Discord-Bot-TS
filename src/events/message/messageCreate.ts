@@ -1,4 +1,5 @@
 import { Message } from 'discord.js';
+import { Op } from 'sequelize';
 import { client, db, timers, Util } from '../..';
 import devCommands from '../../structures/DevCommands';
 import Event from '../../structures/Event';
@@ -92,6 +93,23 @@ export default new Event('on', 'messageCreate', async (message: Message) => {
         const guild = client.guilds.resolve(process.env.GUILD_ID);
         guild.members.resolve(user.id).roles.add(guild.roles.resolve(process.env.ROLE_REGULAR));
       }
+    }
+
+    const emoteReg = new RegExp(/^:(.+?):$/, 'gmi').exec(message.content) ?? [];
+    if (emoteReg.length > 0) {
+      const emote = await db.emotes.findOne({
+        where: {
+          [Op.and]: [
+            {name: {
+              [Op.like]: emoteReg[1]
+            }},
+            {guild: 1},
+            {animated: 1}
+          ]
+        }
+      });
+
+      if (emote) message.channel.send(`<a:${emote.name}:${emote.id}>`);
     }
 
     const emotes = message.content.match(/<(a)?:.+?:\d+>/gmi);
