@@ -130,7 +130,7 @@ export default new Command({
           name: 'Time / DNF',
           value: race.results.map((result) => {
             if (result.finish_position === 1) return `**${msToTime(result.total_time)}**`;
-            else if (result.status === 'Finished' || /^\+(\d+?)\sLap$/.test(result.status)) {
+            else if (result.status === 'Finished' || /^\+(\d+?)\s(Lap|Laps)$/.test(result.status)) {
               if (result.laps === race.results[0].laps) return `+${msToTime(result.total_time - race.results[0].total_time)}`;
               else return result.status;
             } else return `${result.status} (L${result.laps})`;
