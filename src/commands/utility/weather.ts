@@ -19,7 +19,7 @@ export default new Command({
     name: 'unit',
     type: ApplicationCommandOptionType.String,
     description: 'Unit of measurement',
-    required: true,
+    required: false,
     choices: [{
       name: 'Metric',
       value: 'metric',
@@ -46,14 +46,13 @@ export default new Command({
   run: async({ interaction, client }) => {
     await interaction.deferReply();
 
-    const size = (interaction.options.get('size')?.value as string) ?? 'small';
+    const location: string = interaction.options.get('location').value as string;
+    const units: string = (interaction.options.get('unit')?.value as string) ?? 'metric';
+    const size: string = (interaction.options.get('size')?.value as string) ?? 'small';
 
     const weather = new EmbedBuilder();
     const alerts = new EmbedBuilder().setTitle('Alerts').setColor(Color.RED);
     const embeds: EmbedBuilder[] = [];
-
-    const units: string = interaction.options.get('unit').value as string;
-    const location: string = interaction.options.get('location').value as string;
 
     const coordinates: Coordinates = await (await fetch(process.env.ANDLIN_ADDRESS_API, {
       method: 'POST',
@@ -158,8 +157,8 @@ export default new Command({
           `\nHumidity **${data.hourly[0].humidity}%**`,
           inline: true,
         }, {
-          name: 'Rain & Snow',
-          value: `Rain probability **${Math.round(data.hourly[0].pop*100)}%**${rainText}${snowText}`,
+          name: 'Wind & Precipitation',
+          value: `${windText}\nRain probability **${Math.round(data.hourly[0].pop*100)}%**${rainText}${snowText}`,
           inline: true,
         }]);
       } else {
@@ -204,9 +203,9 @@ export default new Command({
           const alertEnd = alert.end - data.current.dt;
           const alertDuration = alert.end - alert.start;
 
-          if (alertStart > 5) alertTime = `Starts in ${Util.secondsToDhms(alertStart)}and lasts for ${Util.secondsToDhms(alertDuration)}\n`;
-          else if (alertEnd > 5) alertTime = `Started ${Util.secondsToDhms(Math.abs(alertStart))}ago and ends in ${Util.secondsToDhms(alertEnd)}\n`;
-          else alertTime = `Ended ${Util.secondsToDhms(Math.abs(alertEnd))}ago and lasted ${Util.secondsToDhms(alertDuration)}\n`;
+          if (alertStart > 5) alertTime = `Starts in ${Util.secondsToDhms(alertStart, false)} and lasts for ${Util.secondsToDhms(alertDuration, false)}\n`;
+          else if (alertEnd > 5) alertTime = `Started ${Util.secondsToDhms(Math.abs(alertStart), false)} ago and ends in ${Util.secondsToDhms(alertEnd, false)}\n`;
+          else alertTime = `Ended ${Util.secondsToDhms(Math.abs(alertEnd), false)} ago and lasted ${Util.secondsToDhms(alertDuration, false)}\n`;
 
           let description = `${alertTime}\n${alert.description}`;
           const more = `...\n\nmore via ${alert.sender_name}`;
