@@ -29,11 +29,14 @@ import regularUsersUpdate from './scheduled/regularUsersUpdate';
 import f1StandingsUpdate from './scheduled/f1StandingsUpdate';
 
 import CommandType from './typings/Command';
+import updateUptime from './scheduled/updateUptime';
 
 if (process.argv[2] === 'dev') {
   process.env.BOT_TOKEN = process.env.BOT_TOKEN_DEV;
   process.env.BOT_ID = process.env.BOT_ID_DEV;
 }
+
+export const startDate = new Date();
 
 export const Util = new Utilities();
 
@@ -71,6 +74,7 @@ export const db =  {
 export type db = typeof db;
 
 export const timers = {
+  update_uptime: updateUptime,
   messages_seven_day_removal: messagesSevenDaysRemove,
   emotes_seven_day_removal: emotesSevenDaysRemove,
   temp_roles_removal: tempRolesRemove,
