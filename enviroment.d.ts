@@ -66,6 +66,8 @@ declare global {
 
       TWITCH_CLIENT_ID: string;
       TWITCH_AUTH_API: string;
+
+      NOPIXEL_API: string;
     }
   }
 }

@@ -1,12 +1,31 @@
 import { Message } from 'discord.js';
+import fetch from 'node-fetch';
+import https from 'https';
 import { client, db, timers, Util } from '../..';
 import devCommands from '../../structures/DevCommands';
 import Event from '../../structures/Event';
+import NoPixelPlayer from '../../typings/apis/NoPixel';
 
 export default new Event('on', 'messageCreate', async (message: Message) => {
   if (message.author.id === process.env.USER_MITCH) await devCommands(client, db, timers, message);
   if (message.author.id !== process.env.BOT_ID && message.author.id !== process.env.BOT_LOGS_ID && message.author.id !== process.env.BOT_ID_DEV) {
     if (message.content.length >= 750) message.react(message.guild.emojis.resolve('773295613558128671')); // donowall
+
+    if (message.content.startsWith('!np')) {
+      const user = message.content.split(' ')[1] ?? '';
+      if (user !== '') {
+        const players: NoPixelPlayer[] = await (await fetch(process.env.NOPIXEL_API, {
+          agent: new https.Agent({rejectUnauthorized: false})
+        })).json() as unknown as NoPixelPlayer[];
+
+        const index = players.findIndex((player) => user.toLowerCase() === 'xqc' ? player.identifiers.includes('steam:110000118646a34') : player.name.toLowerCase() === user.toLowerCase());
+        if (index === -1) {
+          await message.reply(`🔴 ${user} is offline!`);
+        } else {
+          await message.reply(`🟢 ${players[index].name} is online!`);
+        }
+      }
+    }
 
     if (message.content.startsWith('!mp4')) {
       let messageContent = message.content;
