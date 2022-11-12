@@ -30,9 +30,12 @@ export default new Component({
             const image = sharp(await (await fetch(suggestion.suggestion)).buffer());
             const metadata = await image.metadata();
             const imageBuffer = (metadata.format === 'gif') ? await sharp(await (await fetch(suggestion.suggestion)).buffer(), { animated: true }).toBuffer() : await image.toBuffer();
-            interaction.guild.emojis.create(imageBuffer, suggestion.name).then(async (emoji: GuildEmoji) => {
+            interaction.guild.emojis.create({
+              attachment: imageBuffer,
+              name: suggestion.name
+            }).then(async (emoji: GuildEmoji) => {
               await suggestion.set('status', 'Accepted').save();
-              const embed = new EmbedBuilder(suggestionMessage.embeds[0].data)
+              const embed = new EmbedBuilder(suggestionMessage.embeds[0].toJSON())
                 .setTitle(`#${suggestion.id} | ${Util.capitalize(suggestion.type)} Suggestion - ${suggestion.status}`)
                 .setColor(SuggestionStatusColor[suggestion.status]);
 
@@ -57,7 +60,7 @@ export default new Component({
       } else if (args[1] === 'Denied' && (args[0] === 'emote' || args[0] === 'sticker')) {
         await interaction.deferUpdate();
         await suggestion.set('status', 'Denied').save();
-        const embed = new EmbedBuilder(interaction.message.embeds[0])
+        const embed = new EmbedBuilder(interaction.message.embeds[0].toJSON())
           .setTitle(`#${suggestion.id} | ${Util.capitalize(suggestion.type)} Suggestion - Denied`)
           .setColor(SuggestionStatusColor.Denied);
         await interaction.editReply({embeds: [embed], components: []});
@@ -101,9 +104,12 @@ export default new Component({
             components: buttons as unknown as ActionRow<ButtonComponent>[]
           });
         } else {
-          interaction.guild.emojis.create(imageBuffer, suggestion.name).then(async () => {
+          interaction.guild.emojis.create({
+            attachment: imageBuffer,
+            name: suggestion.name
+          }).then(async () => {
             await suggestion.set('status', 'Accepted').save();
-            const embed = new EmbedBuilder(interaction.message.embeds[0])
+            const embed = new EmbedBuilder(interaction.message.embeds[0].toJSON())
               .setTitle(`#${suggestion.id} | ${Util.capitalize(suggestion.type)} Suggestion - ${suggestion.status}`)
               .setColor(SuggestionStatusColor[suggestion.status]);
 
@@ -130,10 +136,14 @@ export default new Component({
           await interaction.editReply(`Max stickers (${GuildStickerLimits['L' + interaction.guild.premiumTier.toString()]}):\nPlease delete a sticker first.`);
         } else {
           const imageBuffer = await sharp(await (await fetch(suggestion.suggestion)).buffer()).png().toBuffer();
-          const sticker = await interaction.guild.stickers.create(imageBuffer, suggestion.name, suggestion.emoji);
+          const sticker = await interaction.guild.stickers.create({
+            file: imageBuffer,
+            name: suggestion.name,
+            tags: suggestion.emoji
+          });
           if (sticker) {
             await suggestion.set('status', 'Accepted').save();
-            const embed = new EmbedBuilder(interaction.message.embeds[0])
+            const embed = new EmbedBuilder(interaction.message.embeds[0].toJSON())
               .setTitle(`#${suggestion.id} | ${Util.capitalize(suggestion.type)} Suggestion - ${suggestion.status}`)
               .setColor(SuggestionStatusColor[suggestion.status]);
 
@@ -156,7 +166,7 @@ export default new Component({
         await interaction.deferUpdate();
         if (args[1] === 'In Progress' || args[1] === 'Completed' || args[1] === 'Denied') {
           await suggestion.set('status', args[1]).save();
-          const embed = new EmbedBuilder(interaction.message.embeds[0])
+          const embed = new EmbedBuilder(interaction.message.embeds[0].toJSON())
             .setTitle(`#${suggestion.id} | ${Util.capitalize(suggestion.type)} Suggestion - ${suggestion.status}`)
             .setColor(SuggestionStatusColor[suggestion.status]);
           await interaction.editReply({embeds: [embed], components: interaction.message.components as ActionRow<MessageActionRowComponent>[]});
