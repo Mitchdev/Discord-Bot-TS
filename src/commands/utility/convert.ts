@@ -56,7 +56,24 @@ export default new Command({
     name: 'currency',
     type: ApplicationCommandOptionType.Subcommand,
     description: 'Convert currency',
-    options: measurementOptions
+    options: [{
+      name: 'amount',
+      type: ApplicationCommandOptionType.String,
+      description: 'Amount in source unit',
+      required: true
+    }, {
+      name: 'source',
+      type: ApplicationCommandOptionType.String,
+      description: 'Source unit',
+      required: true,
+      autocomplete: true
+    }, {
+      name: 'target',
+      type: ApplicationCommandOptionType.String,
+      description: 'Target unit',
+      required: false,
+      autocomplete: true
+    }]
   }, {
     name: 'area',
     type: ApplicationCommandOptionType.Subcommand,
@@ -128,14 +145,20 @@ export default new Command({
       let value = parseFloat(interaction.options.get('amount').value as string);
       if (value) {
         const all = await db.measurements.findAll({ where: { type: subCommand } });
+        let targetVal: string = (interaction.options.get('target')?.value as string)?.toLowerCase() ?? null;
+        if (!targetVal) {
+          let userPreference = await db.userPreferences.findByPk(interaction.user.id);
+          if (!userPreference) userPreference = await db.userPreferences.build({userid: interaction.user.id, units: 'metric'}).save();
+          if (userPreference?.get('currency')) targetVal = userPreference.get('currency').toLowerCase();
+          else return await interaction.editReply('No user preference for currency, set with `/preference`');
+        }
         const target = all.find((measurement) => {
-          const val = (interaction.options.get('target').value as string).toLowerCase();
-          return val === measurement.full_name.toLowerCase() || val === measurement.short_name.toLowerCase() || val === measurement.plural_name.toLowerCase() || val === measurement.symbol.toLowerCase();
+          return targetVal === measurement.full_name.toLowerCase() || targetVal === measurement.short_name.toLowerCase() || targetVal === measurement.plural_name.toLowerCase() || targetVal === measurement.symbol.toLowerCase();
         });
         if (target) {
           const source = all.find((measurement) => {
-            const val = (interaction.options.get('source').value as string).toLowerCase();
-            return val === measurement.full_name.toLowerCase() || val === measurement.short_name.toLowerCase() || val === measurement.plural_name.toLowerCase() || val === measurement.symbol.toLowerCase();
+            const sourceVal = (interaction.options.get('source').value as string).toLowerCase();
+            return sourceVal === measurement.full_name.toLowerCase() || sourceVal === measurement.short_name.toLowerCase() || sourceVal === measurement.plural_name.toLowerCase() || sourceVal === measurement.symbol.toLowerCase();
           });
           if (source) {
             if (subCommand === 'currency') {
@@ -145,11 +168,11 @@ export default new Command({
               const embed = new EmbedBuilder()
                 .addFields([{
                   name: `${source.full_name} (${source.short_name})`,
-                  value: `${source.symbol} ${interaction.options.get('amount').value}`,
+                  value: `${source.symbol} ${Util.commaNumber(value)}`,
                   inline: true,
                 }, {name: '\u200B', value: '**=**', inline: true}, {
                   name: `${target.full_name} (${target.short_name})`,
-                  value: `${target.symbol} ${REQ.toFixed(2)}`,
+                  value: `${target.symbol} ${Util.commaNumber(REQ.toFixed(2))}`,
                   inline: true,
                 }]);
               interaction.editReply({embeds: [embed]});
@@ -170,7 +193,7 @@ export default new Command({
               interaction.editReply({embeds: [embed]});
             }
           } else interaction.editReply(`Could not find source **${interaction.options.get('source').value}** in **${subCommand}**`);
-        } else interaction.editReply(`Could not find target **${interaction.options.get('target').value}** in **${subCommand}**`);
+        } else interaction.editReply(`Could not find target **${targetVal}** in **${subCommand}**`);
       } else interaction.editReply(`Amount **${interaction.options.get('amount').value}** invalid`);
     }
   }

@@ -5,7 +5,8 @@ export default new Autocomplete({
   idType: 'AutocompleteInteraction',
   optionName: 'source',
   run: async ({ interaction, subCommand }) => {
-    if (interaction.commandName === 'convert') {
+    if (interaction.commandName === 'convert' || interaction.commandName === 'currency') {
+      if (subCommand === 'common') subCommand = 'currency';
       const all = await db.measurements.findAll({ where: { type: subCommand } });
       const filtered = all.filter((measurement) => {
         const val = (interaction.options.getFocused() as string).toLowerCase();

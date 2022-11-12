@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import fetch from 'node-fetch';
-import { Util } from '../..';
+import { db, Util } from '../..';
 import Color from '../../enums/Color';
 import Command from '../../structures/Command';
 import Coordinates from '../../typings/apis/Coordinates';
@@ -14,7 +14,7 @@ export default new Command({
     name: 'location',
     type: ApplicationCommandOptionType.String,
     description: 'Location to get weather from',
-    required: true,
+    required: false,
   }, {
     name: 'unit',
     type: ApplicationCommandOptionType.String,
@@ -46,9 +46,18 @@ export default new Command({
   run: async({ interaction, client }) => {
     await interaction.deferReply();
 
-    const location: string = interaction.options.get('location').value as string;
-    const units: string = (interaction.options.get('unit')?.value as string) ?? 'metric';
+    let location: string = (interaction.options.get('location')?.value as string) ?? null;
+    let units: string = (interaction.options.get('unit')?.value as string) ?? 'metric';
     const size: string = (interaction.options.get('size')?.value as string) ?? 'small';
+
+    if (!location) {
+      let userPreference = await db.userPreferences.findByPk(interaction.user.id);
+      if (!userPreference) userPreference = await db.userPreferences.build({userid: interaction.user.id, units: 'metric'}).save();
+
+      if (userPreference?.get('units')) units = userPreference.get('units').toLowerCase();
+      if (userPreference?.get('location')) location = userPreference.get('location');
+      else return await interaction.editReply('No user preference for weather location, set with `/preference`');
+    }
 
     const weather = new EmbedBuilder();
     const alerts = new EmbedBuilder().setTitle('Alerts').setColor(Color.RED);

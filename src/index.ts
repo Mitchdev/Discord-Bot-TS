@@ -16,6 +16,7 @@ import Suggestions from './structures/database/Suggestions';
 import Measurements from './structures/database/Measurements';
 import EmbededTweets from './structures/database/EmbededTweets';
 import RecycledLinks from './structures/database/RecycledLinks';
+import UserPreferences from './structures/database/UserPreferences';
 
 import CloudConvertClient from './structures/CloudConvertClient';
 import TwitterClient from './structures/TwitterClient';
@@ -63,7 +64,8 @@ export const db =  {
   suggestions: Suggestions(sequelize),
   measurements: Measurements(sequelize),
   embededTweets: EmbededTweets(sequelize),
-  recycledLinks: RecycledLinks(sequelize)
+  recycledLinks: RecycledLinks(sequelize),
+  userPreferences: UserPreferences(sequelize),
 };
 
 export type db = typeof db;
