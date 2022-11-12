@@ -1,4 +1,4 @@
-import { Message, Util } from 'discord.js';
+import { Message, Utils } from 'discord.js';
 
 /**
  * Splits content into multiple messages if too big.
