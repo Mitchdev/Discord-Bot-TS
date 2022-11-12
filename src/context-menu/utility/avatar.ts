@@ -5,7 +5,7 @@ import { Util } from '../..';
 
 export default new Command({
   idType: 'UserContextMenuCommandInteraction',
-  name: 'avatar',
+  name: 'Get Avatar',
   type: ApplicationCommandType.User,
   run: async ({ client, interaction }) => {
     await interaction.deferReply({ephemeral: true});

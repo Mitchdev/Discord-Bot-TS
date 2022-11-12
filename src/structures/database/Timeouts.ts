@@ -7,7 +7,7 @@ class TimeoutsUser extends Model<TimeoutsAttributes> implements TimeoutsAttribut
 }
 
 function initiate(sequelize: Sequelize): typeof TimeoutsUser {
-  console.log('Initiating temp roles');
+  console.log('Initiating timeouts');
   return TimeoutsUser.init({
     id: {
       type: DataTypes.STRING,
