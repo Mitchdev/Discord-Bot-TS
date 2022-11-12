@@ -54,6 +54,7 @@ declare global {
       DICTIONARY_API: string;
 
       IMDB_SEARCH_API: string;
+      IMDB_TRAILER_API: string;
       IMDB_INFO_API: string;
       IMDB_INFO_ALT_API: string;
 
