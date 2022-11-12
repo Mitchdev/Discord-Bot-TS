@@ -1,4 +1,4 @@
-import { ApplicationCommandPermissionData, ButtonInteraction, CommandInteraction, GuildMember, SelectMenuInteraction } from 'discord.js';
+import { ButtonInteraction, CommandInteraction, GuildMember, SelectMenuInteraction } from 'discord.js';
 
 export interface ExtendedInteraction extends CommandInteraction {
   member: GuildMember;
@@ -14,6 +14,5 @@ export interface ExtendedSelectMenuInteraction extends SelectMenuInteraction {
 
 export type ExtendedInteractionType = {
   idType: 'AutocompleteInteraction' | 'ChatInputCommandInteraction' | 'MessageContextMenuCommandInteraction' | 'UserContextMenuCommandInteraction' | 'ButtonInteraction' | 'SelectMenuInteraction'
-  userPermissions?: ApplicationCommandPermissionData[];
   cooldown?: number;
 }

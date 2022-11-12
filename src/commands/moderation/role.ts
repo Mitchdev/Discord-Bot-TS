@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, ApplicationCommandPermissionType, GuildMember } from 'discord.js';
+import { ApplicationCommandOptionType, GuildMember } from 'discord.js';
 import { db, Util } from '../..';
 import Command from '../../structures/Command';
 
@@ -6,12 +6,6 @@ export default new Command({
   idType: 'ChatInputCommandInteraction',
   name: 'role',
   description: 'Add or remove role from user',
-  userPermissions: [{
-    id: process.env.ROLE_MOD,
-    type: ApplicationCommandPermissionType.Role,
-    permission: true
-  }],
-  defaultPermission: false,
   options: [{
     name: 'add',
     type: ApplicationCommandOptionType.SubcommandGroup,

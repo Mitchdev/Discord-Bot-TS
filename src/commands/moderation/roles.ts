@@ -1,4 +1,4 @@
-import { ActionRow, ActionRowBuilder, AnyComponentBuilder, ApplicationCommandOptionType, ApplicationCommandPermissionType, ButtonBuilder, ButtonComponent, ButtonStyle, Message, TextChannel } from 'discord.js';
+import { ActionRow, ActionRowBuilder, AnyComponentBuilder, ApplicationCommandOptionType, ButtonBuilder, ButtonComponent, ButtonStyle, Message, TextChannel } from 'discord.js';
 import { db } from '../..';
 import RolesCategory from '../../enums/RolesCategory';
 import ExtendedClient from '../../structures/Client';
@@ -9,12 +9,6 @@ export default new Command({
   idType: 'ChatInputCommandInteraction',
   name: 'roles',
   description: 'Add or remove selection role',
-  userPermissions: [{
-    id: process.env.ROLE_MOD,
-    type: ApplicationCommandPermissionType.Role,
-    permission: true
-  }],
-  defaultPermission: false,
   options: [{
     name: 'reload',
     type: ApplicationCommandOptionType.Subcommand,

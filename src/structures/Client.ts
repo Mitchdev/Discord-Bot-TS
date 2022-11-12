@@ -5,7 +5,6 @@ import Event from './Event';
 import CommandType from '../typings/Command';
 import ComponentType from '../typings/Component';
 import AutocompleteType from '../typings/Autocomplete';
-import { registerCommandsOptions } from '../typings/client';
 import { devActiveCommands } from '..';
 
 const globPromise = promisify(glob);
@@ -54,28 +53,25 @@ export default class ExtendedClient extends Client {
   async removeCommands(): Promise<string> {
     return new Promise((resolve) => {
       this.application?.commands.set([]);
-      this.guilds.cache.get(process.env.GUILD_ID)?.commands.set([]);
-      return resolve('Removed all commands (cache might take a while)');
+      return resolve('Removing all commands');
     });
   }
 
-  async registerCommands({ clientCommands, guildCommands }: registerCommandsOptions) {
-    await this.application?.commands.set(clientCommands);
-    console.log(`Registering ${clientCommands.length} global commands`);
+  async registerCommands(commands: ApplicationCommandDataResolvable[]) {
+    await this.application?.commands.set(commands);
+    console.log(`Registering ${commands.length} global commands`);
 
     // const setGuildCommands =
-    await this.guilds.cache.get(process.env.GUILD_ID)?.commands.set(guildCommands);
+    //await this.guilds.cache.get(process.env.GUILD_ID)?.commands.set(guildCommands);
     // setGuildCommands.forEach((command) => {
     //   command.permissions.set({permissions: this.commands.get(command.name + 'ChatInputCommandInteraction').userPermissions});
     // });
-    console.log(`Registering ${guildCommands.length} commands to ${this.guilds.cache.get(process.env.GUILD_ID).name}`);
-
+    //console.log(`Registering ${guildCommands.length} commands to ${this.guilds.cache.get(process.env.GUILD_ID).name}`);
   }
 
   async registerModules(pushCommands: boolean) {
     // Commands
-    const clientSlashCommands: ApplicationCommandDataResolvable[] = [];
-    const guildSlashCommands: ApplicationCommandDataResolvable[] = [];
+    const slashCommands: ApplicationCommandDataResolvable[] = [];
     const commandFiles = await globPromise(`${__dirname}/../commands/*/*{.ts,.js}`);
     const contextMenuFiles = await globPromise(`${__dirname}/../context-menu/*/*{.ts,.js}`);
     console.log(`Found ${contextMenuFiles.length} context-menu files`);
@@ -91,23 +87,18 @@ export default class ExtendedClient extends Client {
         this.commands.set(command.name + command.idType, command);
 
         if (pushCommands) {
-          if ((command.defaultPermission ?? true)) clientSlashCommands.push(command);
-          else guildSlashCommands.push(command);
+          slashCommands.push(command);
         }
 
         if (i === commandContextMenuFiles.length) {
-          console.log(`Found ${clientSlashCommands.length - contextMenuFiles.length} client command files`);
-          console.log(`Found ${guildSlashCommands.length} guild command files`);
+          console.log(`Found ${slashCommands.length - contextMenuFiles.length} slash command files`);
         }
       }
     });
 
     if (pushCommands) {
       this.on('ready', () => {
-        this.registerCommands({
-          clientCommands: clientSlashCommands,
-          guildCommands: guildSlashCommands
-        });
+        this.registerCommands(slashCommands);
       });
     }
 
