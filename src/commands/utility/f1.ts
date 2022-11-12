@@ -51,11 +51,13 @@ export default new Command({
     await interaction.deferReply();
 
     const rounds: F1Round[] = await (await fetch(process.env.F1_SEASON_API)).json() as F1Round[];
-    let nextRound: F1Round = null;
 
+    let lastRound: F1Round = null;
+    let nextRound: F1Round = null;
     for (let i = 0; i < rounds.length; i++) {
       for (let j = 0; j < rounds[i].sessions.length; j++) {
         if (new Date().getTime() < new Date(rounds[i].sessions[j].time_start).getTime()) {
+          lastRound = rounds[i-1];
           nextRound = rounds[i];
           i = rounds.length + 1;
           break;
@@ -147,7 +149,7 @@ export default new Command({
         : await (await fetch(process.env.F1_CONSTRUCTORS_API)).json() as unknown as F1ConstructorStanding[];
 
       const embed = new EmbedBuilder()
-        .setTitle(`${interaction.options.get('type').value} Standings`)
+        .setTitle(`${interaction.options.get('type').value} Standings after ${lastRound.track.name}`)
         .setColor(Color.F1_RED)
         .addFields([{
           name: 'Position',
@@ -162,7 +164,7 @@ export default new Command({
           value: standings.map((standing: F1DriverStanding | F1ConstructorStanding) => `${standing.points}`).join('\n'),
           inline: true
         }])
-        .setFooter({text: `ROUND ${nextRound.type === 'Testing' ? 0 : nextRound.round - 1} / ${rounds.filter((round) => round.type === 'Round').length}`});
+        .setFooter({text: `ROUND ${nextRound.type === 'Testing' ? 0 : lastRound.round} / ${rounds.filter((round) => round.type === 'Round').length}`});
 
       interaction.editReply({embeds: [embed]});
     }
