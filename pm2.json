@@ -1,0 +1,12 @@
+{
+  "apps": [
+    {
+      "name": "Discord Bot",
+      "script": "npm",
+      "args": "start",
+      "log_date_format": "YYYY-MM-DDTHH:mm:ss",
+      "error_file": "/home/mitch/bots/discord_ts/logs/error.log",
+      "out_file": "/home/mitch/bots/discord_ts/logs/output.log"
+    }
+  ]
+}

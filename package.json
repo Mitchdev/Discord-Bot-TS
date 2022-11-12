@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "ts-node src/index.ts dev",
     "prod": "node dist/index.js prod",
+    "start": "node dist/index.js prod",
     "lint": "eslint . --ext .ts",
     "build": "rm -rf ./dist/ && tsc && pm2 restart 2"
   },
