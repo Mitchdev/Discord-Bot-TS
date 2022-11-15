@@ -20,6 +20,7 @@ declare global {
       CHANNEL_ROLES: string;
       CHANNEL_GENERAL: string;
       CHANNEL_F1: string;
+      CHANNEL_NOPIXEL: string;
 
       MESSAGE_F1_DRIVERS: string;
       MESSAGE_F1_CONSTRUCTORS: string;

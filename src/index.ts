@@ -75,6 +75,7 @@ export const db =  {
   embededTweets: EmbededTweets(sequelize),
   recycledLinks: RecycledLinks(sequelize),
   userPreferences: UserPreferences(sequelize),
+  nopixelStreamers: NoPixelStreamers(sequelize)
 };
 
 export type db = typeof db;
