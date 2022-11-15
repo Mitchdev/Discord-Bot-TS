@@ -3,34 +3,39 @@ dotenv.config();
 
 import { Sequelize } from 'sequelize';
 
-import Utilities from './structures/Utilities';
-import Emotes from './structures/database/Emotes';
-import Invites from './structures/database/Invites';
-import Languages from './structures/database/Languages';
-import Messages from './structures/database/Messages';
-import TempRoles from './structures/database/TempRoles';
-import Roles from './structures/database/Roles';
-import BannedPhrases from './structures/database/BannedPhrases';
-import Timeouts from './structures/database/Timeouts';
-import Suggestions from './structures/database/Suggestions';
-import Measurements from './structures/database/Measurements';
-import EmbededTweets from './structures/database/EmbededTweets';
-import RecycledLinks from './structures/database/RecycledLinks';
-import UserPreferences from './structures/database/UserPreferences';
+import {
+  BannedPhrases,
+  EmbededTweets,
+  Emotes,
+  Invites,
+  Languages,
+  Measurements,
+  Messages,
+  NoPixelStreamers,
+  RecycledLinks,
+  Roles,
+  Suggestions,
+  TempRoles,
+  Timeouts,
+  UserPreferences
+} from './structures/database';
 
+import {
+  emotesSevenDaysRemove,
+  f1StandingsUpdate,
+  messagesSevenDaysRemove,
+  nopixel,
+  regularUsersUpdate,
+  tempRolesRemove,
+  updateUptime
+} from './scheduled';
+
+import Utilities from './structures/Utilities';
 import CloudConvertClient from './structures/CloudConvertClient';
 import TwitterClient from './structures/TwitterClient';
 import ExtendedClient from './structures/Client';
 
-import emotesSevenDaysRemove from './scheduled/emotesSevenDaysRemove';
-import messagesSevenDaysRemove from './scheduled/messagesSevenDaysRemove';
-import tempRolesRemove from './scheduled/tempRolesRemove';
-import regularUsersUpdate from './scheduled/regularUsersUpdate';
-import f1StandingsUpdate from './scheduled/f1StandingsUpdate';
-import nopixel from './scheduled/nopixel';
-
 import CommandType from './typings/Command';
-import updateUptime from './scheduled/updateUptime';
 
 if (process.argv[2] === 'dev') {
   process.env.BOT_TOKEN = process.env.BOT_TOKEN_DEV;
