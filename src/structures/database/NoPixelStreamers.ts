@@ -12,7 +12,7 @@ class NoPixelStreamers extends Model<NoPixelStreamersAttributes> implements NoPi
   declare readonly updatedAt: Date;
 
   public get notifyUsers(): string[] {
-    return this.getDataValue('notify').split(',');
+    return this.getDataValue('notify').split(',').filter((e) => e !== '');
   }
 }
 

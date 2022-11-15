@@ -48,6 +48,36 @@ export default new Command({
     name: 'list',
     type: ApplicationCommandOptionType.Subcommand,
     description: 'Get all streamers'
+  }, {
+    name: 'info',
+    type: ApplicationCommandOptionType.Subcommand,
+    description: 'Get user info from in-game id',
+    options: [{
+      name: 'id',
+      type: ApplicationCommandOptionType.Integer,
+      description: 'Game id',
+      required: true,
+    }]
+  }, {
+    name: 'indentifier',
+    type: ApplicationCommandOptionType.Subcommand,
+    description: 'Get steam indentifier from steam id',
+    options: [{
+      name: 'steam',
+      type: ApplicationCommandOptionType.String,
+      description: 'Steam id',
+      required: true,
+    }]
+  }, {
+    name: 'steam',
+    type: ApplicationCommandOptionType.Subcommand,
+    description: 'Get steam id from steam indentifier',
+    options: [{
+      name: 'id',
+      type: ApplicationCommandOptionType.String,
+      description: 'Steam indentifier',
+      required: true,
+    }]
   }],
   run: async ({ interaction, subCommand }) => {
     if (subCommand === 'get') {
@@ -67,13 +97,13 @@ export default new Command({
         const embed = new EmbedBuilder();
         if (index >= 0) {
           embed.setTitle(`🟢 ${players[index].name} is online!`);
-          embed.setDescription(`With the ping id ${players[index].ping}`);
+          embed.setDescription(`With the ping ${players[index].ping} and id ${players[index].id}`);
         } else {
           embed.setTitle(`🔴 ${name} is offline!`);
         }
         await interaction.editReply({ embeds: [embed] });
       } catch (error) {
-        //console.log(error);
+        await interaction.editReply('Could not get players.');
       }
     } else if (subCommand === 'set') {
       await interaction.deferReply({ephemeral: true});
@@ -118,6 +148,36 @@ export default new Command({
       await interaction.deferReply();
       const streamers = await db.nopixelStreamers.findAll();
       await interaction.editReply(`Known streamers\n${streamers.map((streamer) => streamer.name).join(', ')}.`);
+    } else if (subCommand === 'info') {
+      await interaction.deferReply();
+      const id = interaction.options.get('id').value as number;
+      try {
+        const players: NoPixelPlayer[] = await (await fetch(process.env.NOPIXEL_API, {
+          agent: new http.Agent()
+        })).json() as unknown as NoPixelPlayer[];
+        const index = players.findIndex((player) => player.id === id);
+        if (index >= 0) {
+          const embed = new EmbedBuilder()
+            .setTitle(players[index].name)
+            .setDescription(`**id:** ${players[index].id}\n**ping:** ${players[index].ping}\nIdentifiers: ${players[index].identifiers.join(', ')}`);
+          await interaction.editReply({ embeds: [embed] });
+        } else {
+          await interaction.editReply(`Could not find player with id ${id}.`);
+        }
+      } catch (error) {
+        await interaction.editReply('Could not get players.');
+      }
+    } else if (subCommand === 'indentifier') {
+      await interaction.deferReply();
+      const steam = interaction.options.get('steam').value as string;
+      const steamid = BigInt(steam);
+      await interaction.editReply(`steam:${steamid.toString(16)}`);
+    } else if (subCommand === 'steam') {
+      await interaction.deferReply();
+      const id = interaction.options.get('id').value as string;
+      const hex = id.replace('steam:', '0x');
+      const steamid = BigInt(hex);
+      await interaction.editReply(`https://steamcommunity.com/profiles/${steamid}`);
     }
   }
 });
