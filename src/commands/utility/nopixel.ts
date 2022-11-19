@@ -88,18 +88,43 @@ export default new Command({
         const players: NoPixelPlayer[] = await (await fetch(process.env.NOPIXEL_API, {
           agent: new http.Agent()
         })).json() as unknown as NoPixelPlayer[];
-        const index = players.findIndex((player) => {
+
+        const state = {
+          id: 0,
+          name: name,
+          online: false,
+          lastOnline: null,
+        };
+
+        players.findIndex((player) => {
           streamers.forEach((streamer) => {
-            if (streamer.name.toLowerCase() === name.toLowerCase() && player.identifiers.includes(streamer.npid)) return true;
+            if (streamer.name.toLowerCase() === name.toLowerCase()) {
+              if (player.identifiers.includes(streamer.npid)) {
+                state.id = player.id;
+                state.name = streamer.name;
+                state.online = true;
+                return true;
+              } else {
+                state.name = streamer.name;
+                state.lastOnline = streamer.lastonline;
+                return true;
+              }
+            }
           });
-          return player.name.toLowerCase() === name.toLowerCase();
+          if (player.name.toLowerCase() === name.toLowerCase()) {
+            state.id = player.id;
+            state.name = player.name;
+            state.online = true;
+            return true;
+          } else return false;
         });
         const embed = new EmbedBuilder();
-        if (index >= 0) {
-          embed.setTitle(`🟢 ${players[index].name} is online!`);
-          embed.setDescription(`With the ping ${players[index].ping} and id ${players[index].id}`);
+        if (state.online) {
+          embed.setTitle(`🟢 ${state.name} is online!`);
+          embed.setDescription(`With the id ${state.id}`);
         } else {
-          embed.setTitle(`🔴 ${name} is offline!`);
+          embed.setTitle(`🔴 ${state.name} is offline!`);
+          if (state.lastOnline) embed.setDescription(`Last online <t:${Math.round(state.lastOnline.getTime() / 1000)}:R>`);
         }
         await interaction.editReply({ embeds: [embed] });
       } catch (error) {

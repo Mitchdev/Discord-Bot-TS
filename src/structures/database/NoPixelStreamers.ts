@@ -6,6 +6,7 @@ class NoPixelStreamers extends Model<NoPixelStreamersAttributes> implements NoPi
   declare name: string;
   declare npid: string;
   declare status: boolean;
+  declare lastonline: Date;
   declare notify: string;
 
   declare readonly createdAt: Date;
@@ -36,6 +37,10 @@ function initiate(sequelize: Sequelize): typeof NoPixelStreamers {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false
+    },
+    lastonline: {
+      type: DataTypes.DATE,
+      defaultValue: null
     },
     notify: {
       type: DataTypes.TEXT,

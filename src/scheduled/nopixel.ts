@@ -18,15 +18,17 @@ export default new Scheduled('nopixel', 60, true, async () => {
       if (index >= 0 && !streamer.status) {
         await streamer.set('status', true).save();
         const embed = new EmbedBuilder()
-          .setTitle(`🟢 ${players[index].name} is online!`)
-          .setDescription(`With the ping ${players[index].ping} and id ${players[index].id}`);
+          .setTitle(`🟢 ${streamer.name} is online!`)
+          .setDescription(`With the id ${players[index].id}`);
         await (client.channels.resolve(process.env.CHANNEL_NOPIXEL) as TextChannel).send({ embeds: [embed] });
         if (streamer.notifyUsers.length > 0) {
           await (client.channels.resolve(process.env.CHANNEL_NOPIXEL) as TextChannel).send(streamer.notifyUsers.map((n) => `<@${n}> `).join(''));
         }
       }
       if (index < 0 && streamer.status) {
-        await streamer.set('status', false).save();
+        streamer.set('lastonline', new Date());
+        streamer.set('status', false);
+        await streamer.save();
       }
     });
   } catch (error) {
