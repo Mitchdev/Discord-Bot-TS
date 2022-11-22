@@ -31,7 +31,6 @@ import {
 } from './scheduled';
 
 import Utilities from './structures/Utilities';
-import CloudConvertClient from './structures/CloudConvertClient';
 import TwitterClient from './structures/TwitterClient';
 import ExtendedClient from './structures/Client';
 
@@ -52,8 +51,6 @@ export const client = new ExtendedClient();
 export const devActiveCommands: CommandType['name'][] = [];
 
 export const twitter = new TwitterClient();
-
-export const convert = new CloudConvertClient();
 
 export const sequelize = new Sequelize({
   dialect: 'sqlite',

@@ -1,4 +1,4 @@
-import { ApplicationCommandAutocompleteOption, ApplicationCommandNonOptionsData, ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
+import { ApplicationCommandAutocompleteStringOption, ApplicationCommandNonOptionsData, ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import fetch from 'node-fetch';
 import { db, Util } from '../..';
 import Command from '../../structures/Command';
@@ -21,7 +21,7 @@ const measurementOptions = [{
   description: 'Target unit',
   required: true,
   autocomplete: true
-}] as unknown as (ApplicationCommandNonOptionsData | ApplicationCommandAutocompleteOption)[];
+}] as unknown as (ApplicationCommandNonOptionsData | ApplicationCommandAutocompleteStringOption)[];
 
 export default new Command({
   idType: 'ChatInputCommandInteraction',

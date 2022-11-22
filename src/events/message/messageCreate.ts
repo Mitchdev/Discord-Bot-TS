@@ -8,19 +8,6 @@ export default new Event('on', 'messageCreate', async (message: Message) => {
   if (message.author.id !== process.env.BOT_ID && message.author.id !== process.env.BOT_LOGS_ID && message.author.id !== process.env.BOT_ID_DEV) {
     if (message.content.length >= 750) message.react(message.guild.emojis.resolve('773295613558128671')); // donowall
 
-    if (message.content.startsWith('!mp4')) {
-      let messageContent = message.content;
-      if (message.reference) {
-        const channel = client.guilds.resolve(message.reference.guildId).channels.resolve(message.reference.channelId);
-        if (channel.isTextBased()) messageContent = channel.messages.resolve(message.reference.messageId).content;
-      }
-      const webmURL = new RegExp(/(https?:\/\/.*\/(.*)(?:\.webm))/, 'gmi').exec(messageContent) ?? [];
-      if (webmURL.length > 0) {
-        if (!message.reference) await message.suppressEmbeds();
-        await Util.webmToMp4(message, webmURL[1], webmURL[2]);
-      }
-    }
-
     const twitterURL = new RegExp(/(?:https|http):\/\/(?:.+?\.)?(twitter.com\/(?:.+?)\/status\/([0-9]+?)(?:\/|$|\n|\s|\?))/, 'gmi').exec(message.content) ?? [];
     if (twitterURL.length > 0) {
       const isSpoiler = new RegExp(`(\\|\\|(.+?)${twitterURL[2]}(.+?)\\|\\|)`, 'gmi').exec(message.content) ?? [];
