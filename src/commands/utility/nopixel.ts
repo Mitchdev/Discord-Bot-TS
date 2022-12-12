@@ -158,7 +158,8 @@ export default new Command({
         await interaction.deferReply();
         const index = exists.notifyUsers.indexOf(interaction.user.id);
         if (index >= 0) {
-          const newUsers = exists.notifyUsers.splice(index, 1);
+          const newUsers = exists.notifyUsers;
+          newUsers.splice(index, 1);
           await exists.set('notify', newUsers.join(',')).save();
           await interaction.editReply(`Remove from notifications for ${name}.`);
         } else {
