@@ -43,7 +43,7 @@ export default new Command({
       value: 'small'
     }]
   }],
-  run: async({ interaction, client }) => {
+  run: async({ interaction }) => { //, client }) => {
     await interaction.deferReply();
 
     let location: string = (interaction.options.get('location')?.value as string) ?? null;
@@ -63,20 +63,23 @@ export default new Command({
     const alerts = new EmbedBuilder().setTitle('Alerts').setColor(Color.RED);
     const embeds: EmbedBuilder[] = [];
 
-    const coordinates: Coordinates = await (await fetch(process.env.ANDLIN_ADDRESS_API, {
-      method: 'POST',
-      headers: {'Authorization': process.env.ANDLIN_TOKEN},
-      body: JSON.stringify({'Address': location}),
-    })).json() as Coordinates;
+    // const coordinates: Coordinates = await (await fetch(process.env.ANDLIN_ADDRESS_API, {
+    //   method: 'POST',
+    //   headers: {'Authorization': process.env.ANDLIN_TOKEN},
+    //   body: JSON.stringify({'Address': location}),
+    // })).json() as Coordinates;
 
-    if (coordinates.Message) {
-      if (coordinates.Message.startsWith('404 Not Found:')) interaction.editReply({content: `Could not find ${location}`});
-      else {
-        client.users.fetch(process.env.USER_MITCH).then((devLog) => devLog.send({content: `**Coordinates:** ${coordinates.Message}\n**Sent:** \`\`\`{"Address": ${location}}\`\`\``}));
-        client.users.fetch(process.env.USER_ANDLIN).then((andlinLog) => andlinLog.send({content: `**Coordinates:** ${coordinates.Message}\n**Sent:** \`\`\`{"Address": ${location}}\`\`\``}));
-      }
-    } else {
-      const data: Weather = await (await fetch(process.env.WEATHER_API.replace('|lat|', coordinates.lat.toString()).replace('|lon|', coordinates.lon.toString()).replace('|units|', units))).json() as Weather;
+    const coordinates: Coordinates = (await (await fetch(process.env.ADDRESS_API + encodeURIComponent(location))).json()).results[0];
+
+    // if (coordinates.Message) {
+    //   if (coordinates.Message.startsWith('404 Not Found:')) interaction.editReply({content: `Could not find ${location}`});
+    //   else {
+    //     client.users.fetch(process.env.USER_MITCH).then((devLog) => devLog.send({content: `**Coordinates:** ${coordinates.Message}\n**Sent:** \`\`\`{"Address": ${location}}\`\`\``}));
+    //     client.users.fetch(process.env.USER_ANDLIN).then((andlinLog) => andlinLog.send({content: `**Coordinates:** ${coordinates.Message}\n**Sent:** \`\`\`{"Address": ${location}}\`\`\``}));
+    //   }
+    // } else {
+      // const data: Weather = await (await fetch(process.env.WEATHER_API.replace('|lat|', coordinates.lat.toString()).replace('|lon|', coordinates.lon.toString()).replace('|units|', units))).json() as Weather;
+      const data: Weather = await (await fetch(process.env.WEATHER_API.replace('|lat|', coordinates.geometry.lat.toString()).replace('|lon|', coordinates.geometry.lng.toString()).replace('|units|', units))).json() as Weather;
       const localTime = new Date((data.current.dt+data.timezone_offset)*1000);
       const setRiseMargin = 900; // seconds
 
@@ -154,7 +157,8 @@ export default new Command({
       if (data.hourly[0].wind_gust) gustText += `\nGusts **${(units === 'imperial') ? data.hourly[0].wind_gust+'mi/h' : (units === 'standard') ? data.hourly[0].wind_speed+'m/s' : (data.hourly[0].wind_gust*3.6).toFixed(2)+'km/h'}**`;
 
       // eslint-disable-next-line eqeqeq
-      weather.setTitle(`${coordinates.manicipality != null ? coordinates.manicipality : location}, ${coordinates.countryCode} (Location confidence: ${(coordinates.score < 0) ? '0' : coordinates.score}%)`)
+      // weather.setTitle(`${coordinates.manicipality != null ? coordinates.manicipality : location}, ${coordinates.countryCode} (Location confidence: ${(coordinates.score < 0) ? '0' : coordinates.score}%)`)
+      weather.setTitle(`${coordinates.components.city ? coordinates.components.city : coordinates.components.state ? coordinates.components.state : coordinates.components.town ? coordinates.components.town : 'null'}, ${coordinates.components.country} (Location confidence: ${coordinates.confidence * 10}%)`)
         .setDescription(`Current condition **${data.hourly[0].weather[0].description}** at **${localTime.getHours() < 10 ? `0${localTime.getHours()}`: localTime.getHours()}:${localTime.getMinutes() < 10 ? `0${localTime.getMinutes()}`: localTime.getMinutes()}**`)
         .setThumbnail(`http://openweathermap.org/img/wn/${data.current.weather[0].icon}@2x.png`);
 
@@ -229,7 +233,7 @@ export default new Command({
       interaction.editReply({embeds: embeds});
 
       // animate(data.current.weather[0].main, weather.color, 0, interaction, embeds);
-    }
+    //}
   }
 });
 

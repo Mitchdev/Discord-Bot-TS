@@ -37,6 +37,8 @@ declare global {
       ANDLIN_ADDRESS_API: string;
       ANDLIN_TRANSLATE_API: string;
 
+      ADDRESS_API: string;
+
       TWITTER_API_TOKEN: string;
 
       CLOUD_CONVERT_TOKEN: string;

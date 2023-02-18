@@ -38,77 +38,79 @@ export default new Command({
   run: async ({ interaction }) => {
     await interaction.deferReply();
 
-    const phrase = interaction.options.get('phrase').value as string;
-    const binary = phrase.match(/[10\s]+/gmi);
-    // eslint-disable-next-line no-useless-escape
-    const morse = phrase.match(/[.\-\/\s]+/gmi);
+    interaction.editReply('<@98469747905011712>');
 
-    if (binary?.length === 1 || morse?.length === 1) {
-      if (binary[0] === phrase && (!interaction.options.get('source') || !interaction.options.get('target'))) {
-        interaction.editReply({content: `**Binary**\n${phrase}\n**Ascii**\n${decodeBinary(phrase)}`});
-        return;
-      } else if (morse[0] === phrase && (!interaction.options.get('source') || !interaction.options.get('target'))) {
-        interaction.editReply({content: `**Morse**\n${phrase}\n**Ascii**\n${decodeMorse(phrase)}`});
-        return;
-      }
-    }
+    // const phrase = interaction.options.get('phrase').value as string;
+    // const binary = phrase.match(/[10\s]+/gmi);
+    // // eslint-disable-next-line no-useless-escape
+    // const morse = phrase.match(/[.\-\/\s]+/gmi);
 
-    const sourceLanguage = interaction.options.get('source')?.value as string ?? 'auto';
-    let targetLanguage = 'en';
-    if (interaction.options.get('target') && interaction.options.get('target')?.value as string === 'auto') {
-      switch(interaction.locale) {
-        case 'en-US':
-        case 'en-GB':
-          targetLanguage = 'en';
-          break;
-        case 'zh-CN':
-        case 'zh-TW':
-          targetLanguage = 'zh-Hans';
-          break;
-        case 'pt-BR':
-          targetLanguage = 'pt';
-          break;
-        case 'es-ES':
-          targetLanguage = 'es';
-          break;
-        case 'sv-SE':
-          targetLanguage = 'sw';
-          break;
-        default:
-          targetLanguage = interaction.locale;
-          break;
-      }
-    } else targetLanguage = interaction.options.get('target')?.value as string ?? 'en';
+    // if (binary?.length === 1 || morse?.length === 1) {
+    //   if (binary[0] === phrase && (!interaction.options.get('source') || !interaction.options.get('target'))) {
+    //     interaction.editReply({content: `**Binary**\n${phrase}\n**Ascii**\n${decodeBinary(phrase)}`});
+    //     return;
+    //   } else if (morse[0] === phrase && (!interaction.options.get('source') || !interaction.options.get('target'))) {
+    //     interaction.editReply({content: `**Morse**\n${phrase}\n**Ascii**\n${decodeMorse(phrase)}`});
+    //     return;
+    //   }
+    // }
 
-    const data: Translate[] | TranslateError = await (await fetch(process.env.ANDLIN_TRANSLATE_API, {
-      method: 'POST',
-      headers: {'Authorization': process.env.ANDLIN_TOKEN},
-      body: JSON.stringify({'source': sourceLanguage, 'target': targetLanguage, 'text': encode(phrase)}),
-    })).json();
+    // const sourceLanguage = interaction.options.get('source')?.value as string ?? 'auto';
+    // let targetLanguage = 'en';
+    // if (interaction.options.get('target') && interaction.options.get('target')?.value as string === 'auto') {
+    //   switch(interaction.locale) {
+    //     case 'en-US':
+    //     case 'en-GB':
+    //       targetLanguage = 'en';
+    //       break;
+    //     case 'zh-CN':
+    //     case 'zh-TW':
+    //       targetLanguage = 'zh-Hans';
+    //       break;
+    //     case 'pt-BR':
+    //       targetLanguage = 'pt';
+    //       break;
+    //     case 'es-ES':
+    //       targetLanguage = 'es';
+    //       break;
+    //     case 'sv-SE':
+    //       targetLanguage = 'sw';
+    //       break;
+    //     default:
+    //       targetLanguage = interaction.locale;
+    //       break;
+    //   }
+    // } else targetLanguage = interaction.options.get('target')?.value as string ?? 'en';
 
-    if ('Message' in data) {
-      console.log({'translator': data.Message});
-      console.log({'source': sourceLanguage, 'target': targetLanguage, 'text': encode(phrase)});
-    } else if (data.length > 0) {
-      if (data[0].translations) {
-        if (data[0].translations.length > 0) {
-          const sourceLanguageName = await getLang((data[0].detectedLanguage ? data[0].detectedLanguage.language : sourceLanguage));
-          const targetLanguageName = await getLang((data[0].translations[0].to ? data[0].translations[0].to : targetLanguage));
+    // const data: Translate[] | TranslateError = await (await fetch(process.env.ANDLIN_TRANSLATE_API, {
+    //   method: 'POST',
+    //   headers: {'Authorization': process.env.ANDLIN_TOKEN},
+    //   body: JSON.stringify({'source': sourceLanguage, 'target': targetLanguage, 'text': encode(phrase)}),
+    // })).json();
 
-          const embed = new EmbedBuilder()
-            .setTitle('Translate')
-            .addFields([{
-              name: `**${sourceLanguageName}**${(data[0].detectedLanguage ? ` - Language confidence: ${data[0].detectedLanguage.score*100}%` : '')}`,
-              value: phrase
-            }, {
-              name: `**${targetLanguageName}**`,
-              value: decode(data[0].translations[0].text)
-            }]);
+    // if ('Message' in data) {
+    //   console.log({'translator': data.Message});
+    //   console.log({'source': sourceLanguage, 'target': targetLanguage, 'text': encode(phrase)});
+    // } else if (data.length > 0) {
+    //   if (data[0].translations) {
+    //     if (data[0].translations.length > 0) {
+    //       const sourceLanguageName = await getLang((data[0].detectedLanguage ? data[0].detectedLanguage.language : sourceLanguage));
+    //       const targetLanguageName = await getLang((data[0].translations[0].to ? data[0].translations[0].to : targetLanguage));
 
-          interaction.editReply({embeds: [embed]});
-        }
-      }
-    }
+    //       const embed = new EmbedBuilder()
+    //         .setTitle('Translate')
+    //         .addFields([{
+    //           name: `**${sourceLanguageName}**${(data[0].detectedLanguage ? ` - Language confidence: ${data[0].detectedLanguage.score*100}%` : '')}`,
+    //           value: phrase
+    //         }, {
+    //           name: `**${targetLanguageName}**`,
+    //           value: decode(data[0].translations[0].text)
+    //         }]);
+
+    //       interaction.editReply({embeds: [embed]});
+    //     }
+    //   }
+    // }
   }
 });
 
