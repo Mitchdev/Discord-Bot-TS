@@ -48,7 +48,7 @@ export default new Command({
     }]
   }],
   run: async ({ interaction, subCommand }) => {
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply();
 
     const rounds: F1Round[] = await (await fetch(process.env.F1_SEASON_API)).json() as F1Round[];
 

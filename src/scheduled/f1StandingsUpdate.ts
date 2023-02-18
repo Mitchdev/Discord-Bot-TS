@@ -14,7 +14,7 @@ export default new Scheduled('f1StandingsUpdate', 1800, true, async () => {
     for (let i = 0; i < rounds.length; i++) {
       for (let j = 0; j < rounds[i].sessions.length; j++) {
         if (new Date().getTime() < new Date(rounds[i].sessions[j].time_start).getTime()) {
-          lastRound = rounds[i - 1]; // TODO fix for first round of season
+          lastRound = rounds[i - 1];
           nextRound = rounds[i];
           i = rounds.length + 1;
           break;
@@ -27,7 +27,7 @@ export default new Scheduled('f1StandingsUpdate', 1800, true, async () => {
 
     if (driverStanding.length > 0) {
       const driverEmbed = new EmbedBuilder()
-        .setTitle(`Driver Standings after ${lastRound.track.name}`)
+        .setTitle(`Driver Standings${lastRound ? ` after ${lastRound.track.name}` : ''}`)
         .setColor(Color.F1_RED)
         .addFields([{
           name: 'Position',
@@ -49,7 +49,7 @@ export default new Scheduled('f1StandingsUpdate', 1800, true, async () => {
 
     if (constructorStanding.length > 0) {
       const constructorEmbed = new EmbedBuilder()
-        .setTitle(`Constructors Standings after ${lastRound.track.name}`)
+        .setTitle(`Constructors Standings${lastRound ? ` after ${lastRound.track.name}` : ''}`)
         .setColor(Color.F1_RED)
         .addFields([{
           name: 'Position',
