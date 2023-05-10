@@ -40,8 +40,6 @@ declare global {
 
       ADDRESS_API: string;
 
-      TWITTER_API_TOKEN: string;
-
       CLOUD_CONVERT_TOKEN: string;
 
       SMMRY_API: string;

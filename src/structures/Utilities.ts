@@ -5,7 +5,6 @@ import blankField from '../utilities/blankField';
 import capitalize from '../utilities/capitalize';
 import commaNumber from '../utilities/commaNumber';
 import durationToSeconds from '../utilities/durationToSeconds';
-import embedTweet from '../utilities/embedTweet';
 import followRedirect from '../utilities/followRedirect';
 import hexToInt from '../utilities/hexToInt';
 import randomString from '../utilities/randomString';
@@ -26,7 +25,6 @@ class Utilities implements UtilitiesType {
   capitalize = capitalize;
   commaNumber = commaNumber;
   durationToSeconds = durationToSeconds;
-  embedTweet = embedTweet;
   followRedirect = followRedirect;
   hexToInt = hexToInt;
   randomString = randomString;

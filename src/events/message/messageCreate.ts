@@ -8,15 +8,9 @@ export default new Event('on', 'messageCreate', async (message: Message) => {
   if (message.author.id !== process.env.BOT_ID && message.author.id !== process.env.BOT_LOGS_ID && message.author.id !== process.env.BOT_ID_DEV) {
     if (message.content.length >= 750) message.react(message.guild.emojis.resolve('773295613558128671')); // donowall
 
-    const twitterURL = new RegExp(/(?:https|http):\/\/(?:.+?\.)?(twitter.com\/(?:.+?)\/status\/([0-9]+?)(?:\/|$|\n|\s|\?))/, 'gmi').exec(message.content) ?? [];
-    if (twitterURL.length > 0) {
-      const isSpoiler = new RegExp(`(\\|\\|(.+?)${twitterURL[2]}(.+?)\\|\\|)`, 'gmi').exec(message.content) ?? [];
-      if (isSpoiler.length === 0) Util.embedTweet(message, twitterURL[2]);
-    }
-
     const recycledTwitterURL = new RegExp(/(?:https|http):\/\/(?:.+?\.)?((?:twitter.com|fxtwitter.com|nitter.net)\/(?:.+?)\/status\/([0-9]+?)(?:\/|$|\n|\s|\?))/, 'gmi').exec(message.content) ?? [];
     if (recycledTwitterURL.length > 0) {
-      const recycled = await db.recycledLinks.findByPk(twitterURL[2]);
+      const recycled = await db.recycledLinks.findByPk(recycledTwitterURL[2]);
       if (recycled) message.react('♻️');
       else {
         await db.recycledLinks.build({
@@ -62,8 +56,8 @@ export default new Event('on', 'messageCreate', async (message: Message) => {
         seconds: phrases[0].seconds,
         duration: phrases[0].duration
       }, message,
-      `Added **${phrases[0].rolename}** to **${member.displayName ?? message.author.username}** for **${phrases[0].duration}**\nfor using banned phrase **${phrases[0].phrase}**`,
-      `**${member.displayName ?? message.author.username}** already has role ${phrases[0].rolename}\nbut used banned phrase **${phrases[0].phrase}**`);
+        `Added **${phrases[0].rolename}** to **${member.displayName ?? message.author.username}** for **${phrases[0].duration}**\nfor using banned phrase **${phrases[0].phrase}**`,
+        `**${member.displayName ?? message.author.username}** already has role ${phrases[0].rolename}\nbut used banned phrase **${phrases[0].phrase}**`);
     }
 
     const user = await db.messages.findByPk(message.author.id);

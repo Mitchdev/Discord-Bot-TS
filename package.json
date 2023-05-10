@@ -29,8 +29,7 @@
     "openai": "^3.2.1",
     "sequelize": "^6.15.0",
     "sharp": "^0.30.1",
-    "sqlite3": "^5.0.2",
-    "twitter.js": "^0.12.0"
+    "sqlite3": "^5.0.2"
   },
   "devDependencies": {
     "@types/color-thief-node": "^1.0.1",

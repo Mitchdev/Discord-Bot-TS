@@ -31,7 +31,6 @@ import {
 } from './scheduled';
 
 import Utilities from './structures/Utilities';
-import TwitterClient from './structures/TwitterClient';
 import OpenAIClient from './structures/OpenAIClient';
 import ExtendedClient from './structures/Client';
 
@@ -50,8 +49,6 @@ export const client = new ExtendedClient();
 
 // commands currently working on.
 export const devActiveCommands: CommandType['name'][] = [];
-
-export const twitter = new TwitterClient();
 
 export const openai = new OpenAIClient();
 
