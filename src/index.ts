@@ -32,6 +32,7 @@ import {
 
 import Utilities from './structures/Utilities';
 import TwitterClient from './structures/TwitterClient';
+import OpenAIClient from './structures/OpenAIClient';
 import ExtendedClient from './structures/Client';
 
 import CommandType from './typings/Command';
@@ -52,13 +53,15 @@ export const devActiveCommands: CommandType['name'][] = [];
 
 export const twitter = new TwitterClient();
 
+export const openai = new OpenAIClient();
+
 export const sequelize = new Sequelize({
   dialect: 'sqlite',
   storage: process.argv[2] === 'dev' ? 'discord-dev.sqlite' : 'discord.sqlite',
   logging: process.argv[2] === 'dev' ? console.log : false
 });
 
-export const db =  {
+export const db = {
   messages: Messages(sequelize),
   emotes: Emotes(sequelize),
   tempRoles: TempRoles(sequelize),

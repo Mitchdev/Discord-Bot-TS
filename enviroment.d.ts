@@ -32,6 +32,7 @@ declare global {
       USER_MITCH: string;
       USER_ANDLIN: string;
 
+      OPENAI_TOKEN: string;
       ANDLIN_TOKEN: string;
       ANDLIN_PING_API: string;
       ANDLIN_ADDRESS_API: string;
@@ -76,4 +77,4 @@ declare global {
   }
 }
 
-export {};
+export { };

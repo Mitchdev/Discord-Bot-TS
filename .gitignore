@@ -5,3 +5,4 @@ node_modules/
 *.sqlite*
 package-lock.json
 uptime
+src/resources/gpt/context.txt
