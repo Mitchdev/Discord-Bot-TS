@@ -1,9 +1,10 @@
-export interface NoPixelPlayer {
+export interface GtaRpPlayer {
   endpoint: string;
   id: number;
   identifiers: string[];
   name: string;
   ping: number;
+  server: string;
 }
 
-export default NoPixelPlayer;
+export default GtaRpPlayer;

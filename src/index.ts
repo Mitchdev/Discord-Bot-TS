@@ -24,7 +24,7 @@ import {
   emotesSevenDaysRemove,
   f1StandingsUpdate,
   messagesSevenDaysRemove,
-  nopixel,
+  gtarp,
   regularUsersUpdate,
   tempRolesRemove,
   updateUptime
@@ -84,7 +84,7 @@ export const timers = {
   temp_roles_removal: tempRolesRemove,
   regular_users_update: regularUsersUpdate,
   f1_standings_update: f1StandingsUpdate,
-  nopixel: nopixel
+  gtarp: gtarp
 };
 
 export type timers = typeof timers;

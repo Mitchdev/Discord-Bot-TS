@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import fetch from 'node-fetch';
 import http from 'http';
 import Command from '../../structures/Command';
-import NoPixelPlayer from '../../typings/apis/NoPixel';
+import NoPixelPlayer from '../../typings/apis/GtaRp';
 import { db } from '../..';
 
 export default new Command({
@@ -131,7 +131,7 @@ export default new Command({
         await interaction.editReply('Could not get players.');
       }
     } else if (subCommand === 'set') {
-      await interaction.deferReply({ephemeral: true});
+      await interaction.deferReply({ ephemeral: true });
       const name = interaction.options.get('name').value as string;
       if (interaction.user.id === process.env.USER_MITCH) {
         const id = interaction.options.get('id').value as string;
@@ -167,7 +167,7 @@ export default new Command({
           await interaction.editReply(`Added to notifications for ${name}.`);
         }
       } else {
-        await interaction.deferReply({ephemeral: true});
+        await interaction.deferReply({ ephemeral: true });
         await interaction.editReply(`Streamer ${name} not found.`);
       }
     } else if (subCommand === 'list') {

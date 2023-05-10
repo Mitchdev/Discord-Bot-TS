@@ -71,6 +71,7 @@ declare global {
       TWITCH_AUTH_API: string;
 
       NOPIXEL_API: string;
+      IGNITE_API: string;
     }
   }
 }
