@@ -70,7 +70,7 @@ export default new Command({
         .setTitle(nextRound.name)
         .setColor(Color.F1_RED)
         .setDescription(`**${nextRound.country}**, **${nextRound.city}**\n**${nextRound.track.name}**\n**${nextRound.track.lap_length}km** | **${nextRound.track.laps} laps**\n\n${nextRound.sessions.map((session) => {
-          return `**${session.name}** - ${(session.time_start) ? `**<t:${new Date(session.time_start).getTime() / 1000}:f>** | **<t:${new Date(session.time_start).getTime() / 1000}:R>**` : 'TBA'}`;
+          return `**${session.name}** - ${(session.time_start) ? `**<t:${new Date(session.time_start).getTime() / 1000}:R>**` : 'TBA'}`;
         }).join('\n')}`)
         .setThumbnail(nextRound.track.country_flag)
         .setImage(`${nextRound.track.image}?${Util.randomString(5)}`)
@@ -105,7 +105,7 @@ export default new Command({
         .setTitle(race.name)
         .setColor(Color.F1_RED)
         .setDescription(`**${race.country}**, **${race.city}**\n**${race.track.name}**\n**${race.track.lap_length}km** | **${race.track.laps} laps**\n\n${race.results.length > 0 ? '' : race.sessions.map((session) => {
-          return `**${session.name}** - ${session.time_start ? `**<t:${new Date(session.time_start).getTime() / 1000}:f>** | **<t:${new Date(session.time_start).getTime() / 1000}:R>**` : 'TBA'}`;
+          return `**${session.name}** - ${session.time_start ? `**<t:${new Date(session.time_start).getTime() / 1000}:R>**` : 'TBA'}`;
         }).join('\n')}`)
         .setThumbnail(race.track.country_flag)
         .setImage(`${race.track.image}?${Util.randomString(5)}`)
