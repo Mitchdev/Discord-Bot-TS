@@ -69,6 +69,6 @@ export default new Scheduled('f1StandingsUpdate', 1800, true, async () => {
       if (constructorMessage.embeds[0].fields[2].value !== constructorEmbed.data.fields[2].value) await constructorMessage.edit({ embeds: [constructorEmbed] });
     }
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 });
