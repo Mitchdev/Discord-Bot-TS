@@ -28,7 +28,7 @@ export default class OpenAIClient {
 
     const message: ChatCompletionRequestMessage = {
       role: 'user',
-      name: user,
+      name: user.replaceAll(/[^a-zA-Z0-9_-]/gm, '_'),
       content: question,
     };
 
