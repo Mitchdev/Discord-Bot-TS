@@ -2,9 +2,11 @@ interface NoPixelStreamersAttributes {
   id: string,
   name: string,
   npid: string,
-  lastonline: Date;
+  lastonline: Date,
   status: boolean,
-  notify: string
+  server: string,
+  notify: string,
+  updatedAt: Date
 }
 
 export default NoPixelStreamersAttributes;

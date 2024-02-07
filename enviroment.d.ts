@@ -20,10 +20,12 @@ declare global {
       CHANNEL_ROLES: string;
       CHANNEL_GENERAL: string;
       CHANNEL_F1: string;
+      CHANNEL_NOPIXEL_NOTIFICATIONS: string;
       CHANNEL_NOPIXEL: string;
 
       MESSAGE_F1_DRIVERS: string;
       MESSAGE_F1_CONSTRUCTORS: string;
+      MESSAGE_NOPIXEL: string;
 
       ROLE_MOD: string;
       ROLE_MUTE: string;
@@ -71,6 +73,7 @@ declare global {
 
       NOPIXEL_API: string;
       IGNITE_API: string;
+      ONX_API: string;
     }
   }
 }
