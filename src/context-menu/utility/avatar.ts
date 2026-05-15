@@ -1,4 +1,4 @@
-import { ApplicationCommandType, EmbedBuilder, GuildMember } from 'discord.js';
+import { ApplicationCommandType, EmbedBuilder, GuildMember, MessageFlags } from 'discord.js';
 import { getColorFromURL } from 'color-thief-node';
 import Command from '../../structures/Command';
 import { Util } from '../..';
@@ -8,7 +8,7 @@ export default new Command({
   name: 'Get Avatar',
   type: ApplicationCommandType.User,
   run: async ({ client, interaction }) => {
-    await interaction.deferReply({ephemeral: true});
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
     const member = interaction.options.get('user')?.member ? interaction.options.get('user').member as GuildMember : interaction.member;
     const user = interaction.options.get('user')?.user ? interaction.options.get('user').user : interaction.user;

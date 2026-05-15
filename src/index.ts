@@ -27,12 +27,14 @@ import {
   gtarp,
   regularUsersUpdate,
   tempRolesRemove,
-  updateUptime
+  updateUptime,
+  openaiQueue
 } from './scheduled';
 
 import Utilities from './structures/Utilities';
 import OpenAIClient from './structures/OpenAIClient';
 import ExtendedClient from './structures/Client';
+import Database from './structures/Database';
 
 import CommandType from './typings/Command';
 
@@ -40,6 +42,8 @@ if (process.argv[2] === 'dev') {
   process.env.BOT_TOKEN = process.env.BOT_TOKEN_DEV;
   process.env.BOT_ID = process.env.BOT_ID_DEV;
 }
+
+export const database = new Database();
 
 export const startDate = new Date();
 
@@ -51,6 +55,8 @@ export const client = new ExtendedClient();
 export const devActiveCommands: CommandType['name'][] = [];
 
 export const openai = new OpenAIClient();
+
+openai.registerTools();
 
 export const sequelize = new Sequelize({
   dialect: 'sqlite',
@@ -84,7 +90,8 @@ export const timers = {
   temp_roles_removal: tempRolesRemove,
   regular_users_update: regularUsersUpdate,
   f1_standings_update: f1StandingsUpdate,
-  gtarp: gtarp
+  gtarp: gtarp,
+  openai_queue: openaiQueue
 };
 
 export type timers = typeof timers;

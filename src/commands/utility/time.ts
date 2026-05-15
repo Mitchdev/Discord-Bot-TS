@@ -1,5 +1,4 @@
 import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
-import fetch from 'node-fetch';
 import Color, { ColorDiscord } from '../../enums/Color';
 import Command from '../../structures/Command';
 import Time from '../../typings/apis/Time';
@@ -17,7 +16,7 @@ export default new Command({
   run: async ({ interaction }) => {
     await interaction.deferReply();
 
-    const time: Time = await (await fetch(process.env.TIME_API.replace('|location|', interaction.options.get('location').value as string))).json();
+    const time: Time = await (await fetch(process.env.TIME_API.replace('|location|', interaction.options.get('location').value as string))).json() as Time;
 
     if (Object.keys(time).length > 0) {
       const date = new Date(time.datetime);

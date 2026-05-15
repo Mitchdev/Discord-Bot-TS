@@ -1,4 +1,4 @@
-import { ActionRow, ActionRowBuilder, AnyComponentBuilder, ApplicationCommandOptionType, ButtonBuilder, ButtonComponent, ButtonStyle, Message, TextChannel } from 'discord.js';
+import { ActionRow, ActionRowBuilder, AnyComponentBuilder, ApplicationCommandOptionType, ButtonBuilder, ButtonComponent, ButtonStyle, Message, MessageFlags, TextChannel } from 'discord.js';
 import { db } from '../..';
 import RolesCategory from '../../enums/RolesCategory';
 import ExtendedClient from '../../structures/Client';
@@ -62,7 +62,7 @@ export default new Command({
     }]
   }],
   run: async ({ client, interaction, subCommand }) => {
-    await interaction.deferReply({ephemeral: true});
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
     if (subCommand === 'reload') {
       interaction.editReply('Updating...');
       reloadRolesMessage(client).then(() => {

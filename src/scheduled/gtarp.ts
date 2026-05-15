@@ -1,26 +1,25 @@
 import { EmbedBuilder, TextChannel } from 'discord.js';
-import fetch from 'node-fetch';
-import http from 'http';
 import { client, db } from '..';
 import Scheduled from '../structures/Scheduled';
 import GtaRpPlayer from '../typings/apis/GtaRp';
 import Color from '../enums/Color';
 import NoPixelStreamersAttributes from '../typings/database/NoPixelStreamersAttributes';
+import { Agent } from 'undici';
 
 export default new Scheduled('gtarp', 60, true, async () => {
   try {
     const nopixelPlayers: GtaRpPlayer[] = await (await fetch(process.env.NOPIXEL_API, {
-      agent: new http.Agent()
+      dispatcher: new Agent()
     })).json() as unknown as GtaRpPlayer[];
     nopixelPlayers.forEach((player) => player['server'] = 'NoPixel');
 
     const ignitePlayers: GtaRpPlayer[] = await (await fetch(process.env.IGNITE_API, {
-      agent: new http.Agent()
+      dispatcher: new Agent()
     })).json() as unknown as GtaRpPlayer[];
     ignitePlayers.forEach((player) => player['server'] = 'Ignite');
 
     const onxPlayers: GtaRpPlayer[] = await (await fetch(process.env.ONX_API, {
-      agent: new http.Agent()
+      dispatcher: new Agent()
     })).json() as unknown as GtaRpPlayer[];
     onxPlayers.forEach((player) => player['server'] = 'ONX');
 

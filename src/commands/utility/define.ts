@@ -1,5 +1,4 @@
 import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
-import fetch from 'node-fetch';
 import Command from '../../structures/Command';
 import { NormalDictionary, NormalDictionaryError, UrbanDictionary } from '../../typings/apis/Dictionary';
 
@@ -31,7 +30,7 @@ export default new Command({
     const phrase = (interaction.options.get('phrase').value as string).toLowerCase();
 
     if ((interaction.options.get('dictionary').value as number) === -1) {
-      const data: NormalDictionary[] | NormalDictionaryError = await (await fetch(process.env.DICTIONARY_API.replace('|phrase|', phrase))).json();
+      const data: NormalDictionary[] | NormalDictionaryError = await (await fetch(process.env.DICTIONARY_API.replace('|phrase|', phrase))).json() as NormalDictionary[] | NormalDictionaryError;
       if ('title' in data) {
         if (data.title === 'No Definitions Found') {
           interaction.editReply(`Couldn't find anything for **${phrase}**.`);

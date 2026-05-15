@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, TextChannel } from 'discord.js';
+import { ApplicationCommandOptionType, MessageFlags, TextChannel } from 'discord.js';
 import Command from '../../structures/Command';
 import { db } from '../..';
 
@@ -20,7 +20,7 @@ export default new Command({
     if (twitterURL.length > 0) url = twitterURL[2];
     else if (redditURL.length > 0) url = redditURL[1];
     else {
-      await interaction.deferReply({ ephemeral: true });
+      await interaction.deferReply({ flags: MessageFlags.Ephemeral });
       await interaction.editReply('Not a twitter / reddit link');
       return;
     }

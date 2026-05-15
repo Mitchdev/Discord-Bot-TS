@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, AttachmentBuilder, EmbedBuilder } from 'discord.js';
+import { ApplicationCommandOptionType, AttachmentBuilder, EmbedBuilder, MessageFlags } from 'discord.js';
 import sharp from 'sharp';
 import { db, Util } from '../..';
 import Command from '../../structures/Command';
@@ -117,7 +117,7 @@ export default new Command({
 
         interaction.editReply({files: [new AttachmentBuilder(graphPNG)], embeds: [embed]});
     } else {
-      await interaction.deferReply({ephemeral: true});
+      await interaction.deferReply({ flags: MessageFlags.Ephemeral });
       interaction.editReply({content: 'Could not find user.'});
     }
   }

@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, GuildMember } from 'discord.js';
+import { ApplicationCommandOptionType, GuildMember, MessageFlags } from 'discord.js';
 import { Util } from '../..';
 import Command from '../../structures/Command';
 
@@ -23,7 +23,7 @@ export default new Command({
     description: 'Reason for the timeout',
   }],
   run: async ({ interaction }) => {
-    await interaction.deferReply({ephemeral: true});
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
     const seconds: number = Util.durationToSeconds(interaction.options.get('duration').value as string);
     if (seconds) {
       if (seconds > 0 && seconds < 604800) {

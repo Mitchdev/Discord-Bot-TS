@@ -1,5 +1,4 @@
 import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
-import fetch from 'node-fetch';
 import { db, Util } from '../..';
 import Command from '../../structures/Command';
 import Currency from '../../typings/apis/Currency';

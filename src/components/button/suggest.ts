@@ -1,5 +1,4 @@
-import { ActionRow, ActionRowBuilder, ButtonBuilder, ButtonComponent, ButtonStyle, EmbedBuilder, GuildEmoji, MessageActionRowComponent, TextChannel } from 'discord.js';
-import fetch from 'node-fetch';
+import { ActionRow, ActionRowBuilder, ButtonBuilder, ButtonComponent, ButtonStyle, EmbedBuilder, GuildEmoji, MessageActionRowComponent, MessageFlags, TextChannel } from 'discord.js';
 import sharp from 'sharp';
 import { client, db, Util } from '../..';
 import Color, { SuggestionStatusColor } from '../../enums/Color';
@@ -27,9 +26,9 @@ export default new Component({
             (client.channels.resolve(process.env.CHANNEL_EMOTE) as TextChannel).send({embeds: [logEmbed]});
 
             const suggestionMessage = (client.channels.resolve(process.env.CHANNEL_EMOTE) as TextChannel).messages.resolve(suggestion.messageid);
-            const image = sharp(await (await fetch(suggestion.suggestion)).buffer());
+            const image = sharp(await (await fetch(suggestion.suggestion)).arrayBuffer());
             const metadata = await image.metadata();
-            const imageBuffer = (metadata.format === 'gif') ? await sharp(await (await fetch(suggestion.suggestion)).buffer(), { animated: true }).toBuffer() : await image.toBuffer();
+            const imageBuffer = (metadata.format === 'gif') ? await sharp(await (await fetch(suggestion.suggestion)).arrayBuffer(), { animated: true }).toBuffer() : await image.toBuffer();
             interaction.guild.emojis.create({
               attachment: imageBuffer,
               name: suggestion.name
@@ -65,9 +64,9 @@ export default new Component({
           .setColor(SuggestionStatusColor.Denied);
         await interaction.editReply({embeds: [embed], components: []});
       } else if (args[0] === 'emote' && args[1] === 'Accepted') {
-        const image = sharp(await (await fetch(suggestion.suggestion)).buffer());
+        const image = sharp(await (await fetch(suggestion.suggestion)).arrayBuffer());
         const metadata = await image.metadata();
-        const imageBuffer = (metadata.format === 'gif') ? await sharp(await (await fetch(suggestion.suggestion)).buffer(), { animated: true }).toBuffer() : await image.toBuffer();
+        const imageBuffer = (metadata.format === 'gif') ? await sharp(await (await fetch(suggestion.suggestion)).arrayBuffer(), { animated: true }).toBuffer() : await image.toBuffer();
         const emojisSize = (await interaction.guild.emojis.fetch()).filter((emoji) => emoji.animated === (metadata.format === 'gif')).size;
         if (emojisSize >= GuildEmoteLimits['L' + interaction.guild.premiumTier.toString()]) {
           await interaction.deferReply();
@@ -125,17 +124,17 @@ export default new Component({
             (client.channels.resolve(process.env.CHANNEL_EMOTE) as TextChannel).send({embeds: [logEmbed]});
           }).catch(async (error) => {
             console.log(error);
-            await interaction.deferReply({ ephemeral: true });
+            await interaction.deferReply({ flags: MessageFlags.Ephemeral });
             await interaction.editReply('Could not add emote.');
           });
         }
       } else if (args[0] === 'sticker' && args[1] === 'Accepted') {
         const stickers = await interaction.guild.stickers.fetch();
         if (stickers.size >= GuildStickerLimits['L' + interaction.guild.premiumTier.toString()]) {
-          await interaction.deferReply({ ephemeral: true });
+          await interaction.deferReply({ flags: MessageFlags.Ephemeral });
           await interaction.editReply(`Max stickers (${GuildStickerLimits['L' + interaction.guild.premiumTier.toString()]}):\nPlease delete a sticker first.`);
         } else {
-          const imageBuffer = await sharp(await (await fetch(suggestion.suggestion)).buffer()).png().toBuffer();
+          const imageBuffer = await sharp(await (await fetch(suggestion.suggestion)).arrayBuffer()).png().toBuffer();
           const sticker = await interaction.guild.stickers.create({
             file: imageBuffer,
             name: suggestion.name,
@@ -158,7 +157,7 @@ export default new Component({
 
             (client.channels.resolve(process.env.CHANNEL_EMOTE) as TextChannel).send({embeds: [logEmbed]});
           } else {
-            await interaction.deferReply({ ephemeral: true });
+            await interaction.deferReply({ flags: MessageFlags.Ephemeral });
             await interaction.editReply('Could not add sticker.');
           }
         }
@@ -173,7 +172,7 @@ export default new Component({
         }
       }
     } else {
-      await interaction.deferReply({ ephemeral: true });
+      await interaction.deferReply({ flags: MessageFlags.Ephemeral });
       await interaction.editReply('Could not find id in suggestions');
     }
   }

@@ -1,23 +1,23 @@
-import { Message, Utils } from 'discord.js';
-
-/**
- * Splits content into multiple messages if too big.
- * @param {string | string[]} content content to be split or already split content.
- * @param {Message} message message to reply to.
- * @param {string} codeblock disocrd codeblock type.
- * @example Util.splitMessage('Hello World', message)
- * @example Util.splitMessage('console.log(\'Hello world\')', message, 'ts')
- */
-export default async function splitMessage(content: string | string[], message: Message, codeblock: string = null): Promise<void> {
-  // if (typeof content === 'string') {
-  //   if (content.length > 0) {
-  //     if (codeblock !== null) content = Util.cleanCodeBlockContent(content);
-  //     content = Util.splitMessage(content);
-  //   } else return;
-  // }
-  // if (content.length > 0) {
-  //   const reply = await message.reply(`${codeblock ? `\`\`\`${codeblock}\n` : ''}${content[0]}${codeblock ? '```' : ''}`);
-  //   content.shift();
-  //   return await splitMessage(content, reply, codeblock);
-  // } else return;
+export default function splitMessage(text: string): string[] {
+	if (text.length <= 2000) return [text];
+	const parts = [];
+	let curPart = '';
+	let chunkStartIndex = 0;
+	let prevDelim = '';
+	function addChunk(chunkEndIndex: number, nextDelim: string) {
+		const nextChunk = text.substring(chunkStartIndex, chunkEndIndex);
+		const lengthWithChunk = (curPart.length + prevDelim.length + nextChunk.length);
+		if (lengthWithChunk > 2000) {
+			parts.push(curPart);
+			curPart = nextChunk;
+		} else curPart += prevDelim + nextChunk;
+		prevDelim = nextDelim;
+		chunkStartIndex = chunkEndIndex + prevDelim.length;
+	}
+	for (const match of text.matchAll(/\n/g)) addChunk(match.index, match[0]);
+	addChunk(text.length - 1, '');
+	parts.push(curPart);
+	console.log(encodeURIComponent(text));
+	console.log(parts.map((t) => encodeURIComponent(t)));
+	return parts;
 }

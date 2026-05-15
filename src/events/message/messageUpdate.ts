@@ -1,9 +1,9 @@
-import { EmbedBuilder, GuildTextBasedChannel, Message, TextChannel, WebhookClient } from 'discord.js';
+import { EmbedBuilder, GuildTextBasedChannel, Message, OmitPartialGroupDMChannel, PartialMessage, TextChannel, WebhookClient } from 'discord.js';
 import { client } from '../..';
 import Color from '../../enums/Color';
 import Event from '../../structures/Event';
 
-export default new Event('on', 'messageUpdate', async (oldMessage: Message, newMessage: Message) => {
+export default new Event('on', 'messageUpdate', async (oldMessage: OmitPartialGroupDMChannel<Message | PartialMessage>, newMessage: OmitPartialGroupDMChannel<Message>) => {
   if (newMessage.author.id !== process.env.BOT_ID && oldMessage.content !== newMessage.content) {
     const embed = new EmbedBuilder()
       .setTitle(`**${newMessage.author.username}s edited message in #${(newMessage.channel as TextChannel).name}**`)

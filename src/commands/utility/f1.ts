@@ -1,5 +1,4 @@
 import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
-import fetch from 'node-fetch';
 import { Util } from '../..';
 import Color from '../../enums/Color';
 import Command from '../../structures/Command';
@@ -74,24 +73,24 @@ export default new Command({
         }).join('\n')}`)
         .setThumbnail(nextRound.track.country_flag)
         .setImage(`${nextRound.track.image}?${Util.randomString(5)}`)
-        .setFooter({ text: `${nextRound.type.toUpperCase()} ${nextRound.round} / ${rounds.filter((round) => round.type === nextRound.type).length}` });
+        .setFooter({ text: `${nextRound.type === 'race' ? 'ROUND' : 'TESTING'} ${nextRound.round} / ${rounds.filter((round) => round.type === nextRound.type).length}` });
 
       interaction.editReply({ embeds: [embed] });
     } else if (subCommand === 'races') {
       const embed = new EmbedBuilder()
-        .setTitle('2022 Races')
+        .setTitle(new Date().getFullYear() + ' Races')
         .setColor(Color.F1_RED)
         .addFields([{
           name: 'Round',
-          value: rounds.filter((round) => round.type === 'Round').map((round) => `**${round.round}**`).join('\n'),
+          value: rounds.filter((round) => round.type === 'race').map((round) => `**${round.round}**`).join('\n'),
           inline: true
         }, {
           name: 'Location',
-          value: rounds.filter((round) => round.type === 'Round').map((round) => `**${round.city}, ${round.country}**`).join('\n'),
+          value: rounds.filter((round) => round.type === 'race').map((round) => `**${round.city}, ${round.country}**`).join('\n'),
           inline: true
         }, {
           name: 'Time',
-          value: rounds.filter((round) => round.type === 'Round').map((round) => {
+          value: rounds.filter((round) => round.type === 'race').map((round) => {
             return `${(round.sessions[round.sessions.length - 1].time_start) ? `**<t:${new Date(round.sessions[round.sessions.length - 1].time_start).getTime() / 1000}:f>**` : '**TBA**'
               }`;
           }).join('\n'),
@@ -100,7 +99,7 @@ export default new Command({
 
       interaction.editReply({ embeds: [embed] });
     } else if (subCommand === 'race') {
-      const race = rounds.find((round) => round.round === interaction.options.get('round').value as number && round.type === 'Round');
+      const race = rounds.find((round) => round.round === interaction.options.get('round').value as number && round.type === 'race');
       const embed = new EmbedBuilder()
         .setTitle(race.name)
         .setColor(Color.F1_RED)
@@ -109,7 +108,7 @@ export default new Command({
         }).join('\n')}`)
         .setThumbnail(race.track.country_flag)
         .setImage(`${race.track.image}?${Util.randomString(5)}`)
-        .setFooter({ text: `${race.type.toUpperCase()} ${race.round} / ${rounds.filter((round) => round.type === 'Round').length}` });
+        .setFooter({ text: `${race.type.toUpperCase()} ${race.round} / ${rounds.filter((round) => round.type === 'race').length}` });
 
       if (race.results.length > 0) {
         embed.setFields([{
@@ -163,7 +162,7 @@ export default new Command({
           value: standings.map((standing: F1DriverStanding | F1ConstructorStanding) => `${standing.points}`).join('\n'),
           inline: true
         }])
-        .setFooter({ text: `ROUND ${nextRound.type === 'Testing' ? 0 : lastRound.round} / ${rounds.filter((round) => round.type === 'Round').length}` });
+        .setFooter({ text: `ROUND ${nextRound.type === 'fom-testing' ? 0 : lastRound.round} / ${rounds.filter((round) => round.type === 'race').length}` });
 
       interaction.editReply({ embeds: [embed] });
     }

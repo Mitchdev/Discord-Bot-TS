@@ -1,5 +1,3 @@
-import fetch from 'node-fetch';
-
 /**
  * Get all the redirects from a url.
  * @param {string} url original url.

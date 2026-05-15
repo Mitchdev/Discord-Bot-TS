@@ -1,5 +1,4 @@
-import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
-import fetch from 'node-fetch';
+import { ApplicationCommandOptionType, EmbedBuilder, MessageFlags } from 'discord.js';
 import { Util } from '../..';
 import Command from '../../structures/Command';
 import Smmry from '../../typings/apis/Smmry';
@@ -17,7 +16,7 @@ export default new Command({
   run: async ({ interaction }) => {
     if (Util.validUrl(interaction.options.get('url').value as string)) {
       await interaction.deferReply();
-      const tldr: Smmry = await (await fetch(process.env.SMMRY_API + interaction.options.get('url').value)).json();
+      const tldr: Smmry = await (await fetch(process.env.SMMRY_API + interaction.options.get('url').value)).json() as Smmry;
       if (!tldr.sm_api_error) {
         const embed = new EmbedBuilder()
           .setTitle(tldr.sm_api_title)
@@ -27,7 +26,7 @@ export default new Command({
         await interaction.editReply({embeds: [embed]});
       } else await interaction.editReply({content: 'Could not summarize article'});
     } else {
-      await interaction.deferReply({ ephemeral: true });
+      await interaction.deferReply({ flags: MessageFlags.Ephemeral });
       await interaction.editReply('Invalid url');
     }
   }

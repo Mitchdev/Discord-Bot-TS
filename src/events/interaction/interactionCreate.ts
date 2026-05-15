@@ -1,5 +1,5 @@
 /* eslint-disable no-empty */
-import { AutocompleteInteraction, Interaction } from 'discord.js';
+import { AutocompleteInteraction, Interaction, MessageFlags } from 'discord.js';
 import { client } from '../..';
 import Event from '../../structures/Event';
 import { ExtendedButtonInteraction, ExtendedInteraction } from '../../typings/Interaction';
@@ -36,7 +36,7 @@ export default new Event('on', 'interactionCreate', async (interaction: Interact
     if (interaction.isChatInputCommand()) { // ChatInputCommandInteraction
       const command = client.commands.get(interaction.commandName + 'ChatInputCommandInteraction');
       if (!command) {
-        await interaction.deferReply({ephemeral: true});
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         return interaction.editReply('You have used a non exitent slash command');
       }
       command.run({
@@ -50,12 +50,12 @@ export default new Event('on', 'interactionCreate', async (interaction: Interact
       else if (interaction.isUserContextMenuCommand()) { // UserContextMenuCommandInteraction
         const command = client.commands.get(interaction.commandName + 'UserContextMenuCommandInteraction');
         if (!command) {
-          await interaction.deferReply({ephemeral: true});
+          await interaction.deferReply({ flags: MessageFlags.Ephemeral });
           return interaction.editReply('You have used a non exitent context-menu command');
         }
         command.run({
           client,
-          interaction: interaction as ExtendedInteraction,
+          interaction: interaction as unknown as ExtendedInteraction,
           subCommandGroup: null,
           subCommand: null
         });
@@ -65,7 +65,7 @@ export default new Event('on', 'interactionCreate', async (interaction: Interact
     if (interaction.isButton()) { // ButtonInteraction
       const component = client.components.get(interaction.customId.split('|')[0] + 'ButtonInteraction');
       if (!component) {
-        await interaction.deferReply({ephemeral: true});
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         return interaction.editReply('You have used a non exitent context-menu command');
       }
       const args = interaction.customId.split('|');
@@ -76,6 +76,6 @@ export default new Event('on', 'interactionCreate', async (interaction: Interact
         args: args
       });
     }
-    else if (interaction.isSelectMenu()) {} // SelectMenuInteraction
+    else if (interaction.isStringSelectMenu()) {} // StringSelectMenuInteraction
   }
 });

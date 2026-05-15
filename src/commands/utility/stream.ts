@@ -1,5 +1,4 @@
 import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
-import fetch from 'node-fetch';
 import { Util } from '../..';
 import Command from '../../structures/Command';
 import { DGGYoutube, TwitchStream, TwitchUser, TwitchVideo } from '../../typings/apis/Twitch';
@@ -18,7 +17,7 @@ export default new Command({
     const streamer = (interaction.options.get('streamer').value as string).toLowerCase();
     await interaction.deferReply();
     if (streamer === 'destiny') {
-      const stream = (await (await fetch('https://www.destiny.gg/api/info/stream')).json()).data.streams.youtube as DGGYoutube;
+      const stream = ((await (await fetch('https://www.destiny.gg/api/info/stream')).json()) as { data: { streams: { youtube: DGGYoutube } } }).data.streams.youtube;
       if (stream.live) {
         const embed = new EmbedBuilder()
           .setTitle('Destiny')
@@ -46,10 +45,10 @@ export default new Command({
         await interaction.editReply({ embeds: [embed] });
       }
     } else {
-      const token = await (await fetch(process.env.TWITCH_AUTH_API, { method: 'POST' })).json();
+      const token = await (await fetch(process.env.TWITCH_AUTH_API, { method: 'POST' })).json() as { access_token: string };
       const auth = { headers: { 'Client-ID': process.env.TWITCH_CLIENT_ID, 'Authorization': `Bearer ${token.access_token}` } };
-      const channels = (await (await fetch(`https://api.twitch.tv/helix/users?login=${streamer}`, auth)).json()).data as TwitchUser[];
-      const streams = (await (await fetch(`https://api.twitch.tv/helix/streams?user_login=${streamer}`, auth)).json()).data as TwitchStream[];
+      const channels = ((await (await fetch(`https://api.twitch.tv/helix/users?login=${streamer}`, auth)).json()) as { data: TwitchUser[] }).data;
+      const streams = ((await (await fetch(`https://api.twitch.tv/helix/streams?user_login=${streamer}`, auth)).json()) as { data: TwitchStream[] }).data;
       if (streams.length > 0) {
         const stream = streams[0];
         const thumbnail_url = stream.thumbnail_url.replace('{width}', `192${Math.floor(Math.random() * 10)}`).replace('{height}', `108${Math.floor(Math.random() * 10)}`) + `?${Util.randomString(8)}`;
@@ -78,7 +77,7 @@ export default new Command({
           await interaction.editReply({ embeds: [embed] });
         }, 100);
       } else if (channels.length > 0) {
-        const videos = (await (await fetch(`https://api.twitch.tv/helix/videos?type=archive&first=1&user_id=${channels[0].id}`, auth)).json()).data as TwitchVideo[];
+        const videos = ((await (await fetch(`https://api.twitch.tv/helix/videos?type=archive&first=1&user_id=${channels[0].id}`, auth)).json()) as { data: TwitchVideo[] }).data;
         const embed = new EmbedBuilder()
           .setTitle(channels[0].display_name)
           .setURL(`https://twitch.tv/${channels[0].display_name}`)

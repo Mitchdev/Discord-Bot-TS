@@ -1,5 +1,4 @@
 import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
-import fetch from 'node-fetch';
 import { getColorFromURL } from 'color-thief-node';
 import Command from '../../structures/Command';
 import { ImdbSearch, ImdbTitle, ImdbTitleAlt, ImdbTrailer } from '../../typings/apis/Imdb';

@@ -1,5 +1,4 @@
-import { ApplicationCommandAutocompleteStringOption, ApplicationCommandNonOptionsData, ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
-import fetch from 'node-fetch';
+import { ApplicationCommandAutocompleteStringOption, ApplicationCommandNonOptionsData, ApplicationCommandOptionType, EmbedBuilder, MessageFlags } from 'discord.js';
 import { db, Util } from '../..';
 import Command from '../../structures/Command';
 import Currency from '../../typings/apis/Currency';
@@ -137,7 +136,7 @@ export default new Command({
   }],
   run: async ({ interaction, subCommand }) => {
     if (subCommand === 'list') {
-      await interaction.deferReply({ ephemeral: true });
+      await interaction.deferReply({ flags: MessageFlags.Ephemeral });
       const all = await db.measurements.findAll({ where: { type: interaction.options.get('type').value } });
       interaction.editReply(`**${Util.capitalize(interaction.options.get('type').value as string)}**:\n${all.map((measurement) => `**${measurement.short_name}**`).join(', ')}`);
     } else {

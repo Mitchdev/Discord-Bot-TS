@@ -1,6 +1,6 @@
-import { ButtonInteraction, CommandInteraction, GuildMember, SelectMenuInteraction } from 'discord.js';
+import { ButtonInteraction, ChatInputCommandInteraction, GuildMember, StringSelectMenuInteraction } from 'discord.js';
 
-export interface ExtendedInteraction extends CommandInteraction {
+export interface ExtendedInteraction extends ChatInputCommandInteraction {
   member: GuildMember;
 }
 
@@ -8,7 +8,7 @@ export interface ExtendedButtonInteraction extends ButtonInteraction {
   member: GuildMember;
 }
 
-export interface ExtendedSelectMenuInteraction extends SelectMenuInteraction {
+export interface ExtendedSelectMenuInteraction extends StringSelectMenuInteraction {
   member: GuildMember;
 }
 

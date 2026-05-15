@@ -8,10 +8,10 @@ async function devCommands(client: ExtendedClient, db: db, timers: timers, messa
     try {
       const evaled = await eval(`(async () => { ${message.content.replace('!eval ', '')} })()`);
       const cleaned = await cleanEval(client, evaled);
-      await message.channel.send(`\`\`\`js\n${cleaned}\n\`\`\``);
+      if ('send' in message.channel) await message.channel.send(`\`\`\`js\n${cleaned}\n\`\`\``);
     } catch (err) {
       const cleaned = await cleanEval(client, err);
-      await message.channel.send(`\`ERROR\` \`\`\`xl\n${cleaned}\n\`\`\``);
+      if ('send' in message.channel) await message.channel.send(`\`ERROR\` \`\`\`xl\n${cleaned}\n\`\`\``);
     }
   }
 

@@ -2,10 +2,39 @@ import { Message } from 'discord.js';
 import { client, db, timers, Util } from '../..';
 import devCommands from '../../structures/DevCommands';
 import Event from '../../structures/Event';
+import { writeFileSync } from 'fs';
 
 export default new Event('on', 'messageCreate', async (message: Message) => {
   if (message.author.id === process.env.USER_MITCH) await devCommands(client, db, timers, message);
   if (message.author.id !== process.env.BOT_ID && message.author.id !== process.env.BOT_LOGS_ID && message.author.id !== process.env.BOT_ID_DEV) {
+    let content = message.content;
+    if (content !== '') {
+      message.mentions.users.forEach((user) => {
+        content = content.replaceAll(new RegExp(`<@${user.id}>`, 'gm'), user.globalName);
+      });
+      message.mentions.roles.forEach((role) => {
+        content = content.replaceAll(new RegExp(`<@&${role.id}>`, 'gm'), role.name);
+      });
+      (await message.guild.channels.fetch()).forEach((channel) => {
+        content = content.replaceAll(new RegExp(`<#${channel.id}>`, 'gm'), `#${channel.name}`);
+      });
+      if (message.mentions.repliedUser) {
+        content = `${message.mentions.repliedUser.globalName} ${content}`;
+      }
+      if (client.messages.has(message.channelId)) {
+        let messages = client.messages.get(message.channelId);
+        messages.push({ name: message.author.globalName, message: content, timestamp: message.createdTimestamp });
+        if (messages.length > 50) {
+          messages = messages.slice(-50);
+        }
+        client.messages.set(message.channelId, messages);
+      } else {
+        client.messages.set(message.channelId, [{ name: message.author.globalName, message: content, timestamp: message.createdTimestamp }]);
+      }
+
+      writeFileSync('./messages.json', JSON.stringify(Object.fromEntries(client.messages)));
+    }
+
     if (message.content.length >= 750) message.react(message.guild.emojis.resolve('773295613558128671')); // donowall
 
     const recycledTwitterURL = new RegExp(/(?:https|http):\/\/(?:.+?\.)?((?:twitter.com|fxtwitter.com|nitter.net)\/(?:.+?)\/status\/([0-9]+?)(?:\/|$|\n|\s|\?))/, 'gmi').exec(message.content) ?? [];

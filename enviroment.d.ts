@@ -10,6 +10,11 @@ declare global {
       BOT_LOGS_ID: string;
       GUILD_ID: string;
 
+      DB_VERSION: string;
+      DB_USER: string;
+      DB_PASSWORD: string;
+      DB_HOST: string;
+
       WEBHOOK_LOG_ID: string;
       WEBHOOK_LOG_TOKEN: string;
 
@@ -32,13 +37,8 @@ declare global {
       ROLE_REGULAR: string;
 
       USER_MITCH: string;
-      USER_ANDLIN: string;
 
-      OPENAI_TOKEN: string;
-      ANDLIN_TOKEN: string;
-      ANDLIN_PING_API: string;
-      ANDLIN_ADDRESS_API: string;
-      ANDLIN_TRANSLATE_API: string;
+      OLYMPICS_API: string;
 
       ADDRESS_API: string;
 
@@ -53,6 +53,8 @@ declare global {
       ANIMAL_PIC_FERRET_API: string;
       ANIMAL_PIC_API: string;
       ANIMAL_FACT_API: string;
+
+      GOOGLE_SEARCH: string;
 
       URBAN_API: string;
       DICTIONARY_API: string;

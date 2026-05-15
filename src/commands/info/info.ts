@@ -1,5 +1,4 @@
 import os from 'os';
-//import fetch from 'node-fetch';
 import Command from '../../structures/Command';
 import { EmbedBuilder } from 'discord.js';
 import { Util } from '../..';
@@ -10,10 +9,6 @@ export default new Command({
   description: 'Shows uptime and ping',
   run: async ({ client, interaction }) => {
     await interaction.deferReply();
-
-    // const pre = new Date();
-    // await fetch(process.env.ANDLIN_PING_API);
-    // const post = new Date();
 
     const embed = new EmbedBuilder()
       .setTitle('Info')
@@ -30,11 +25,6 @@ export default new Command({
         value: Util.secondsToDhms(os.uptime()),
         inline: true,
       }
-      // , {
-      //   name: 'Andlin API Ping',
-      //   value: `${(post.getTime() - pre.getTime())}ms`,
-      //   inline: true,
-      // }
     ]);
 
     interaction.editReply({embeds: [embed]});

@@ -1,5 +1,4 @@
 import { EmbedBuilder, TextChannel } from 'discord.js';
-import fetch from 'node-fetch';
 import { client } from '..';
 import Color from '../enums/Color';
 import Scheduled from '../structures/Scheduled';
@@ -42,7 +41,7 @@ export default new Scheduled('f1StandingsUpdate', 1800, true, async () => {
           value: driverStanding.map((standing) => `${standing.points}`).join('\n'),
           inline: true
         }])
-        .setFooter({ text: `ROUND ${nextRound.type === 'Testing' ? 0 : lastRound.round} / ${rounds.filter((round) => round.type === 'Round').length}` });
+        .setFooter({ text: `ROUND ${nextRound.type === 'fom-testing' ? 0 : lastRound.round} / ${rounds.filter((round) => round.type === 'race').length}` });
       const driverMessage = await (client.channels.resolve(process.env.CHANNEL_F1) as TextChannel).messages.fetch(process.env.MESSAGE_F1_DRIVERS);
       if (driverMessage.embeds[0].fields[2].value !== driverEmbed.data.fields[2].value) await driverMessage.edit({ embeds: [driverEmbed] });
     }
@@ -64,7 +63,7 @@ export default new Scheduled('f1StandingsUpdate', 1800, true, async () => {
           value: constructorStanding.map((standing) => `${standing.points}`).join('\n'),
           inline: true
         }])
-        .setFooter({ text: `ROUND ${nextRound.type === 'Testing' ? 0 : lastRound.round} / ${rounds.filter((round) => round.type === 'Round').length}` });
+        .setFooter({ text: `ROUND ${nextRound.type === 'fom-testing' ? 0 : lastRound.round} / ${rounds.filter((round) => round.type === 'race').length}` });
       const constructorMessage = await (client.channels.resolve(process.env.CHANNEL_F1) as TextChannel).messages.fetch(process.env.MESSAGE_F1_CONSTRUCTORS);
       if (constructorMessage.embeds[0].fields[2].value !== constructorEmbed.data.fields[2].value) await constructorMessage.edit({ embeds: [constructorEmbed] });
     }

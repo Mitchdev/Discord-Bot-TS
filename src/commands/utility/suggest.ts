@@ -1,5 +1,4 @@
-import { ActionRow, ActionRowBuilder, ApplicationCommandOptionType, ButtonBuilder, ButtonComponent, ButtonStyle, EmbedBuilder, TextChannel } from 'discord.js';
-import fetch from 'node-fetch';
+import { ActionRow, ActionRowBuilder, ApplicationCommandOptionType, ButtonBuilder, ButtonComponent, ButtonStyle, EmbedBuilder, MessageFlags, TextChannel } from 'discord.js';
 import sharp from 'sharp';
 import { client, db, Util } from '../..';
 import { SuggestionStatusColor } from '../../enums/Color';
@@ -77,11 +76,11 @@ export default new Command({
     }]
   }],
   run: async ({ interaction, subCommand }) => {
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
     if (subCommand === 'emote' || subCommand === 'sticker') {
       if (Util.validUrl(interaction.options.get('image').value as string)) {
         const response = await fetch(interaction.options.get('image').value as string);
-        const buffer = await response.buffer();
+        const buffer = await response.arrayBuffer();
         if (response.headers.get('content-type')?.startsWith('image')) {
           const metadata = await sharp(buffer).metadata();
           let stickerEmote = null;

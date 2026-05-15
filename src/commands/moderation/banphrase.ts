@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType } from 'discord.js';
+import { ApplicationCommandOptionType, MessageFlags } from 'discord.js';
 import { db, Util } from '../..';
 import Command from '../../structures/Command';
 
@@ -71,7 +71,7 @@ export default new Command({
         interaction.editReply(`Phrase **${interaction.options.get('phrase').value}** does not exist`);
       }
     } else if (subCommand === 'list') {
-      await interaction.deferReply({ephemeral: true});
+      await interaction.deferReply({ flags: MessageFlags.Ephemeral });
       // const bannedPhrases = await db.bannedPhrases.findAll({ where: {} });
       // interaction.editReply(bannedPhrases.map((phrase) => `${phrase.phrase} | ${phrase.rolename} | ${phrase.duration}`).join('\n'));
       interaction.editReply('https://mitchdev.net/dgg/discord/banphrases');

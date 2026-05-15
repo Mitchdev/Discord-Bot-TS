@@ -1,5 +1,4 @@
 import { ApplicationCommandOptionType } from 'discord.js';
-import fetch from 'node-fetch';
 import Command from '../../structures/Command';
 import { AnimalFact, AnimalPic } from '../../typings/apis/Animal';
 

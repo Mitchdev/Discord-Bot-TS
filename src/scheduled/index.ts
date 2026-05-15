@@ -5,3 +5,4 @@ export { default as regularUsersUpdate } from './regularUsersUpdate';
 export { default as f1StandingsUpdate } from './f1StandingsUpdate';
 export { default as gtarp } from './gtarp';
 export { default as updateUptime } from './updateUptime';
+export { default as openaiQueue } from './openaiQueue';

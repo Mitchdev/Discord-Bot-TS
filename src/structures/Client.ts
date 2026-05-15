@@ -1,39 +1,45 @@
-import { ApplicationCommandDataResolvable, Client, ClientEvents, Collection, IntentsBitField } from 'discord.js';
+import { ApplicationCommandDataResolvable, Client, ClientEvents, Collection, GatewayIntentBits } from 'discord.js';
 import { glob } from 'glob';
-import { promisify } from 'util';
 import Event from './Event';
 import CommandType from '../typings/Command';
 import ComponentType from '../typings/Component';
 import AutocompleteType from '../typings/Autocomplete';
 import { devActiveCommands } from '..';
-
-const globPromise = promisify(glob);
+import Message from '../typings/Message';
+import { readFileSync } from 'fs';
 
 export default class ExtendedClient extends Client {
+  messages: Map<string, Message[]> = new Map();
   commands: Collection<string, CommandType> = new Collection();
   components: Collection<string, ComponentType> = new Collection();
   autocomplete: Collection<string, AutocompleteType> = new Collection();
 
   constructor() {
-    super({intents: [
-      IntentsBitField.Flags.DirectMessageReactions,
-      IntentsBitField.Flags.DirectMessageTyping,
-      IntentsBitField.Flags.DirectMessages,
-      IntentsBitField.Flags.GuildBans,
-      IntentsBitField.Flags.GuildEmojisAndStickers,
-      IntentsBitField.Flags.GuildIntegrations,
-      IntentsBitField.Flags.GuildInvites,
-      IntentsBitField.Flags.GuildMembers,
-      IntentsBitField.Flags.GuildMessageReactions,
-      IntentsBitField.Flags.GuildMessageTyping,
-      IntentsBitField.Flags.GuildMessages,
-      IntentsBitField.Flags.GuildPresences,
-      IntentsBitField.Flags.GuildScheduledEvents,
-      IntentsBitField.Flags.GuildVoiceStates,
-      IntentsBitField.Flags.GuildWebhooks,
-      IntentsBitField.Flags.Guilds,
-      IntentsBitField.Flags.MessageContent
-    ]});
+    super({
+      intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildModeration,
+        GatewayIntentBits.GuildEmojisAndStickers,
+        GatewayIntentBits.GuildIntegrations,
+        GatewayIntentBits.GuildWebhooks,
+        GatewayIntentBits.GuildInvites,
+        GatewayIntentBits.GuildVoiceStates,
+        GatewayIntentBits.GuildPresences,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildMessageReactions,
+        GatewayIntentBits.GuildMessageTyping,
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.DirectMessageReactions,
+        GatewayIntentBits.DirectMessageTyping,
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildScheduledEvents,
+        GatewayIntentBits.AutoModerationConfiguration,
+        GatewayIntentBits.AutoModerationExecution,
+      ]
+    })
+
+    this.messages = new Map(Object.entries(JSON.parse(readFileSync('./messages.json', { encoding: 'utf8' }))));
   }
 
   start() {
@@ -72,8 +78,8 @@ export default class ExtendedClient extends Client {
   async registerModules(pushCommands: boolean) {
     // Commands
     const slashCommands: ApplicationCommandDataResolvable[] = [];
-    const commandFiles = await globPromise(`${__dirname}/../commands/*/*{.ts,.js}`);
-    const contextMenuFiles = await globPromise(`${__dirname}/../context-menu/*/*{.ts,.js}`);
+    const commandFiles = await glob(`${__dirname}/../commands/*/*{.ts,.js}`);
+    const contextMenuFiles = await glob(`${__dirname}/../context-menu/*/*{.ts,.js}`);
     console.log(`Found ${contextMenuFiles.length} context-menu files`);
     const commandContextMenuFiles = commandFiles.concat(contextMenuFiles);
 
@@ -97,13 +103,13 @@ export default class ExtendedClient extends Client {
     });
 
     if (pushCommands) {
-      this.on('ready', () => {
+      this.on('clientReady', () => {
         this.registerCommands(slashCommands);
       });
     }
 
     // Message Components
-    const messageComponentFiles = await globPromise(`${__dirname}/../components/*/*{.ts,.js}`);
+    const messageComponentFiles = await glob(`${__dirname}/../components/*/*{.ts,.js}`);
     console.log(`Found ${messageComponentFiles.length} message component files`);
     messageComponentFiles.forEach(async (filePath) => {
       const component: ComponentType = await this.importFile(filePath);
@@ -112,7 +118,7 @@ export default class ExtendedClient extends Client {
     });
 
     // Autocomplete
-    const autocompleteFiles = await globPromise(`${__dirname}/../autocomplete/*{.ts,.js}`);
+    const autocompleteFiles = await glob(`${__dirname}/../autocomplete/*{.ts,.js}`);
     console.log(`Found ${autocompleteFiles.length} autocomplete files`);
     autocompleteFiles.forEach(async (filePath) => {
       const autocomplete: AutocompleteType = await this.importFile(filePath);
@@ -121,7 +127,7 @@ export default class ExtendedClient extends Client {
     });
 
     // Events
-    const eventFiles = await globPromise(`${__dirname}/../events/*/*{.ts,.js}`);
+    const eventFiles = await glob(`${__dirname}/../events/*/*{.ts,.js}`);
     console.log(`Found ${eventFiles.length} event files`);
     eventFiles.forEach(async filePath => {
       const event: Event<keyof ClientEvents> = await this.importFile(filePath);

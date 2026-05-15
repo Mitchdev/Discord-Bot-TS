@@ -1,5 +1,4 @@
 import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
-import fetch from 'node-fetch';
 import Command from '../../structures/Command';
 
 export default new Command({
@@ -20,7 +19,7 @@ export default new Command({
   run: async ({ interaction }) => {
     await interaction.deferReply();
     const term = interaction.options.get('term').value as string;
-    const data = await (await fetch(`https://customsearch.googleapis.com/customsearch/v1?key=AIzaSyAgaMhrypBikWfZf1Bo8LzkIkcl-emXyzs&cx=014497667322888393049%3Axrzxhj73vor&searchType=image&q=${term}&safe=1`)).json();
+    const data = await (await fetch(process.env.GOOGLE_SEARCH.replace('|phrase|', term))).json() as { items?: { link: string }[] };
     const embed = new EmbedBuilder()
       .setTitle(`**${term}**`);
 

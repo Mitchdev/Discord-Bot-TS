@@ -1,9 +1,8 @@
-import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
-import fetch from 'node-fetch';
-import http from 'http';
+import { ApplicationCommandOptionType, EmbedBuilder, MessageFlags } from 'discord.js';
 import Command from '../../structures/Command';
 import NoPixelPlayer from '../../typings/apis/GtaRp';
 import { db } from '../..';
+import { Agent } from 'undici';
 
 export default new Command({
   idType: 'ChatInputCommandInteraction',
@@ -86,7 +85,7 @@ export default new Command({
       const name = interaction.options.get('name').value as string;
       try {
         const players: NoPixelPlayer[] = await (await fetch(process.env.NOPIXEL_API, {
-          agent: new http.Agent()
+          dispatcher: new Agent()
         })).json() as unknown as NoPixelPlayer[];
 
         const state = {
@@ -131,7 +130,7 @@ export default new Command({
         await interaction.editReply('Could not get players.');
       }
     } else if (subCommand === 'set') {
-      await interaction.deferReply({ ephemeral: true });
+      await interaction.deferReply({ flags: MessageFlags.Ephemeral });
       const name = interaction.options.get('name').value as string;
       if (interaction.user.id === process.env.USER_MITCH) {
         const id = interaction.options.get('id').value as string;
@@ -167,7 +166,7 @@ export default new Command({
           await interaction.editReply(`Added to notifications for ${name}.`);
         }
       } else {
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         await interaction.editReply(`Streamer ${name} not found.`);
       }
     } else if (subCommand === 'list') {
@@ -179,7 +178,7 @@ export default new Command({
       const id = interaction.options.get('id').value as number;
       try {
         const players: NoPixelPlayer[] = await (await fetch(process.env.NOPIXEL_API, {
-          agent: new http.Agent()
+          dispatcher: new Agent()
         })).json() as unknown as NoPixelPlayer[];
         const index = players.findIndex((player) => player.id === id);
         if (index >= 0) {

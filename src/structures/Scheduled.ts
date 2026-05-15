@@ -4,7 +4,7 @@ export default class Scheduled {
   public interval: number;
   public runAtStart: boolean;
   public run: () => any;
-  private timer: NodeJS.Timer;
+  private timer: NodeJS.Timeout;
 
   constructor(name: string, interval: number, runAtStart: boolean, run: () => any) {
     this.name = name;

@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
+import { ApplicationCommandOptionType, EmbedBuilder, MessageFlags } from 'discord.js';
 import { Util } from '../..';
 import Command from '../../structures/Command';
 
@@ -23,7 +23,7 @@ export default new Command({
 
       await interaction.editReply({ embeds: [embed] });
     } else {
-      await interaction.deferReply({ ephemeral: true });
+      await interaction.deferReply({ flags: MessageFlags.Ephemeral });
       await interaction.editReply('Invalid URL');
     }
   }

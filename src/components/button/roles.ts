@@ -1,4 +1,4 @@
-import { GuildMember } from 'discord.js';
+import { GuildMember, MessageFlags } from 'discord.js';
 import { db } from '../..';
 import Component from '../../structures/Component';
 
@@ -6,7 +6,7 @@ export default new Component({
   idType: 'ButtonInteraction',
   customId: 'roles',
   run: async ({ client, interaction, args }) => {
-    await interaction.deferReply({ephemeral: true});
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
     const role = await db.roles.findByPk(parseInt(args[0]));
     if (role) {

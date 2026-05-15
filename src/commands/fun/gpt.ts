@@ -1,6 +1,7 @@
-import { ApplicationCommandOptionType } from 'discord.js';
+import { ApplicationCommandOptionType, MessageFlags } from 'discord.js';
 import { openai } from '../..';
 import Command from '../../structures/Command';
+import OpenAIQueueItem from '../../typings/OpenAIQueueItem';
 
 export default new Command({
   idType: 'ChatInputCommandInteraction',
@@ -11,15 +12,37 @@ export default new Command({
     type: ApplicationCommandOptionType.String,
     description: 'Question to ask ChatGPT',
     required: true,
+  }, {
+    name: 'image',
+    type: ApplicationCommandOptionType.Attachment,
+    description: 'PNG, JPG, JPEG, WEBP or GIF Image to give ChatGPT',
+    required: false,
   }],
   run: async ({ interaction }) => {
-    await interaction.deferReply();
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
-    const question = (interaction.options.get('question').value as string);
-    const reply = await openai.send(interaction.user.username, question);
+    const queue: OpenAIQueueItem = {
+      interaction,
+      text: (interaction.options.get('question').value as string), 
+      image: null,
+      type: 'gpt',
+    };
 
-    const message = await interaction.editReply(reply.substring(0, 1999));
-    if (reply.length > 2000) message.reply(reply.substring(2000, 3999));
-    if (reply.length > 4000) message.reply(reply.substring(4000, 5999));
+    const image = interaction.options.get('image')?.attachment;
+    if (image) {
+      if (['image/png', 'image/jpeg', 'image/webp', 'image/gif'].includes(image.contentType)) {
+        if (image.size <= 20000000) {
+          queue.image = image.url;
+        } else {
+          return await interaction.editReply(`Image is ${image.size / 1000000}MB needs to be below 20MB`);
+        }
+      } else {
+        return await interaction.editReply(`${image.contentType} not supports please use png, jpeg, jpg, webp or gif.`);
+      }
+    }
+
+    const queuePos = openai.addQueue(queue);
+
+    await interaction.editReply(`Added question to queue position ${queuePos}/${openai.queue.length}`);
   }
 });

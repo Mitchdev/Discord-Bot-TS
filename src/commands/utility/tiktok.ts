@@ -1,5 +1,4 @@
 import { ApplicationCommandOptionType, AttachmentBuilder } from 'discord.js';
-import fetch from 'node-fetch';
 import { Util } from '../..';
 import Command from '../../structures/Command';
 
@@ -23,7 +22,7 @@ export default new Command({
         if (vidUrl) {
           const buffer = await getBufferFromVideo(vidUrl);
           await interaction.editReply({
-            files: [new AttachmentBuilder(buffer, {
+            files: [new AttachmentBuilder(Buffer.from(buffer), {
               name: 'tiktok.mp4'
             })]
           });
@@ -36,7 +35,7 @@ export default new Command({
   }
 });
 
-async function getBufferFromVideo(vidUrl: string): Promise<Buffer | null> {
+async function getBufferFromVideo(vidUrl: string): Promise<ArrayBuffer | null> {
   const res = await fetch(vidUrl, {
     method: 'GET',
     headers: {
@@ -53,7 +52,7 @@ async function getBufferFromVideo(vidUrl: string): Promise<Buffer | null> {
   });
 
   try {
-    const buffer = await res.buffer();
+    const buffer = await res.arrayBuffer();
     return buffer;
   } catch (err) {
     return null;
@@ -80,7 +79,15 @@ async function getVideoFromId(id: string): Promise<string | null> {
   });
 
   try {
-    const json = await res.json();
+    const json = await res.json() as {
+      itemInfo?: {
+        itemStruct?:{
+          video?: {
+            playAddr: string;
+          }
+        }
+      }
+    } | null;
     if (json?.itemInfo?.itemStruct?.video?.playAddr) {
       return json?.itemInfo?.itemStruct?.video?.playAddr;
     }

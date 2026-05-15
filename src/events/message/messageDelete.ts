@@ -1,9 +1,9 @@
-import { AuditLogEvent, EmbedBuilder, GuildAuditLogsEntry, Message, TextChannel, WebhookClient } from 'discord.js';
+import { AuditLogEvent, EmbedBuilder, GuildAuditLogsEntry, Message, OmitPartialGroupDMChannel, PartialMessage, TextChannel, WebhookClient } from 'discord.js';
 import { client, db } from '../..';
 import Color from '../../enums/Color';
 import Event from '../../structures/Event';
 
-export default new Event('on', 'messageDelete', async (message: Message) => {
+export default new Event('on', 'messageDelete', async (message: OmitPartialGroupDMChannel<Message | PartialMessage>) => {
   if (message.author.id !== process.env.BOT_ID && message.author.id !== process.env.WEBHOOK_LOG_ID) {
 
     message.guild.fetchAuditLogs().then(async (audit) => {

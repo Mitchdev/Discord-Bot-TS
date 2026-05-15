@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType } from 'discord.js';
+import { ApplicationCommandOptionType, MessageFlags } from 'discord.js';
 import { db } from '../..';
 import Command from '../../structures/Command';
 import UserPreferencesAttributes from '../../typings/database/UserPreferencesAttributes';
@@ -38,7 +38,7 @@ export default new Command({
     }]
   }],
   run: async ({ interaction, subCommand }) => {
-    await interaction.deferReply({ephemeral: true});
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
     if (subCommand === 'set') {
       let userPreference = await db.userPreferences.findByPk(interaction.user.id);

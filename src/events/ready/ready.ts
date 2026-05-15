@@ -1,7 +1,7 @@
 import { client, db, timers } from '../..';
 import Event from '../../structures/Event';
 
-export default new Event('once', 'ready', async () => {
+export default new Event('once', 'clientReady', async () => {
   console.log(`${client.user.username} is online`);
 
   for (const key in db) {
